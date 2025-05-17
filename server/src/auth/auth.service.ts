@@ -17,11 +17,17 @@ import { RefreshTokenProvider } from './providers/refresh-token.provider';
 export class AuthService {
   constructor(
     private readonly createUserProvider: CreateUserProvider,
+
     private readonly generateTokensProvider: GenerateTokensProvider,
+
     private readonly validateUserProvider: ValidateUserProvider,
+
     private readonly changePasswordProvider: ChangePasswordProvider,
+
     private readonly forgotPasswordProvider: ForgotPasswordProvider,
+
     private readonly resetPasswordProvider: ResetPasswordProvider,
+
     private readonly refreshTokenProvider: RefreshTokenProvider,
   ) {}
 
@@ -29,14 +35,17 @@ export class AuthService {
     return this.createUserProvider.createUser(registerDto);
   }
 
-  async login(
-    loginDto: LoginDto,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  async login(loginDto: LoginDto): Promise<{
+    accessToken: string;
+    refreshToken: string;
+    user: Omit<User, 'password'>;
+  }> {
     const user = await this.validateUserProvider.verifyUser(
       loginDto.email,
       loginDto.password,
     );
-    return this.generateTokensProvider.generateTokens(user);
+    const tokens = await this.generateTokensProvider.generateTokens(user);
+    return { ...tokens, user };
   }
 
   async changePassword(

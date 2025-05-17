@@ -5,8 +5,8 @@ import { User } from '../entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigType } from '@nestjs/config';
 import jwtConfig from '../../config/jwt.config';
-// import { EmailService } from '../../shared/services/email.service';
 import { ResetPasswordPayload } from '../interfaces/reset-password-payload.interface';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class ForgotPasswordProvider {
@@ -16,7 +16,7 @@ export class ForgotPasswordProvider {
     private jwtService: JwtService,
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
-    // private readonly emailService: EmailService,
+    private readonly mailerService: MailerService,
   ) {}
 
   async sendResetPasswordEmail(email: string): Promise<void> {
@@ -43,15 +43,15 @@ export class ForgotPasswordProvider {
     // Tạo URL reset password
     const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
 
-    // // Gửi email
-    // await this.emailService.sendMail({
-    //   to: user.email,
-    //   subject: 'Reset your password',
-    //   template: 'reset-password',
-    //   context: {
-    //     name: user.fullName || user.email,
-    //     resetUrl,
-    //   },
-    // });
+    // Gửi email
+    await this.mailerService.sendMail({
+      to: user.email,
+      subject: 'Reset your password',
+      template: 'reset-password',
+      context: {
+        name: user.fullName || user.email,
+        resetUrl,
+      },
+    });
   }
 }

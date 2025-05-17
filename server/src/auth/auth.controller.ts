@@ -43,8 +43,8 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  getProfile(@CurrentUser() user: User | null) {
-    return user;
+  getProfile(@CurrentUser('id') userId: string | null) {
+    return userId;
   }
 
   @Patch('change-password')

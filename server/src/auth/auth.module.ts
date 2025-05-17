@@ -13,10 +13,12 @@ import { RefreshTokenProvider } from './providers/refresh-token.provider';
 import { ChangePasswordProvider } from './providers/change-password.provider';
 import { ForgotPasswordProvider } from './providers/forgot-password.provider';
 import { ResetPasswordProvider } from './providers/reset-password.provider';
-// import { EmailService } from '../shared/services/email.service'; // Giả định bạn có EmailService
 import { APP_GUARD } from '@nestjs/core';
 import { HashingProvider } from './providers/hashing.provider';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { JwtStrategy } from './strategies/jwt.strategy';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   controllers: [AuthController],
@@ -30,7 +32,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
     ChangePasswordProvider,
     ForgotPasswordProvider,
     ResetPasswordProvider,
-    // EmailService,
+    JwtStrategy,
     {
       provide: APP_GUARD,
       useClass: JwtAuthGuard,
@@ -41,6 +43,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
     },
   ],
   imports: [
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -52,6 +55,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
       }),
     }),
     TypeOrmModule.forFeature([User]),
+    MailerModule,
   ],
 })
 export class AuthModule {}

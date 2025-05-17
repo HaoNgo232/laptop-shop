@@ -1,22 +1,24 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  RequestTimeoutException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BcryptProvider } from './bcrypt.provider';
 import { User } from '../entities/user.entity';
 import { RegisterDto } from '../dtos/register.dto';
+import { MailService } from '../../mail/mail.service';
 
 @Injectable()
 export class CreateUserProvider {
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>,
-    private bcryptProvider: BcryptProvider,
+    private readonly userRepository: Repository<User>,
+    private readonly bcryptProvider: BcryptProvider,
+    private readonly mailService: MailService,
   ) {}
 
   async createUser(registerDto: RegisterDto): Promise<Omit<User, 'password'>> {
@@ -49,10 +51,15 @@ export class CreateUserProvider {
       // // Tạo giỏ hàng cho user
       // await this.cartService.createCartForUser(newUser.id);
 
+      try {
+        await this.mailService.sendUserWelcomeEmail(newUser);
+      } catch (error) {
+        throw new RequestTimeoutException(error);
+      }
+
       const { password, ...userInfo } = newUser;
       return userInfo;
     } catch (error) {
-      console.error('Error during registration:', error);
       throw new BadRequestException('Đăng ký tài khoản thất bại');
     }
   }

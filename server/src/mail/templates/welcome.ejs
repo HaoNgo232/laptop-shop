@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Welcome to Our Service</title>
+  </head>
+  <body
+    style="
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      line-height: 1.6;
+    "
+  >
+    <div style="max-width: 600px; margin: 0 auto; padding: 20px">
+      <!-- Header -->
+      <div style="text-align: center; padding: 20px; background-color: #f8f9fa">
+        <img
+          src="https://example.com/logo.png"
+          alt="Company Logo"
+          style="max-width: 150px; height: auto"
+        />
+        <h1 style="color: #2d3436; margin-top: 15px">
+          Welcome Aboard, <%= name %>! 👋
+        </h1>
+      </div>
+
+      <!-- Content -->
+      <div style="padding: 30px 20px">
+        <p style="color: #4a4a4a">
+          We're thrilled to welcome you to [Your Service Name]. Thank you for
+          joining our community!
+        </p>
+
+        <div
+          style="
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 25px 0;
+          "
+        >
+          <p style="margin: 0">Get started by accessing your account:</p>
+          <div style="text-align: center; margin-top: 20px">
+            <a
+              href="<%= loginUrl %>"
+              style="
+                display: inline-block;
+                padding: 12px 30px;
+                background-color: #007bff;
+                color: white;
+                text-decoration: none;
+                border-radius: 5px;
+                font-weight: bold;
+              "
+            >
+              Access Your Account
+            </a>
+          </div>
+        </div>
+
+        <p style="color: #4a4a4a">
+          Need help getting started? Here's what you can do next:
+        </p>
+        <ul style="color: #4a4a4a; padding-left: 20px">
+          <li>Explore our getting started guide</li>
+          <li>Complete your profile setup</li>
+          <li>Connect with our community</li>
+        </ul>
+      </div>
+
+      <!-- Footer -->
+      <div
+        style="
+          border-top: 1px solid #e9ecef;
+          padding: 20px;
+          text-align: center;
+          color: #6c757d;
+        "
+      >
+        <p style="margin: 0 0 10px 0">Follow us on:</p>
+        <div style="margin-bottom: 15px">
+          <a
+            href="#"
+            style="margin: 0 10px; color: #007bff; text-decoration: none"
+            >Twitter</a
+          >
+          <a
+            href="#"
+            style="margin: 0 10px; color: #007bff; text-decoration: none"
+            >LinkedIn</a
+          >
+          <a
+            href="#"
+            style="margin: 0 10px; color: #007bff; text-decoration: none"
+            >Facebook</a
+          >
+        </div>
+        <p style="margin: 0; font-size: 0.9em">
+          © 2024 Your Company Name. All rights reserved.<br />
+          [Company Address] |
+          <a href="#" style="color: #007bff; text-decoration: none"
+            >Privacy Policy</a
+          >
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

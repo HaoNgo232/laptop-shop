@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -34,7 +34,7 @@ export class ResetPasswordProvider {
 
       // Kiểm tra loại token
       if (payload.type !== 'password-reset') {
-        throw new UnauthorizedException('Invalid token');
+        throw new UnauthorizedException('Token không hợp lệ');
       }
 
       // Tìm user
@@ -43,7 +43,7 @@ export class ResetPasswordProvider {
       });
 
       if (!user) {
-        throw new UnauthorizedException('User not found');
+        throw new UnauthorizedException('User không tồn tại');
       }
 
       // Mã hóa mật khẩu mới
@@ -55,10 +55,7 @@ export class ResetPasswordProvider {
       user.password = hashedPassword;
       await this.userRepository.save(user);
     } catch (err: unknown) {
-      // Explicitly type the error as unknown
-      // Optional: Log the error for more detailed diagnostics if needed
-      // For example: if (err instanceof Error) console.error(err.message);
-      throw new UnauthorizedException('Token is invalid or expired');
+      throw new UnauthorizedException('Token không hợp lệ hoặc đã hết hạn');
     }
   }
 }

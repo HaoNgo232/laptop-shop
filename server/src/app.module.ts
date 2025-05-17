@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import 'dotenv/config';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MailModule } from './mail/mail.module';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 import jwtConfig from './config/jwt.config';
@@ -36,6 +37,7 @@ import jwtConfig from './config/jwt.config';
       }),
     }),
     AuthModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
