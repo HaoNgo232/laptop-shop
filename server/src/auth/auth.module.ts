@@ -19,6 +19,8 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
+import { UsersController } from './users.controller';
+import { UsersService } from './users.service';
 
 @Module({
   imports: [
@@ -48,7 +50,7 @@ import { PassportModule } from '@nestjs/passport';
     TypeOrmModule.forFeature([User]),
     MailerModule,
   ],
-  controllers: [AuthController],
+  controllers: [AuthController, UsersController],
   providers: [
     AuthService,
     CreateUserProvider,
@@ -68,6 +70,7 @@ import { PassportModule } from '@nestjs/passport';
       provide: HashingProvider,
       useClass: BcryptProvider,
     },
+    UsersService,
   ],
 })
 export class AuthModule {}

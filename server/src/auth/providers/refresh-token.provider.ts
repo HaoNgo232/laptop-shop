@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
+import { UserProfileDto } from '../dtos/user-profile.dto';
 
 @Injectable()
 export class RefreshTokenProvider {
@@ -43,11 +44,11 @@ export class RefreshTokenProvider {
       }
 
       // Remove password from user object
-      const { password, ...userWithoutPassword } = user;
+      const { password_hash, ...userWithoutPassword } = user;
 
       // Generate new tokens
       return await this.generateTokensProvider.generateTokens(
-        userWithoutPassword,
+        new UserProfileDto(userWithoutPassword),
       );
     } catch (error) {
       throw new UnauthorizedException('Refresh token không hợp lệ');

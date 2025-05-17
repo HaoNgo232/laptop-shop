@@ -9,8 +9,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { BcryptProvider } from './bcrypt.provider';
 import { User } from '../entities/user.entity';
-import { RegisterDto } from '../dtos/register.dto';
+import { RegisterUserDto } from '../dtos/register-user.dto';
 import { MailService } from '../../mail/mail.service';
+import { UserProfileDto } from '../dtos/user-profile.dto';
 
 @Injectable()
 export class CreateUserProvider {
@@ -21,11 +22,11 @@ export class CreateUserProvider {
     private readonly mailService: MailService,
   ) {}
 
-  async createUser(registerDto: RegisterDto): Promise<Omit<User, 'password'>> {
+  async createUser(registerUserDto: RegisterUserDto): Promise<UserProfileDto> {
     try {
       // Kiểm tra email đã tồn tại chưa
       const existingUser = await this.userRepository.findOne({
-        where: { email: registerDto.email },
+        where: { email: registerUserDto.email },
       });
 
       if (existingUser) {
@@ -34,7 +35,7 @@ export class CreateUserProvider {
 
       // Mã hóa mật khẩu
       const hashedPassword: string = await this.bcryptProvider.hashPassword(
-        registerDto.password,
+        registerUserDto.password,
       );
 
       // Kiểm tra xem mã hóa có thành công không
@@ -44,8 +45,8 @@ export class CreateUserProvider {
 
       // Tạo user mới
       const newUser: User = this.userRepository.create({
-        ...registerDto,
-        password: hashedPassword,
+        ...registerUserDto,
+        password_hash: hashedPassword,
       });
       await this.userRepository.save(newUser);
       // // Tạo giỏ hàng cho user
@@ -57,10 +58,10 @@ export class CreateUserProvider {
         throw new RequestTimeoutException(error);
       }
 
-      const { password, ...userInfo } = newUser;
-      return userInfo;
+      const { password_hash, ...userInfo } = newUser;
+      return new UserProfileDto(userInfo);
     } catch (error) {
-      throw new BadRequestException('Đăng ký tài khoản thất bại');
+      throw new BadRequestException(error, 'Đăng ký tài khoản thất bại');
     }
   }
 }

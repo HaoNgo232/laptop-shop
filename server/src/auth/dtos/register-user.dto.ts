@@ -6,7 +6,7 @@ import {
   MinLength,
 } from 'class-validator';
 
-export class RegisterDto {
+export class RegisterUserDto {
   @IsEmail()
   @IsNotEmpty()
   email: string;
@@ -14,7 +14,7 @@ export class RegisterDto {
   @IsString()
   @IsNotEmpty()
   @MinLength(8)
-  @Matches(/(?=.*[0-9])(?=.*[a-zA-Z])/, {
+  @Matches(/(?=.*\d)(?=.*[a-zA-Z])/, {
     message:
       'Mật khẩu phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường và số',
   })
@@ -22,5 +22,5 @@ export class RegisterDto {
 
   @IsString()
   @IsNotEmpty()
-  fullName: string;
+  full_name: string;
 }

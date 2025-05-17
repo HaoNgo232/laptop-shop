@@ -7,13 +7,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { BcryptProvider } from './bcrypt.provider';
-import { ChangePasswordDto } from '../dtos/changePassword.dto';
+import { ChangePasswordDto } from '../dtos/change-password.dto';
 
 @Injectable()
 export class ChangePasswordProvider {
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private readonly userRepository: Repository<User>,
     private readonly bcryptProvider: BcryptProvider,
   ) {}
 
@@ -33,7 +33,7 @@ export class ChangePasswordProvider {
     // Kiểm tra mật khẩu hiện tại
     const isPasswordValid = await this.bcryptProvider.comparePassword(
       changePasswordDto.currentPassword,
-      user.password,
+      user.password_hash,
     );
 
     if (!isPasswordValid) {
@@ -46,7 +46,7 @@ export class ChangePasswordProvider {
     );
 
     // Cập nhật mật khẩu
-    user.password = hashedNewPassword;
+    user.password_hash = hashedNewPassword;
     await this.userRepository.save(user);
   }
 }

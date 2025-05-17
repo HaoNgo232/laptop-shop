@@ -1,17 +1,20 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Injectable } from '@nestjs/common';
 import { User } from './entities/user.entity';
-import { RegisterDto } from './dtos/register.dto';
-import { LoginDto } from './dtos/login.dto';
+import { RegisterUserDto } from './dtos/register-user.dto';
+import { LoginUserDto } from './dtos/login.dto';
 import { CreateUserProvider } from './providers/create-user.provider';
 import { GenerateTokensProvider } from './providers/generate-tokens.provider';
 import { ValidateUserProvider } from './providers/validate-user.provider';
-import { ChangePasswordDto } from './dtos/changePassword.dto';
+import { ChangePasswordDto } from './dtos/change-password.dto';
 import { ChangePasswordProvider } from './providers/change-password.provider';
 import { ForgotPasswordProvider } from './providers/forgot-password.provider';
 import { ResetPasswordProvider } from './providers/reset-password.provider';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
 import { RefreshTokenDto } from './dtos/refresh-token.dto';
 import { RefreshTokenProvider } from './providers/refresh-token.provider';
+import { UserProfileDto } from './dtos/user-profile.dto';
 
 @Injectable()
 export class AuthService {
@@ -43,26 +46,26 @@ export class AuthService {
 
   /**
    * Đăng ký người dùng mới.
-   * @param registerDto Thông tin đăng ký của người dùng.
+   * @param RegisterUserDto Thông tin đăng ký của người dùng.
    * @returns Thông tin người dùng đã được tạo (không bao gồm mật khẩu).
    */
-  async register(registerDto: RegisterDto): Promise<Omit<User, 'password'>> {
-    return this.createUserProvider.createUser(registerDto);
+  async register(RegisterUserDto: RegisterUserDto): Promise<UserProfileDto> {
+    return this.createUserProvider.createUser(RegisterUserDto);
   }
 
   /**
    * Đăng nhập người dùng.
-   * @param loginDto Thông tin đăng nhập của người dùng.
+   * @param LoginUserDto Thông tin đăng nhập của người dùng.
    * @returns Access token, refresh token và thông tin người dùng (không bao gồm mật khẩu).
    */
-  async login(loginDto: LoginDto): Promise<{
+  async login(loginUserDto: LoginUserDto): Promise<{
     accessToken: string;
     refreshToken: string;
-    user: Omit<User, 'password'>;
+    user: UserProfileDto;
   }> {
     const user = await this.validateUserProvider.verifyUser(
-      loginDto.email,
-      loginDto.password,
+      loginUserDto.email,
+      loginUserDto.password,
     );
     const tokens = await this.generateTokensProvider.generateTokens(user);
     return { ...tokens, user };

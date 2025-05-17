@@ -1,8 +1,8 @@
 import { Controller, Post, Body, Patch, Get, UseGuards } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RegisterDto } from './dtos/register.dto';
-import { LoginDto } from './dtos/login.dto';
-import { ChangePasswordDto } from './dtos/changePassword.dto';
+import { RegisterUserDto } from './dtos/register-user.dto';
+import { LoginUserDto } from './dtos/login.dto';
+import { ChangePasswordDto } from './dtos/change-password.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { User } from './entities/user.entity';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
@@ -10,6 +10,7 @@ import { IsPublic } from './decorators/isPublic.decorator';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { RefreshTokenDto } from './dtos/refresh-token.dto';
 import { ForgotPasswordDto } from './dtos/forgot-password.dto';
+import { UserProfileDto } from './dtos/user-profile.dto';
 
 @Controller('api/auth')
 export class AuthController {
@@ -18,15 +19,15 @@ export class AuthController {
   @Post('register')
   @IsPublic()
   async register(
-    @Body() registerDto: RegisterDto,
-  ): Promise<Omit<User, 'password'> | null> {
-    return this.authService.register(registerDto);
+    @Body() registerUserDto: RegisterUserDto,
+  ): Promise<UserProfileDto> {
+    return this.authService.register(registerUserDto);
   }
 
   @Post('login')
   @IsPublic()
-  async login(@Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto);
+  async login(@Body() loginUserDto: LoginUserDto) {
+    return this.authService.login(loginUserDto);
   }
 
   @Post('logout')
@@ -35,16 +36,16 @@ export class AuthController {
     return { message: 'Đăng xuất thành công' };
   }
 
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  getProfile(@CurrentUser() user: User | null) {
+    return user;
+  }
+
   @Post('refresh-token')
   @IsPublic()
   async refreshToken(@Body() refreshTokenDto: RefreshTokenDto) {
     return this.authService.refreshToken(refreshTokenDto);
-  }
-
-  @Get('me')
-  @UseGuards(JwtAuthGuard)
-  getProfile(@CurrentUser('id') userId: string | null) {
-    return userId;
   }
 
   @Patch('change-password')

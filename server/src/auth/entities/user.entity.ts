@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { UserRole } from '../enums/user.role';
+import { IsEmail, IsNumber, IsString } from 'class-validator';
 
 @Entity()
 export class User {
@@ -13,13 +14,23 @@ export class User {
   id: string;
 
   @Column({ unique: true })
+  @IsEmail({}, { message: 'Email không hợp lệ' })
   email: string;
 
   @Column()
-  password: string;
+  password_hash: string;
 
   @Column()
-  fullName: string;
+  @IsString({ message: 'Họ tên không hợp lệ' })
+  full_name: string;
+
+  @Column({ nullable: true })
+  @IsString({ message: 'Địa chỉ không hợp lệ' })
+  address?: string;
+
+  @Column({ nullable: true })
+  @IsNumber({}, { message: 'Số điện thoại không hợp lệ' })
+  phone_number?: number;
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
   role: UserRole;

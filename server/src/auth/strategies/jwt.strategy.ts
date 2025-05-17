@@ -9,9 +9,9 @@ import { User } from '../entities/user.entity';
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
-    private configService: ConfigService,
+    private readonly configService: ConfigService,
     @InjectRepository(User)
-    private userRepository: Repository<User>,
+    private readonly userRepository: Repository<User>,
   ) {
     const jwtSecret = configService.get<string>('jwt.secret');
 
@@ -36,7 +36,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     // Loại bỏ password trước khi trả về
-    const { password, ...result } = user;
+    const { password_hash, ...result } = user;
     return result;
   }
 }

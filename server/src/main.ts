@@ -10,6 +10,8 @@ async function bootstrap() {
   // Thiết lập global ValidationPipe
   app.useGlobalPipes(
     new ValidationPipe({
+      whitelist: true,
+      // Loại bỏ các thuộc tính không được định nghĩa trong DTO
       forbidNonWhitelisted: true,
       transform: true,
       transformOptions: {

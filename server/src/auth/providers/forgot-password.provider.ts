@@ -12,8 +12,8 @@ import { MailerService } from '@nestjs-modules/mailer';
 export class ForgotPasswordProvider {
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>,
-    private jwtService: JwtService,
+    private readonly userRepository: Repository<User>,
+    private readonly jwtService: JwtService,
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
     private readonly mailerService: MailerService,
@@ -49,7 +49,7 @@ export class ForgotPasswordProvider {
       subject: 'Reset your password',
       template: 'reset-password',
       context: {
-        name: user.fullName || user.email,
+        name: user.full_name || user.email,
         resetUrl,
       },
     });

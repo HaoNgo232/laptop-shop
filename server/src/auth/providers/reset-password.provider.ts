@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -15,8 +13,8 @@ import { ResetPasswordPayload } from '../interfaces/reset-password-payload.inter
 export class ResetPasswordProvider {
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>,
-    private jwtService: JwtService,
+    private readonly userRepository: Repository<User>,
+    private readonly jwtService: JwtService,
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
     private readonly bcryptProvider: BcryptProvider,
@@ -52,10 +50,13 @@ export class ResetPasswordProvider {
       );
 
       // Cập nhật mật khẩu
-      user.password = hashedPassword;
+      user.password_hash = hashedPassword;
       await this.userRepository.save(user);
-    } catch (err: unknown) {
-      throw new UnauthorizedException('Token không hợp lệ hoặc đã hết hạn');
+    } catch (error) {
+      if (error) {
+        throw new UnauthorizedException('Refresh token không hợp lệ');
+      }
+      throw error;
     }
   }
 }

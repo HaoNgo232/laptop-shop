@@ -2,8 +2,8 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import jwtConfig from '../../config/jwt.config';
-import { User } from '../entities/user.entity';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
+import { UserProfileDto } from '../dtos/user-profile.dto';
 
 @Injectable()
 export class GenerateTokensProvider {
@@ -33,7 +33,7 @@ export class GenerateTokensProvider {
     );
   }
 
-  public async generateTokens(user: Omit<User, 'password'>) {
+  public async generateTokens(user: UserProfileDto) {
     const payload: JwtPayload = {
       sub: user.id,
       email: user.email,
