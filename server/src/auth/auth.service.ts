@@ -15,6 +15,16 @@ import { RefreshTokenProvider } from './providers/refresh-token.provider';
 
 @Injectable()
 export class AuthService {
+  /**
+   * Khởi tạo AuthService với các provider cần thiết.
+   * @param createUserProvider Provider để tạo người dùng mới.
+   * @param generateTokensProvider Provider để tạo access token và refresh token.
+   * @param validateUserProvider Provider để xác thực thông tin đăng nhập của người dùng.
+   * @param changePasswordProvider Provider để thay đổi mật khẩu người dùng.
+   * @param forgotPasswordProvider Provider để xử lý yêu cầu quên mật khẩu.
+   * @param resetPasswordProvider Provider để đặt lại mật khẩu người dùng.
+   * @param refreshTokenProvider Provider để làm mới access token.
+   */
   constructor(
     private readonly createUserProvider: CreateUserProvider,
 
@@ -31,10 +41,20 @@ export class AuthService {
     private readonly refreshTokenProvider: RefreshTokenProvider,
   ) {}
 
+  /**
+   * Đăng ký người dùng mới.
+   * @param registerDto Thông tin đăng ký của người dùng.
+   * @returns Thông tin người dùng đã được tạo (không bao gồm mật khẩu).
+   */
   async register(registerDto: RegisterDto): Promise<Omit<User, 'password'>> {
     return this.createUserProvider.createUser(registerDto);
   }
 
+  /**
+   * Đăng nhập người dùng.
+   * @param loginDto Thông tin đăng nhập của người dùng.
+   * @returns Access token, refresh token và thông tin người dùng (không bao gồm mật khẩu).
+   */
   async login(loginDto: LoginDto): Promise<{
     accessToken: string;
     refreshToken: string;
@@ -48,6 +68,11 @@ export class AuthService {
     return { ...tokens, user };
   }
 
+  /**
+   * Thay đổi mật khẩu người dùng.
+   * @param userId ID của người dùng.
+   * @param changePasswordDto Thông tin mật khẩu mới.
+   */
   async changePassword(
     userId: string,
     changePasswordDto: ChangePasswordDto,
@@ -58,16 +83,29 @@ export class AuthService {
     );
   }
 
+  /**
+   * Xử lý yêu cầu quên mật khẩu.
+   * Gửi email đặt lại mật khẩu cho người dùng.
+   * @param email Email của người dùng.
+   */
   async forgotPassword(email: string): Promise<void> {
     return this.forgotPasswordProvider.sendResetPasswordEmail(email);
   }
 
+  /**
+   * Đặt lại mật khẩu người dùng.
+   * @param resetPasswordDto Thông tin để đặt lại mật khẩu (bao gồm token và mật khẩu mới).
+   */
   async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<void> {
     return this.resetPasswordProvider.resetPassword(resetPasswordDto);
   }
 
-  async refreshToken(refreshToken: string) {
-    const refreshTokenDto: RefreshTokenDto = { refreshToken };
+  /**
+   * Làm mới access token bằng refresh token.
+   * @param refreshTokenDto Refresh token của người dùng.
+   * @returns Access token và refresh token mới.
+   */
+  async refreshToken(refreshTokenDto: RefreshTokenDto) {
     return this.refreshTokenProvider.refreshTokens(refreshTokenDto);
   }
 }

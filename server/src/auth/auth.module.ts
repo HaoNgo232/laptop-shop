@@ -21,6 +21,33 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { PassportModule } from '@nestjs/passport';
 
 @Module({
+  imports: [
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => {
+        const secret = configService.get<string>('jwt.secret');
+        const expirationTime = configService.get<string>('jwt.expirationTime'); // jwt.config.ts now returns string ("1h")
+
+        if (!secret) {
+          throw new Error('JWT_SECRET is not defined!');
+        }
+        if (!expirationTime) {
+          throw new Error('JWT_EXPIRATION_TIME is not defined!');
+        }
+
+        return {
+          secret: secret,
+          signOptions: {
+            expiresIn: expirationTime, // Use string with time unit (e.g., "1h")
+          },
+        };
+      },
+      inject: [ConfigService],
+    }),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    TypeOrmModule.forFeature([User]),
+    MailerModule,
+  ],
   controllers: [AuthController],
   providers: [
     AuthService,
@@ -41,21 +68,6 @@ import { PassportModule } from '@nestjs/passport';
       provide: HashingProvider,
       useClass: BcryptProvider,
     },
-  ],
-  imports: [
-    PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        secret: configService.get('jwt.secret'),
-        signOptions: {
-          expiresIn: `${configService.get('jwt.expirationTime')}s`,
-        },
-      }),
-    }),
-    TypeOrmModule.forFeature([User]),
-    MailerModule,
   ],
 })
 export class AuthModule {}

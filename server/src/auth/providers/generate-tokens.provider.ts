@@ -14,16 +14,22 @@ export class GenerateTokensProvider {
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
   ) {}
 
-  public async signToken<T>(userId: string, expiresIn: string, payload?: T) {
+  public async signToken<T>(
+    userId: string,
+    expiresIn: string | number, // Can be string (e.g., '7d') or number (seconds)
+    payload?: T,
+  ) {
+    const signOptions = {
+      secret: this.jwtConfiguration.secret,
+      expiresIn: expiresIn,
+    };
+
     return await this.jwtService.signAsync(
       {
         sub: userId,
         ...payload,
       },
-      {
-        secret: this.jwtConfiguration.secret,
-        expiresIn,
-      },
+      signOptions,
     );
   }
 
@@ -34,18 +40,20 @@ export class GenerateTokensProvider {
       role: user.role,
     };
 
+    // Access token uses the string expirationTime with time unit (e.g. "1h")
+    const accessTokenExpiresIn = this.jwtConfiguration.expirationTime;
+    // Refresh token uses the string refreshExpirationTime (e.g., '7d')
+    const refreshTokenExpiresIn = this.jwtConfiguration.refreshExpirationTime;
+
     const [accessToken, refreshToken] = await Promise.all([
-      // Generate access token
-      this.signToken(
+      this.signToken<JwtPayload>(
         user.id,
-        this.jwtConfiguration.expirationTime.toString(),
+        accessTokenExpiresIn, // Pass string with time unit (e.g., "1h")
         payload,
       ),
-
-      // Generate refresh token
-      this.signToken(
+      this.signToken<JwtPayload>(
         user.id,
-        this.jwtConfiguration.refreshExpirationTime,
+        refreshTokenExpiresIn, // Pass string (e.g., '7d')
         payload,
       ),
     ]);

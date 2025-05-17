@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
@@ -15,6 +14,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private userRepository: Repository<User>,
   ) {
     const jwtSecret = configService.get<string>('jwt.secret');
+
     if (!jwtSecret) {
       throw new Error('JWT secret is not defined in the configuration');
     }
@@ -31,7 +31,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const user = await this.userRepository.findOne({
       where: { id: payload.sub },
     });
-
     if (!user) {
       return null;
     }
