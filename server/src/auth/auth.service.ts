@@ -1,7 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { Injectable } from '@nestjs/common';
-import { User } from './entities/user.entity';
 import { RegisterUserDto } from './dtos/register-user.dto';
 import { LoginUserDto } from './dtos/login.dto';
 import { CreateUserProvider } from './providers/create-user.provider';
@@ -15,6 +12,7 @@ import { ResetPasswordDto } from './dtos/reset-password.dto';
 import { RefreshTokenDto } from './dtos/refresh-token.dto';
 import { RefreshTokenProvider } from './providers/refresh-token.provider';
 import { UserProfileDto } from './dtos/user-profile.dto';
+import { LoginResponseDto } from './dtos/login-response.dto';
 
 @Injectable()
 export class AuthService {
@@ -72,6 +70,17 @@ export class AuthService {
   }
 
   /**
+   * Làm mới access token bằng refresh token.
+   * @param refreshTokenDto Refresh token của người dùng.
+   * @returns Access token và refresh token mới.
+   */
+  async refreshToken(
+    refreshTokenDto: RefreshTokenDto,
+  ): Promise<LoginResponseDto> {
+    return this.refreshTokenProvider.refreshTokens(refreshTokenDto);
+  }
+
+  /**
    * Thay đổi mật khẩu người dùng.
    * @param userId ID của người dùng.
    * @param changePasswordDto Thông tin mật khẩu mới.
@@ -79,7 +88,7 @@ export class AuthService {
   async changePassword(
     userId: string,
     changePasswordDto: ChangePasswordDto,
-  ): Promise<void> {
+  ): Promise<{ message: string }> {
     return this.changePasswordProvider.changePassword(
       userId,
       changePasswordDto,
@@ -101,14 +110,5 @@ export class AuthService {
    */
   async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<void> {
     return this.resetPasswordProvider.resetPassword(resetPasswordDto);
-  }
-
-  /**
-   * Làm mới access token bằng refresh token.
-   * @param refreshTokenDto Refresh token của người dùng.
-   * @returns Access token và refresh token mới.
-   */
-  async refreshToken(refreshTokenDto: RefreshTokenDto) {
-    return this.refreshTokenProvider.refreshTokens(refreshTokenDto);
   }
 }

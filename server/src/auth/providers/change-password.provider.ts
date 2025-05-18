@@ -20,14 +20,14 @@ export class ChangePasswordProvider {
   async changePassword(
     userId: string,
     changePasswordDto: ChangePasswordDto,
-  ): Promise<void> {
+  ): Promise<{ message: string }> {
     // Tìm user theo ID
     const user = await this.userRepository.findOne({
       where: { id: userId },
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Không tìm thấy user');
     }
 
     // Kiểm tra mật khẩu hiện tại
@@ -37,7 +37,7 @@ export class ChangePasswordProvider {
     );
 
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Current password is incorrect');
+      throw new UnauthorizedException('Mật khẩu hiện tại không đúng');
     }
 
     // Mã hóa mật khẩu mới
@@ -48,5 +48,6 @@ export class ChangePasswordProvider {
     // Cập nhật mật khẩu
     user.password_hash = hashedNewPassword;
     await this.userRepository.save(user);
+    return { message: 'Mật khẩu đã được thay đổi thành công' };
   }
 }

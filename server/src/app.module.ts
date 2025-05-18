@@ -17,7 +17,7 @@ import jwtConfig from './config/jwt.config';
     ConfigModule.forRoot({
       isGlobal: true,
       load: [appConfig, databaseConfig, jwtConfig],
-      envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
+      envFilePath: `.env.${process.env.NODE_ENV ?? 'development'}`,
       validationSchema,
     }),
     // Cấu hình TypeOrmModule

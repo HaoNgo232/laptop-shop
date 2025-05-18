@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
-import { UserProfileDto } from '../dtos/user-profile.dto';
+import { LoginResponseDto } from '../dtos/login-response.dto';
 
 @Injectable()
 export class RefreshTokenProvider {
@@ -24,7 +24,9 @@ export class RefreshTokenProvider {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  public async refreshTokens(refreshTokenDto: RefreshTokenDto) {
+  public async refreshTokens(
+    refreshTokenDto: RefreshTokenDto,
+  ): Promise<LoginResponseDto> {
     try {
       // Xác thực refresh token
       const payload = await this.jwtService.verifyAsync<JwtPayload>(
@@ -47,11 +49,14 @@ export class RefreshTokenProvider {
       const { password_hash, ...userWithoutPassword } = user;
 
       // Generate new tokens
-      return await this.generateTokensProvider.generateTokens(
-        new UserProfileDto(userWithoutPassword),
-      );
+      const tokens =
+        await this.generateTokensProvider.generateTokens(userWithoutPassword);
+      return { ...tokens, user: userWithoutPassword };
     } catch (error) {
-      throw new UnauthorizedException('Refresh token không hợp lệ');
+      if (error instanceof UnauthorizedException) {
+        throw error; // Ném lại ngoại lệ đã được xử lý
+      }
+      throw new UnauthorizedException('Refresh token không hợp lệ'); // Xử lý ngoại lệ khác
     }
   }
 }
