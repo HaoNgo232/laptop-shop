@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import { UserProfileDto } from './dtos/user-profile.dto';
-import { UpdateProfileDto } from './dtos/update-profile.dto';
+import { UpdateUserProfileDto } from './dtos/update-profile.dto';
+import { CreateUserDto } from './dtos/create-user.dto';
 
 @Injectable()
 export class UsersService {
@@ -11,7 +11,7 @@ export class UsersService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
-  async getUserProfile(userId: string | null): Promise<UserProfileDto> {
+  async findById(userId: string): Promise<User> {
     if (!userId) {
       throw new Error('User ID is required');
     }
@@ -24,13 +24,32 @@ export class UsersService {
       throw new Error('User not found');
     }
 
-    return new UserProfileDto(user);
+    return user;
   }
 
-  async updateUserProfile(
+  async findByEmail(email: string): Promise<User> {
+    if (!email) {
+      throw new Error('Email is required');
+    }
+    const user = await this.userRepository.findOne({
+      where: { email },
+    });
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    return user;
+  }
+
+  async create(createUserDto: CreateUserDto): Promise<User> {
+    const user = this.userRepository.create(createUserDto);
+    return await this.userRepository.save(user);
+  }
+
+  async update(
     userId: string,
-    updateProfileDto: UpdateProfileDto,
-  ): Promise<UserProfileDto> {
+    updateUserDto: UpdateUserProfileDto,
+  ): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
     });
@@ -39,18 +58,11 @@ export class UsersService {
       throw new Error('User not found');
     }
 
-    // Chỉ cập nhật những trường được phép từ DTO
-    // DTO đã được thiết kế để chỉ chứa những trường an toàn
-    const updatedUser = await this.userRepository.save({
-      ...user,
-      ...updateProfileDto,
-      // Đảm bảo các trường nhạy cảm không bị ghi đè
-      id: user.id,
-      email: user.email,
-      role: user.role,
-      createdAt: user.createdAt,
-    });
+    const updatedUser = { id: user.id, ...updateUserDto };
 
-    return new UserProfileDto(updatedUser);
+    // DTO đã được thiết kế để chỉ chứa những trường an toàn
+    const result = await this.userRepository.save(updatedUser);
+
+    return result;
   }
 }

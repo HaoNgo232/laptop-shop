@@ -3,7 +3,7 @@ import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import jwtConfig from '../../config/jwt.config';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
-import { UserProfileDto } from '../dtos/user-profile.dto';
+import { User } from '../entities/user.entity';
 
 @Injectable()
 export class GenerateTokensProvider {
@@ -33,7 +33,9 @@ export class GenerateTokensProvider {
     );
   }
 
-  public async generateTokens(user: UserProfileDto) {
+  public async generateTokens(
+    user: User,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const payload: JwtPayload = {
       sub: user.id,
       email: user.email,

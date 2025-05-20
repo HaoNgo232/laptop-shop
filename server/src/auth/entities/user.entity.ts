@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { UserRole } from '../enums/user.role';
-import { IsEmail, IsNumber, IsString } from 'class-validator';
+import { IsEmail, IsString } from 'class-validator';
 
 @Entity()
 export class User {
@@ -29,8 +29,8 @@ export class User {
   address?: string;
 
   @Column({ nullable: true })
-  @IsNumber({}, { message: 'Số điện thoại không hợp lệ' })
-  phone_number?: number;
+  @IsString({ message: 'Số điện thoại không hợp lệ' })
+  phone_number?: string;
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
   role: UserRole;

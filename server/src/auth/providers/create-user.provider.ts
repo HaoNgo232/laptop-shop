@@ -11,7 +11,6 @@ import { BcryptProvider } from './bcrypt.provider';
 import { User } from '../entities/user.entity';
 import { RegisterUserDto } from '../dtos/register-user.dto';
 import { MailService } from '../../mail/mail.service';
-import { UserProfileDto } from '../dtos/user-profile.dto';
 
 @Injectable()
 export class CreateUserProvider {
@@ -22,7 +21,7 @@ export class CreateUserProvider {
     private readonly mailService: MailService,
   ) {}
 
-  async createUser(registerUserDto: RegisterUserDto): Promise<UserProfileDto> {
+  async createUser(registerUserDto: RegisterUserDto) {
     try {
       // Kiểm tra email đã tồn tại chưa
       const existingUser = await this.userRepository.findOne({
@@ -58,8 +57,7 @@ export class CreateUserProvider {
         throw new RequestTimeoutException(error);
       }
 
-      const { password_hash, ...userInfo } = newUser;
-      return new UserProfileDto(userInfo);
+      return newUser;
     } catch (error) {
       throw new BadRequestException(error, 'Đăng ký tài khoản thất bại');
     }

@@ -4,7 +4,7 @@ import { appCreate } from './app.create';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await appCreate(app);
+  appCreate(app);
 
   await app.listen(3000);
   console.log(`Application is running on: ${await app.getUrl()}`);

@@ -1,5 +1,12 @@
 import { Exclude, Expose } from 'class-transformer';
-import { IsEmail, IsEnum, IsString, IsUUID, IsDate } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsString,
+  IsUUID,
+  IsDate,
+  IsOptional,
+} from 'class-validator';
 import { UserRole } from '../enums/user.role';
 
 @Expose() // Chỉ hiển thị các trường được định nghĩa rõ ràng
@@ -12,6 +19,14 @@ export class UserProfileDto {
 
   @IsString()
   full_name: string;
+
+  @IsOptional()
+  @IsString()
+  address?: string;
+
+  @IsOptional()
+  @IsString({ message: 'Số điện thoại không hợp lệ' })
+  phone_number?: string;
 
   @IsEnum(UserRole)
   role: UserRole;

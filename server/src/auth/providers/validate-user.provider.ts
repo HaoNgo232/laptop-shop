@@ -3,7 +3,6 @@ import { User } from '../entities/user.entity';
 import { Repository } from 'typeorm';
 import { BcryptProvider } from './bcrypt.provider';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UserProfileDto } from '../dtos/user-profile.dto';
 
 @Injectable()
 export class ValidateUserProvider {
@@ -12,7 +11,7 @@ export class ValidateUserProvider {
     private readonly userRepository: Repository<User>,
     private readonly bcryptProvider: BcryptProvider, // Inject BcryptProvider
   ) {}
-  async verifyUser(email: string, password: string): Promise<UserProfileDto> {
+  async validateUser(email: string, password: string): Promise<User> {
     // Tìm user theo email
     const user = await this.userRepository.findOne({
       where: { email },
@@ -32,8 +31,6 @@ export class ValidateUserProvider {
       throw new UnauthorizedException('Mật khẩu không đúng');
     }
 
-    // Trả về thông tin user (không bao gồm mật khẩu)
-    const { password_hash: _, ...result } = user;
-    return new UserProfileDto(result);
+    return user;
   }
 }

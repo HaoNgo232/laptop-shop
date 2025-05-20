@@ -38,7 +38,10 @@ describe('[Auth] @Post Endpoint', () => {
   it('should register a user', async () => {
     const fakeEmail = faker.internet.email();
     const fakeFullName = faker.person.fullName();
-    const fakePassword = faker.internet.password();
+    const fakePassword = faker.internet.password({
+      length: 10,
+      pattern: /[0-9A-Za-z]/,
+    });
 
     const response = await request(app.getHttpServer())
       .post('/api/auth/register')
@@ -46,11 +49,11 @@ describe('[Auth] @Post Endpoint', () => {
         email: fakeEmail,
         full_name: fakeFullName,
         password: fakePassword,
-        // Thêm các trường cần thiết khác theo DTO
       })
-      .expect(201); // Kiểm tra mã trạng thái HTTP
+      .expect(201);
 
-    expect(response.body).toHaveProperty('id'); // Kiểm tra xem phản hồi có chứa id không
+    expect(response.body).toHaveProperty('id');
+    expect(response.body).toHaveProperty('email', fakeEmail);
   });
 
   it('should login a user', async () => {
@@ -84,6 +87,23 @@ describe('[Auth] @Post Endpoint', () => {
       .expect(200);
 
     expect(response.body).toHaveProperty('accessToken');
+  });
+
+  // Thêm test cho update profile
+  it('should update user profile', async () => {
+    const response = await request(app.getHttpServer())
+      .put('/api/users/profile')
+      .set('Authorization', `Bearer ${accessToken}`)
+      .send({
+        full_name: 'Updated Name',
+        address: 'New Address',
+        phone_number: '1234567890',
+      })
+      .expect(200);
+
+    expect(response.body).toHaveProperty('full_name', 'Updated Name');
+    expect(response.body).toHaveProperty('address', 'New Address');
+    expect(response.body).toHaveProperty('phone_number', '1234567890');
   });
 
   it.todo('should change password');

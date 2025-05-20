@@ -2,7 +2,6 @@ import {
   Controller,
   Post,
   Body,
-  Patch,
   Get,
   UseGuards,
   HttpCode,
@@ -11,7 +10,6 @@ import {
 import { AuthService } from './auth.service';
 import { RegisterUserDto } from './dtos/register-user.dto';
 import { LoginUserDto } from './dtos/login.dto';
-import { ChangePasswordDto } from './dtos/change-password.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { User } from './entities/user.entity';
 import { ResetPasswordDto } from './dtos/reset-password.dto';
@@ -53,8 +51,8 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   getProfile(
-    @CurrentUser() user: Omit<User, 'password'> | null,
-  ): UserProfileDto | null {
+    @CurrentUser() user: Omit<User, 'password'>,
+  ): Omit<User, 'password'> {
     return user;
   }
 
@@ -65,16 +63,6 @@ export class AuthController {
     @Body() refreshTokenDto: RefreshTokenDto,
   ): Promise<LoginResponseDto> {
     return this.authService.refreshToken(refreshTokenDto);
-  }
-
-  @Patch('change-password')
-  @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard)
-  async changePassword(
-    @CurrentUser('id') userId: string,
-    @Body() changePasswordDto: ChangePasswordDto,
-  ): Promise<{ message: string }> {
-    return this.authService.changePassword(userId, changePasswordDto);
   }
 
   @Post('forgot-password')

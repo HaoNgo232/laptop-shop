@@ -45,13 +45,9 @@ export class RefreshTokenProvider {
         throw new UnauthorizedException('Khong tìm thấy user');
       }
 
-      // Remove password from user object
-      const { password_hash, ...userWithoutPassword } = user;
-
       // Generate new tokens
-      const tokens =
-        await this.generateTokensProvider.generateTokens(userWithoutPassword);
-      return { ...tokens, user: userWithoutPassword };
+      const tokens = await this.generateTokensProvider.generateTokens(user);
+      return { ...tokens, user };
     } catch (error) {
       if (error instanceof UnauthorizedException) {
         throw error; // Ném lại ngoại lệ đã được xử lý
