@@ -1,10 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
+import { TokenBlacklistProvider } from '../providers/token-blacklist.provider';
+import { Request } from 'express';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -12,6 +14,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     private readonly configService: ConfigService,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly tokenBlacklistProvider: TokenBlacklistProvider,
   ) {
     const jwtSecret = configService.get<string>('jwt.secret');
 
@@ -23,10 +26,25 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
       secretOrKey: jwtSecret,
+      passReqToCallback: true,
     });
   }
 
-  async validate(payload: { sub: string; email: string }) {
+  async validate(req: Request, payload: { sub: string; email: string }) {
+    // Kiểm tra token có nằm trong blacklist không
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      const isBlacklisted =
+        await this.tokenBlacklistProvider.isBlacklisted(token);
+
+      if (isBlacklisted) {
+        throw new UnauthorizedException(
+          'Token đã hết hạn hoặc đã bị vô hiệu hóa',
+        );
+      }
+    }
+
     // Tìm user theo id (sub) từ payload
     const user = await this.userRepository.findOne({
       where: { id: payload.sub },

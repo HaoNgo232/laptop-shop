@@ -6,6 +6,7 @@ import {
   UseGuards,
   HttpCode,
   HttpStatus,
+  Headers,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterUserDto } from './dtos/register-user.dto';
@@ -43,7 +44,11 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
-  logout() {
+  async logout(
+    @Headers('authorization') authHeader: string,
+    @Body() refreshTokenDto?: RefreshTokenDto,
+  ) {
+    await this.authService.logout(authHeader, refreshTokenDto?.refreshToken);
     return { message: 'Đăng xuất thành công' };
   }
 

@@ -11,6 +11,7 @@ import { RefreshTokenDto } from './dtos/refresh-token.dto';
 import { RefreshTokenProvider } from './providers/refresh-token.provider';
 import { LoginResponseDto } from './dtos/login-response.dto';
 import { User } from './entities/user.entity';
+import { TokenBlacklistProvider } from './providers/token-blacklist.provider';
 
 @Injectable()
 export class AuthService {
@@ -26,6 +27,8 @@ export class AuthService {
     private readonly resetPasswordProvider: ResetPasswordProvider,
 
     private readonly refreshTokenProvider: RefreshTokenProvider,
+
+    private readonly tokenBlacklistProvider: TokenBlacklistProvider,
   ) {}
 
   /**
@@ -84,5 +87,26 @@ export class AuthService {
 
   async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<void> {
     return this.resetPasswordProvider.resetPassword(resetPasswordDto);
+  }
+
+  /**
+   * Đăng xuất người dùng và đưa token vào blacklist.
+   * @param accessToken Access token cần đưa vào blacklist
+   * @param refreshToken Refresh token cần đưa vào blacklist
+   */
+  async logout(accessToken: string, refreshToken?: string): Promise<void> {
+    // Bỏ "Bearer " từ đầu nếu tồn tại
+    const formattedAccessToken = accessToken.replace('Bearer ', '');
+
+    // Thêm access token vào blacklist
+    await this.tokenBlacklistProvider.addToBlacklist(
+      formattedAccessToken,
+      'access',
+    );
+
+    // Nếu có refresh token, thêm cả refresh token vào blacklist
+    if (refreshToken) {
+      await this.tokenBlacklistProvider.addToBlacklist(refreshToken, 'refresh');
+    }
   }
 }

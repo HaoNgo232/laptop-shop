@@ -5,6 +5,7 @@ import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
+import { TokenBlacklist } from './entities/token-blacklist.entity';
 import { CreateUserProvider } from './providers/create-user.provider';
 import { BcryptProvider } from './providers/bcrypt.provider';
 import { ValidateUserProvider } from './providers/validate-user.provider';
@@ -13,6 +14,7 @@ import { RefreshTokenProvider } from './providers/refresh-token.provider';
 import { ChangePasswordProvider } from './providers/change-password.provider';
 import { ForgotPasswordProvider } from './providers/forgot-password.provider';
 import { ResetPasswordProvider } from './providers/reset-password.provider';
+import { TokenBlacklistProvider } from './providers/token-blacklist.provider';
 import { APP_GUARD } from '@nestjs/core';
 import { HashingProvider } from './providers/hashing.provider';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
@@ -28,7 +30,7 @@ import { UsersService } from './users.service';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => {
         const secret = configService.get<string>('jwt.secret');
-        const expirationTime = configService.get<string>('jwt.expirationTime'); // jwt.config.ts now returns string ("1h")
+        const expirationTime = configService.get<string>('jwt.expirationTime');
 
         if (!secret) {
           throw new Error('JWT_SECRET is not defined!');
@@ -40,14 +42,14 @@ import { UsersService } from './users.service';
         return {
           secret: secret,
           signOptions: {
-            expiresIn: expirationTime, // Use string with time unit (e.g., "1h")
+            expiresIn: expirationTime,
           },
         };
       },
       inject: [ConfigService],
     }),
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, TokenBlacklist]),
     MailerModule,
   ],
   controllers: [AuthController, UsersController],
@@ -61,6 +63,7 @@ import { UsersService } from './users.service';
     ChangePasswordProvider,
     ForgotPasswordProvider,
     ResetPasswordProvider,
+    TokenBlacklistProvider,
     JwtStrategy,
     {
       provide: APP_GUARD,
