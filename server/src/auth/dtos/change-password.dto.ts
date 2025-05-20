@@ -1,10 +1,22 @@
 import { IsNotEmpty, IsString, Matches, MinLength } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class ChangePasswordDto {
+  @ApiProperty({
+    description: 'Mật khẩu hiện tại',
+    example: 'CurrentPass123',
+    required: true,
+  })
   @IsString()
   @IsNotEmpty()
   currentPassword: string;
 
+  @ApiProperty({
+    description: 'Mật khẩu mới',
+    example: 'NewPass123',
+    required: true,
+    minLength: 8,
+  })
   @IsString()
   @IsNotEmpty()
   @MinLength(8)

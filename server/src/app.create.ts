@@ -25,13 +25,33 @@ export function appCreate(app: INestApplication): void {
 
   // Swagger
   const config = new DocumentBuilder()
-    .setTitle('API Documentation')
-    .setDescription('API documentation for the project')
+    .setTitle('Web Ecommerce API')
+    .setDescription('API documentation cho ứng dụng Web Ecommerce')
     .setVersion('1.0')
+    .addTag('Ứng dụng', 'Các API chung của ứng dụng')
+    .addTag('Xác thực', 'Các API liên quan đến xác thực người dùng')
+    .addTag('Người dùng', 'Các API liên quan đến quản lý thông tin người dùng')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        name: 'Authorization',
+        description: 'Enter JWT token',
+        in: 'header',
+      },
+      'Authorization',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup('api/docs', app, document, {
+    swaggerOptions: {
+      persistAuthorization: true,
+      tagsSorter: 'alpha',
+      operationsSorter: 'alpha',
+    },
+  });
 
   // Sử dụng ClassSerializerInterceptor toàn cục
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));

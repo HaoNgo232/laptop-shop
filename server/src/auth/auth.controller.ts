@@ -20,11 +20,26 @@ import { RefreshTokenDto } from './dtos/refresh-token.dto';
 import { ForgotPasswordDto } from './dtos/forgot-password.dto';
 import { UserProfileDto } from './dtos/user-profile.dto';
 import { LoginResponseDto } from './dtos/login-response.dto';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 
+@ApiTags('Xác thực')
 @Controller('api/auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @ApiOperation({ summary: 'Đăng ký tài khoản mới' })
+  @ApiResponse({
+    status: 201,
+    description: 'Tài khoản đã được tạo thành công',
+    type: UserProfileDto,
+  })
+  @ApiResponse({ status: 400, description: 'Dữ liệu đầu vào không hợp lệ' })
+  @ApiResponse({ status: 409, description: 'Email đã tồn tại trong hệ thống' })
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
   @IsPublic()
@@ -34,6 +49,13 @@ export class AuthController {
     return this.authService.register(registerUserDto);
   }
 
+  @ApiOperation({ summary: 'Đăng nhập' })
+  @ApiResponse({
+    status: 200,
+    description: 'Đăng nhập thành công',
+    type: LoginResponseDto,
+  })
+  @ApiResponse({ status: 401, description: 'Thông tin đăng nhập không hợp lệ' })
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @IsPublic()
@@ -41,6 +63,10 @@ export class AuthController {
     return this.authService.login(loginUserDto);
   }
 
+  @ApiOperation({ summary: 'Đăng xuất' })
+  @ApiResponse({ status: 200, description: 'Đăng xuất thành công' })
+  @ApiResponse({ status: 401, description: 'Không có quyền truy cập' })
+  @ApiBearerAuth()
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
@@ -52,6 +78,14 @@ export class AuthController {
     return { message: 'Đăng xuất thành công' };
   }
 
+  @ApiOperation({ summary: 'Lấy thông tin người dùng hiện tại' })
+  @ApiResponse({
+    status: 200,
+    description: 'Thông tin người dùng',
+    type: UserProfileDto,
+  })
+  @ApiResponse({ status: 401, description: 'Không có quyền truy cập' })
+  @ApiBearerAuth()
   @Get('me')
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
@@ -61,6 +95,13 @@ export class AuthController {
     return user;
   }
 
+  @ApiOperation({ summary: 'Làm mới access token' })
+  @ApiResponse({
+    status: 200,
+    description: 'Token đã được làm mới',
+    type: LoginResponseDto,
+  })
+  @ApiResponse({ status: 401, description: 'Refresh token không hợp lệ' })
   @Post('refresh-token')
   @HttpCode(HttpStatus.OK)
   @IsPublic()
@@ -70,6 +111,15 @@ export class AuthController {
     return this.authService.refreshToken(refreshTokenDto);
   }
 
+  @ApiOperation({ summary: 'Yêu cầu khôi phục mật khẩu' })
+  @ApiResponse({
+    status: 200,
+    description: 'Email khôi phục mật khẩu đã được gửi',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Không tìm thấy email trong hệ thống',
+  })
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
   @IsPublic()
@@ -78,6 +128,16 @@ export class AuthController {
     return { message: 'Email khôi phục mật khẩu đã được gửi' };
   }
 
+  @ApiOperation({ summary: 'Đặt lại mật khẩu' })
+  @ApiResponse({
+    status: 200,
+    description: 'Mật khẩu đã được đặt lại thành công',
+  })
+  @ApiResponse({ status: 400, description: 'Dữ liệu đầu vào không hợp lệ' })
+  @ApiResponse({
+    status: 401,
+    description: 'Token không hợp lệ hoặc đã hết hạn',
+  })
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
   @IsPublic()
