@@ -5,7 +5,7 @@ import { CategoryDetailDto } from '../dtos/category-detail.dto';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 
 @ApiTags('Danh mục sản phẩm')
-@Controller('categories')
+@Controller('api/categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 

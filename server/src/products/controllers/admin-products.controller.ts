@@ -18,10 +18,14 @@ import {
   ApiParam,
   ApiBearerAuth,
 } from '@nestjs/swagger';
+import { AuthType } from '../../auth/enums/auth-type.enum';
+import { UserRole } from '../../auth/enums/user.role';
+import { Auth } from '../../auth/decorators/auth.decorator';
 
 @ApiTags('Quản lý sản phẩm')
 @ApiBearerAuth()
-@Controller('admin/products')
+@Controller('api/admin.products')
+@Auth(AuthType.Bearer, UserRole.ADMIN)
 export class AdminProductsController {
   constructor(private readonly productsService: ProductsService) {}
 

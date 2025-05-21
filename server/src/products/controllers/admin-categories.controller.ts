@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Param,
-  Post,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
 import { CategoriesService } from '../services/categories.service';
 import { CreateCategoryDto } from '../dtos/create-category.dto';
 import { UpdateCategoryDto } from '../dtos/update-category.dto';
@@ -18,10 +10,14 @@ import {
   ApiParam,
   ApiBearerAuth,
 } from '@nestjs/swagger';
+import { AuthType } from '../../auth/enums/auth-type.enum';
+import { UserRole } from '../../auth/enums/user.role';
+import { Auth } from '../../auth/decorators/auth.decorator';
 
 @ApiTags('Quản lý danh mục')
 @ApiBearerAuth()
-@Controller('admin/categories')
+@Controller('api/admin.categories')
+@Auth(AuthType.Bearer, UserRole.ADMIN)
 export class AdminCategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 

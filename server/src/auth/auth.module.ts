@@ -20,6 +20,7 @@ import { UsersController } from './controllers/users.controller';
 import { AuthController } from './controllers/auth.controller';
 import { AuthService } from './services/auth.service';
 import { UsersService } from './services/users.service';
+import { RolesGuard } from './guards/authentication/roles.guard';
 @Module({
   imports: [
     TypeOrmModule.forFeature([TokenBlacklist, User]),
@@ -53,6 +54,7 @@ import { UsersService } from './services/users.service';
     ResetPasswordProvider,
     RefreshTokenProvider,
     AuthenticationGuard,
+    RolesGuard,
   ],
   exports: [
     UsersService,
@@ -68,6 +70,7 @@ import { UsersService } from './services/users.service';
     RefreshTokenProvider,
     AuthenticationGuard,
     AccessTokenGuard,
+    RolesGuard,
   ],
 })
 export class AuthModule {}
