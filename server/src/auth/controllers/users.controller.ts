@@ -1,8 +1,8 @@
+import { UserProfileDto } from './../dtos/user-profile.dto';
+import { CurrentUser } from './../decorators/current-user.decorator';
+import { UpdateUserProfileDto } from './../dtos/update-profile.dto';
+import { UsersService } from './../services/users.service';
 import { Body, Controller, Get, Put } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { CurrentUser } from './decorators/current-user.decorator';
-import { UpdateUserProfileDto } from './dtos/update-profile.dto';
-import { UserProfileDto } from './dtos/user-profile.dto';
 import {
   ApiTags,
   ApiOperation,

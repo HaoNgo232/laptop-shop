@@ -1,3 +1,4 @@
+import { AccessTokenGuard } from './auth/guards/access-token/access-token.guard';
 import { validationSchema } from './config/validation.schema';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
@@ -7,9 +8,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import 'dotenv/config';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MailModule } from './mail/mail.module';
+import { ProductsModule } from './products/products.module';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
-import jwtConfig from './config/jwt.config';
+import jwtConfig from './auth/config/jwt.config';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthenticationGuard } from './auth/guards/authentication/authentication.guard';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -38,8 +43,18 @@ import jwtConfig from './config/jwt.config';
     }),
     AuthModule,
     MailModule,
+    ProductsModule,
+    ConfigModule.forFeature(jwtConfig),
+    JwtModule.registerAsync(jwtConfig.asProvider()),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthenticationGuard,
+    },
+    AccessTokenGuard,
+  ],
 })
 export class AppModule {}

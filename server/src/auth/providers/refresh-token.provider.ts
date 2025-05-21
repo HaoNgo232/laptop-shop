@@ -1,6 +1,6 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import jwtConfig from '../../config/jwt.config';
+import jwtConfig from '../config/jwt.config';
 import { ConfigType } from '@nestjs/config';
 import { GenerateTokensProvider } from './generate-tokens.provider';
 import { RefreshTokenDto } from '../dtos/refresh-token.dto';

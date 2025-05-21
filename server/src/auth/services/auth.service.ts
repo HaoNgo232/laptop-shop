@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { RegisterUserDto } from './dtos/register-user.dto';
-import { LoginUserDto } from './dtos/login.dto';
-import { CreateUserProvider } from './providers/create-user.provider';
-import { GenerateTokensProvider } from './providers/generate-tokens.provider';
-import { ValidateUserProvider } from './providers/validate-user.provider';
-import { ForgotPasswordProvider } from './providers/forgot-password.provider';
-import { ResetPasswordProvider } from './providers/reset-password.provider';
-import { ResetPasswordDto } from './dtos/reset-password.dto';
-import { RefreshTokenDto } from './dtos/refresh-token.dto';
-import { RefreshTokenProvider } from './providers/refresh-token.provider';
-import { LoginResponseDto } from './dtos/login-response.dto';
-import { User } from './entities/user.entity';
-import { TokenBlacklistProvider } from './providers/token-blacklist.provider';
+import { CreateUserProvider } from '../providers/create-user.provider';
+import { GenerateTokensProvider } from '../providers/generate-tokens.provider';
+import { ValidateUserProvider } from '../providers/validate-user.provider';
+import { ForgotPasswordProvider } from '../providers/forgot-password.provider';
+import { ResetPasswordProvider } from '../providers/reset-password.provider';
+import { RefreshTokenProvider } from '../providers/refresh-token.provider';
+import { TokenBlacklistProvider } from '../providers/token-blacklist.provider';
+import { RegisterUserDto } from '../dtos/register-user.dto';
+import { LoginUserDto } from '../dtos/login.dto';
+import { User } from '../entities/user.entity';
+import { RefreshTokenDto } from '../dtos/refresh-token.dto';
+import { LoginResponseDto } from '../dtos/login-response.dto';
+import { ResetPasswordDto } from '../dtos/reset-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -36,8 +36,8 @@ export class AuthService {
    * @param RegisterUserDto Thông tin đăng ký của người dùng.
    * @returns Thông tin người dùng đã được tạo (không bao gồm mật khẩu).
    */
-  async register(RegisterUserDto: RegisterUserDto) {
-    return this.createUserProvider.createUser(RegisterUserDto);
+  async register(registerUserDto: RegisterUserDto) {
+    return this.createUserProvider.createUser(registerUserDto);
   }
 
   /**

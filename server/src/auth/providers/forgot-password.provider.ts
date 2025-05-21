@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigType } from '@nestjs/config';
-import jwtConfig from '../../config/jwt.config';
+import jwtConfig from '../config/jwt.config';
 import { ResetPasswordPayload } from '../interfaces/reset-password-payload.interface';
 import { MailerService } from '@nestjs-modules/mailer';
 

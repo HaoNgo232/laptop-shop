@@ -6,7 +6,7 @@ import { JwtService } from '@nestjs/jwt';
 import { BcryptProvider } from './bcrypt.provider';
 import { ResetPasswordDto } from '../dtos/reset-password.dto';
 import { ConfigType } from '@nestjs/config';
-import jwtConfig from '../../config/jwt.config';
+import jwtConfig from '../config/jwt.config';
 import { ResetPasswordPayload } from '../interfaces/reset-password-payload.interface'; // Import ResetPasswordPayload
 
 @Injectable()

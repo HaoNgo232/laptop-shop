@@ -1,31 +1,30 @@
 import {
-  Controller,
-  Post,
   Body,
+  Controller,
   Get,
-  UseGuards,
+  Headers,
   HttpCode,
   HttpStatus,
-  Headers,
+  Post,
 } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { RegisterUserDto } from './dtos/register-user.dto';
-import { LoginUserDto } from './dtos/login.dto';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { User } from './entities/user.entity';
-import { ResetPasswordDto } from './dtos/reset-password.dto';
-import { IsPublic } from './decorators/isPublic.decorator';
-import { CurrentUser } from './decorators/current-user.decorator';
-import { RefreshTokenDto } from './dtos/refresh-token.dto';
-import { ForgotPasswordDto } from './dtos/forgot-password.dto';
-import { UserProfileDto } from './dtos/user-profile.dto';
-import { LoginResponseDto } from './dtos/login-response.dto';
 import {
-  ApiTags,
+  ApiBearerAuth,
   ApiOperation,
   ApiResponse,
-  ApiBearerAuth,
+  ApiTags,
 } from '@nestjs/swagger';
+import { AuthService } from '../services/auth.service';
+import { UserProfileDto } from '../dtos/user-profile.dto';
+import { AuthType } from '../enums/auth-type.enum';
+import { Auth } from '../decorators/auth.decorator';
+import { RegisterUserDto } from '../dtos/register-user.dto';
+import { LoginResponseDto } from '../dtos/login-response.dto';
+import { RefreshTokenDto } from '../dtos/refresh-token.dto';
+import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
+import { ResetPasswordDto } from '../dtos/reset-password.dto';
+import { CurrentUser } from '../decorators/current-user.decorator';
+import { LoginUserDto } from '../dtos/login.dto';
+import { User } from '../entities/user.entity';
 
 @ApiTags('Xác thực')
 @Controller('api/auth')
@@ -42,7 +41,7 @@ export class AuthController {
   @ApiResponse({ status: 409, description: 'Email đã tồn tại trong hệ thống' })
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
-  @IsPublic()
+  @Auth(AuthType.None)
   async register(
     @Body() registerUserDto: RegisterUserDto,
   ): Promise<UserProfileDto> {
@@ -58,7 +57,7 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Thông tin đăng nhập không hợp lệ' })
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @IsPublic()
+  @Auth(AuthType.None)
   async login(@Body() loginUserDto: LoginUserDto): Promise<LoginResponseDto> {
     return this.authService.login(loginUserDto);
   }
@@ -69,7 +68,6 @@ export class AuthController {
   @ApiBearerAuth()
   @Post('logout')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard)
   async logout(
     @Headers('authorization') authHeader: string,
     @Body() refreshTokenDto?: RefreshTokenDto,
@@ -88,7 +86,6 @@ export class AuthController {
   @ApiBearerAuth()
   @Get('me')
   @HttpCode(HttpStatus.OK)
-  @UseGuards(JwtAuthGuard)
   getProfile(
     @CurrentUser() user: Omit<User, 'password'>,
   ): Omit<User, 'password'> {
@@ -104,7 +101,7 @@ export class AuthController {
   @ApiResponse({ status: 401, description: 'Refresh token không hợp lệ' })
   @Post('refresh-token')
   @HttpCode(HttpStatus.OK)
-  @IsPublic()
+  @Auth(AuthType.None)
   async refreshToken(
     @Body() refreshTokenDto: RefreshTokenDto,
   ): Promise<LoginResponseDto> {
@@ -122,7 +119,7 @@ export class AuthController {
   })
   @Post('forgot-password')
   @HttpCode(HttpStatus.OK)
-  @IsPublic()
+  @Auth(AuthType.None)
   async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
     await this.authService.forgotPassword(forgotPasswordDto.email);
     return { message: 'Email khôi phục mật khẩu đã được gửi' };
@@ -140,7 +137,7 @@ export class AuthController {
   })
   @Post('reset-password')
   @HttpCode(HttpStatus.OK)
-  @IsPublic()
+  @Auth(AuthType.None)
   async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
     await this.authService.resetPassword(resetPasswordDto);
     return { message: 'Mật khẩu đã được đặt lại thành công' };

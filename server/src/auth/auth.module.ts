@@ -1,79 +1,73 @@
+import { AccessTokenGuard } from './guards/access-token/access-token.guard';
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AuthService } from './auth.service';
-import { AuthController } from './auth.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from './entities/user.entity';
-import { TokenBlacklist } from './entities/token-blacklist.entity';
-import { CreateUserProvider } from './providers/create-user.provider';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtStrategy } from './strategies/jwt.strategy';
+import { TokenBlacklistProvider } from './providers/token-blacklist.provider';
 import { BcryptProvider } from './providers/bcrypt.provider';
-import { ValidateUserProvider } from './providers/validate-user.provider';
+import { TokenBlacklist } from './entities/token-blacklist.entity'; // Tạo nếu chưa có
+import { CreateUserProvider } from './providers/create-user.provider';
 import { GenerateTokensProvider } from './providers/generate-tokens.provider';
-import { RefreshTokenProvider } from './providers/refresh-token.provider';
-import { ChangePasswordProvider } from './providers/change-password.provider';
+import { ValidateUserProvider } from './providers/validate-user.provider';
 import { ForgotPasswordProvider } from './providers/forgot-password.provider';
 import { ResetPasswordProvider } from './providers/reset-password.provider';
-import { TokenBlacklistProvider } from './providers/token-blacklist.provider';
-import { APP_GUARD } from '@nestjs/core';
+import { RefreshTokenProvider } from './providers/refresh-token.provider';
+import { User } from './entities/user.entity';
+import { AuthenticationGuard } from './guards/authentication/authentication.guard';
 import { HashingProvider } from './providers/hashing.provider';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { MailerModule } from '@nestjs-modules/mailer';
-import { JwtStrategy } from './strategies/jwt.strategy';
-import { PassportModule } from '@nestjs/passport';
-import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
-
+import { UsersController } from './controllers/users.controller';
+import { AuthController } from './controllers/auth.controller';
+import { AuthService } from './services/auth.service';
+import { UsersService } from './services/users.service';
 @Module({
   imports: [
+    TypeOrmModule.forFeature([TokenBlacklist, User]),
     JwtModule.registerAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => {
-        const secret = configService.get<string>('jwt.secret');
-        const expirationTime = configService.get<string>('jwt.expirationTime');
-
-        if (!secret) {
-          throw new Error('JWT_SECRET is not defined!');
-        }
-        if (!expirationTime) {
-          throw new Error('JWT_EXPIRATION_TIME is not defined!');
-        }
-
-        return {
-          secret: secret,
-          signOptions: {
-            expiresIn: expirationTime,
-          },
-        };
-      },
       inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get('jwt.secret'),
+        signOptions: {
+          expiresIn: configService.get('jwt.expiresIn'),
+        },
+      }),
     }),
-    PassportModule.register({ defaultStrategy: 'jwt' }),
-    TypeOrmModule.forFeature([User, TokenBlacklist]),
-    MailerModule,
   ],
   controllers: [AuthController, UsersController],
   providers: [
+    AccessTokenGuard,
     AuthService,
-    CreateUserProvider,
-    BcryptProvider,
-    ValidateUserProvider,
-    GenerateTokensProvider,
-    RefreshTokenProvider,
-    ChangePasswordProvider,
-    ForgotPasswordProvider,
-    ResetPasswordProvider,
-    TokenBlacklistProvider,
-    JwtStrategy,
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
     {
       provide: HashingProvider,
       useClass: BcryptProvider,
     },
     UsersService,
+    JwtStrategy,
+    TokenBlacklistProvider,
+    BcryptProvider,
+    CreateUserProvider,
+    GenerateTokensProvider,
+    ValidateUserProvider,
+    ForgotPasswordProvider,
+    ResetPasswordProvider,
+    RefreshTokenProvider,
+    AuthenticationGuard,
+  ],
+  exports: [
+    UsersService,
+    JwtStrategy,
+    TokenBlacklistProvider,
+    BcryptProvider,
+    JwtModule,
+    CreateUserProvider,
+    GenerateTokensProvider,
+    ValidateUserProvider,
+    ForgotPasswordProvider,
+    ResetPasswordProvider,
+    RefreshTokenProvider,
+    AuthenticationGuard,
+    AccessTokenGuard,
   ],
 })
 export class AuthModule {}
