@@ -1,12 +1,9 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateProductDto } from './create-product.dto';
-import { ApiProperty } from '@nestjs/swagger';
+import { IsBoolean, IsOptional } from 'class-validator';
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {
-  @ApiProperty({
-    description: 'Trạng thái sản phẩm',
-    example: true,
-    required: false,
-  })
+  @IsOptional()
+  @IsBoolean()
   active?: boolean;
 }

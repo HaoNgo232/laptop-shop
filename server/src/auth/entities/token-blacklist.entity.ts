@@ -23,5 +23,5 @@ export class TokenBlacklist {
   expiresAt: Date;
 
   @CreateDateColumn()
-  createdAt: Date;
+  created_at: Date;
 }

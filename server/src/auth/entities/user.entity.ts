@@ -36,10 +36,10 @@ export class User {
   role: UserRole;
 
   @CreateDateColumn()
-  createdAt: Date;
+  created_at: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updated_at: Date;
 
   // // Relationships
   // @OneToMany(() => Order, (order) => order.user)

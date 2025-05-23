@@ -11,71 +11,35 @@ import { ProductsService } from '../services/products.service';
 import { CreateProductDto } from '../dtos/create-product.dto';
 import { UpdateProductDto } from '../dtos/update-product.dto';
 import { ProductDto } from '../dtos/product.dto';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiResponse,
-  ApiParam,
-  ApiBearerAuth,
-} from '@nestjs/swagger';
 import { AuthType } from '../../auth/enums/auth-type.enum';
 import { UserRole } from '../../auth/enums/user.role';
 import { Auth } from '../../auth/decorators/auth.decorator';
 
-@ApiTags('Quản lý sản phẩm')
-@ApiBearerAuth()
 @Controller('api/admin.products')
 @Auth(AuthType.Bearer, UserRole.ADMIN)
 export class AdminProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @ApiOperation({ summary: 'Tạo sản phẩm mới' })
-  @ApiResponse({
-    status: 201,
-    description: 'Sản phẩm đã được tạo thành công',
-    type: ProductDto,
-  })
-  @ApiResponse({ status: 400, description: 'Dữ liệu đầu vào không hợp lệ' })
-  @ApiResponse({ status: 401, description: 'Không có quyền truy cập' })
   @Post()
-  create(@Body() createProductDto: CreateProductDto): Promise<ProductDto> {
-    // Gọi service để tạo sản phẩm mới
+  public create(
+    @Body() createProductDto: CreateProductDto,
+  ): Promise<ProductDto> {
     return this.productsService.create(createProductDto) as Promise<ProductDto>;
   }
 
-  @ApiOperation({ summary: 'Cập nhật thông tin sản phẩm' })
-  @ApiResponse({
-    status: 200,
-    description: 'Sản phẩm đã được cập nhật thành công',
-    type: ProductDto,
-  })
-  @ApiResponse({ status: 400, description: 'Dữ liệu đầu vào không hợp lệ' })
-  @ApiResponse({ status: 401, description: 'Không có quyền truy cập' })
-  @ApiResponse({ status: 404, description: 'Không tìm thấy sản phẩm' })
-  @ApiParam({ name: 'id', description: 'ID của sản phẩm' })
   @Put(':id')
-  update(
+  public update(
     @Param('id') id: string,
     @Body() updateProductDto: UpdateProductDto,
   ): Promise<ProductDto> {
-    // Gọi service để cập nhật sản phẩm
     return this.productsService.update(
       id,
       updateProductDto,
     ) as Promise<ProductDto>;
   }
 
-  @ApiOperation({ summary: 'Xóa sản phẩm' })
-  @ApiResponse({
-    status: 200,
-    description: 'Sản phẩm đã được xóa thành công',
-  })
-  @ApiResponse({ status: 401, description: 'Không có quyền truy cập' })
-  @ApiResponse({ status: 404, description: 'Không tìm thấy sản phẩm' })
-  @ApiParam({ name: 'id', description: 'ID của sản phẩm' })
   @Delete(':id')
-  remove(@Param('id') id: string): Promise<void> {
-    // Gọi service để xóa sản phẩm
+  public remove(@Param('id') id: string): Promise<void> {
     return this.productsService.remove(id);
   }
 }

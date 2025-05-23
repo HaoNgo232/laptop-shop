@@ -19,55 +19,96 @@ export class CategoriesService {
   ) {}
 
   async findAll(): Promise<CategoryDto[]> {
-    // Logic chính:
-    // 1. Lấy tất cả danh mục từ database
-    // 2. Map dữ liệu sang CategoryDto
-    // 3. Trả về danh sách CategoryDto
+    const categories = await this.categoryRepository.find();
 
-    return [];
+    const categoryDtos = categories.map((category) => ({
+      id: category.id,
+      name: category.name,
+      description: category.description,
+    }));
+
+    // 3. Trả về danh sách CategoryDto
+    return categoryDtos;
   }
 
   async findOne(id: string): Promise<CategoryDetailDto> {
-    // Logic chính:
-    // 1. Tìm danh mục theo ID với relations đến products
-    // 2. Kiểm tra nếu không tìm thấy, throw NotFoundException
-    // 3. Map dữ liệu sang CategoryDetailDto
-    // 4. Trả về đối tượng CategoryDetailDto
+    const category = await this.categoryRepository.findOne({
+      where: { id },
+      relations: ['products'],
+    });
 
-    return {} as CategoryDetailDto;
+    // 2. Kiểm tra nếu không tìm thấy, throw NotFoundException
+    if (!category) {
+      throw new NotFoundException(`Không tìm thấy danh mục với ID: ${id}`);
+    }
+
+    return category;
   }
 
   async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
-    // Logic chính:
-    // 1. Kiểm tra xem tên danh mục đã tồn tại chưa
-    // 2. Nếu tồn tại, throw ConflictException
-    // 3. Tạo đối tượng danh mục mới
-    // 4. Lưu vào database
-    // 5. Trả về danh mục đã tạo
+    const existingCategory = await this.categoryRepository.findOne({
+      where: { name: createCategoryDto.name },
+    });
 
-    return {} as Category;
+    if (existingCategory) {
+      throw new ConflictException(
+        `Danh mục với tên "${createCategoryDto.name}" đã tồn tại`,
+      );
+    }
+
+    const newCategory = this.categoryRepository.create({
+      name: createCategoryDto.name,
+      description: createCategoryDto.description,
+    });
+
+    return await this.categoryRepository.save(newCategory);
   }
 
   async update(
     id: string,
     updateCategoryDto: UpdateCategoryDto,
   ): Promise<Category> {
-    // Logic chính:
-    // 1. Tìm danh mục theo ID
-    // 2. Kiểm tra nếu không tìm thấy, throw NotFoundException
-    // 3. Nếu cập nhật tên, kiểm tra tên mới đã tồn tại chưa
-    // 4. Cập nhật thông tin danh mục
-    // 5. Lưu vào database
-    // 6. Trả về danh mục đã cập nhật
+    const category = await this.categoryRepository.findOne({
+      where: { id },
+    });
 
-    return {} as Category;
+    if (!category) {
+      throw new NotFoundException(`Không tìm thấy danh mục với ID: ${id}`);
+    }
+
+    if (updateCategoryDto.name && updateCategoryDto.name !== category.name) {
+      const existingCategory = await this.categoryRepository.findOne({
+        where: { name: updateCategoryDto.name },
+      });
+
+      if (existingCategory) {
+        throw new ConflictException(
+          `Danh mục với tên "${updateCategoryDto.name}" đã tồn tại`,
+        );
+      }
+    }
+
+    Object.assign(category, updateCategoryDto);
+
+    return await this.categoryRepository.save(category);
   }
 
   async remove(id: string): Promise<void> {
-    // Logic chính:
-    // 1. Tìm danh mục theo ID
-    // 2. Kiểm tra nếu không tìm thấy, throw NotFoundException
-    // 3. Kiểm tra xem danh mục có sản phẩm không
-    // 4. Xóa danh mục
+    const category = await this.categoryRepository.findOne({
+      where: { id },
+      relations: ['products'],
+    });
+
+    if (!category) {
+      throw new NotFoundException(`Không tìm thấy danh mục với ID: ${id}`);
+    }
+
+    if (category.products && category.products.length > 0) {
+      throw new ConflictException(
+        `Không thể xóa danh mục "${category.name}" vì còn ${category.products.length} sản phẩm thuộc danh mục này`,
+      );
+    }
+
+    await this.categoryRepository.remove(category);
   }
 }

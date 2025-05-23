@@ -64,10 +64,10 @@ export class ProductsProvider {
     queryBuilder.orderBy(`product.${sortBy}`, sortOrder);
 
     // 5. Thực thi truy vấn
-    const [products, total] = await queryBuilder.getManyAndCount();
+    const [products_list, total] = await queryBuilder.getManyAndCount();
 
     // 6. Map dữ liệu sang DTO
-    const data = products.map((product) => this.mapProductToDto(product));
+    const data = products_list;
 
     // 7. Tạo metadata phân trang
     const meta: PaginationMeta = {
@@ -83,26 +83,6 @@ export class ProductsProvider {
     return {
       data,
       meta,
-    };
-  }
-
-  // Hàm tiện ích để chuyển đổi Entity sang DTO
-  private mapProductToDto(product: Product): ProductDto {
-    return {
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      description: product.description,
-      image_url: product.image_url,
-      stock_quantity: product.stock_quantity,
-      category: product.category
-        ? {
-            id: product.category.id,
-            name: product.category.name,
-          }
-        : { id: '', name: '' },
-      createdAt: product.createdAt,
-      updatedAt: product.updatedAt,
     };
   }
 }
