@@ -10,7 +10,7 @@ import { ProductDto } from '../dtos/product.dto';
 import { ProductDetailDto } from '../dtos/product-detail.dto';
 import { PaginatedResponse } from '../interfaces/paginated-response.interface';
 import { PaginationMeta } from '../interfaces/pagination-meta.interface';
-import { ProductsProvider } from '../providers/produsts.provider';
+import { ProductsProvider } from '../providers/products.provider';
 
 @Injectable()
 export class ProductsService {

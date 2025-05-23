@@ -6,6 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Exclude, Expose, Type } from 'class-transformer';
 import { Product } from './product.entity';
 
 @Entity('categories')
@@ -19,7 +20,11 @@ export class Category {
   @Column('text', { nullable: true })
   description: string;
 
-  @OneToMany(() => Product, (product) => product.category)
+  @OneToMany(() => Product, (product) => product.category, {
+    // eager: false (default) - Lazy loading
+    // cascade: false (default) - No cascade operations
+  })
+  @Type(() => Product)
   products: Product[];
 
   @CreateDateColumn({ name: 'created_at' })

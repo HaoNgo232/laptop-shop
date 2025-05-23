@@ -7,11 +7,11 @@ import { PaginatedResponse } from '../interfaces/paginated-response.interface';
 import { AuthType } from '../../auth/enums/auth-type.enum';
 import { Auth } from '../../auth/decorators/auth.decorator';
 
+@Auth(AuthType.None)
 @Controller('api/products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @Auth(AuthType.None)
   @Get()
   public findAll(
     @Query() query: QueryProductDto,

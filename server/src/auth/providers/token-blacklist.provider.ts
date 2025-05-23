@@ -5,15 +5,12 @@ import { Repository, LessThan } from 'typeorm';
 import { TokenBlacklist } from '../entities/token-blacklist.entity';
 import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
-import { ConfigService } from '@nestjs/config';
-
 @Injectable()
 export class TokenBlacklistProvider {
   constructor(
     @InjectRepository(TokenBlacklist)
     private readonly tokenBlacklistRepository: Repository<TokenBlacklist>,
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
   ) {
     // Đặt lịch tự động xóa các token hết hạn mỗi ngày
     setInterval(() => this.removeExpiredTokens(), 24 * 60 * 60 * 1000);

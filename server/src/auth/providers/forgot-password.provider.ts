@@ -26,7 +26,7 @@ export class ForgotPasswordProvider {
     });
 
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException('Không tìm thấy user');
     }
 
     // Tạo reset token với payload đúng kiểu

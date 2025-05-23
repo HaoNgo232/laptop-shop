@@ -10,25 +10,19 @@ import { CreateCategoryDto } from '../dtos/create-category.dto';
 import { UpdateCategoryDto } from '../dtos/update-category.dto';
 import { CategoryDto } from '../dtos/category.dto';
 import { CategoryDetailDto } from '../dtos/category-detail.dto';
+import { CategoryMapperProvider } from '../providers/category-mapper.provider';
 
 @Injectable()
 export class CategoriesService {
   constructor(
     @InjectRepository(Category)
-    private categoryRepository: Repository<Category>,
+    private readonly categoryRepository: Repository<Category>,
+    private readonly categoryMapperProvider: CategoryMapperProvider,
   ) {}
 
   async findAll(): Promise<CategoryDto[]> {
     const categories = await this.categoryRepository.find();
-
-    const categoryDtos = categories.map((category) => ({
-      id: category.id,
-      name: category.name,
-      description: category.description,
-    }));
-
-    // 3. Trả về danh sách CategoryDto
-    return categoryDtos;
+    return this.categoryMapperProvider.toCategoriesToDtos(categories);
   }
 
   async findOne(id: string): Promise<CategoryDetailDto> {
@@ -37,12 +31,11 @@ export class CategoriesService {
       relations: ['products'],
     });
 
-    // 2. Kiểm tra nếu không tìm thấy, throw NotFoundException
     if (!category) {
       throw new NotFoundException(`Không tìm thấy danh mục với ID: ${id}`);
     }
 
-    return category;
+    return this.categoryMapperProvider.toCategoryDetailDto(category);
   }
 
   async create(createCategoryDto: CreateCategoryDto): Promise<Category> {
