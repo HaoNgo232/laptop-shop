@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import React, { createContext, useReducer, useEffect, useCallback, useMemo, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
 import { authService } from '@/services/authService';
 import type {
     User,
@@ -9,25 +9,15 @@ import type {
 } from '@/types/auth';
 import type { ApiError } from '@/types/api';
 
-// Auth State Type
-interface AuthState {
+// Auth Context Type - Đơn giản hóa
+interface AuthContextType {
+    // State
     user: User | null;
     isAuthenticated: boolean;
     isLoading: boolean;
     error: string | null;
-}
 
-// Auth Actions
-type AuthAction =
-    | { type: 'AUTH_START' }
-    | { type: 'AUTH_SUCCESS'; payload: User }
-    | { type: 'AUTH_ERROR'; payload: string }
-    | { type: 'AUTH_LOGOUT' }
-    | { type: 'CLEAR_ERROR' }
-    | { type: 'UPDATE_USER'; payload: User };
-
-// Auth Context Type
-interface AuthContextType extends AuthState {
+    // Actions - đơn giản, không cần useCallback
     login: (credentials: LoginRequest) => Promise<void>;
     register: (userData: RegisterRequest) => Promise<void>;
     logout: () => Promise<void>;
@@ -35,170 +25,137 @@ interface AuthContextType extends AuthState {
     clearError: () => void;
 }
 
-// Initial State
-const initialState: AuthState = {
-    user: null,
-    isAuthenticated: false,
-    isLoading: true, // Start with loading to check stored token
-    error: null,
-};
-
-// Auth Reducer
-function authReducer(state: AuthState, action: AuthAction): AuthState {
-    switch (action.type) {
-        case 'AUTH_START':
-            return {
-                ...state,
-                isLoading: true,
-                error: null,
-            };
-
-        case 'AUTH_SUCCESS':
-            return {
-                ...state,
-                user: action.payload,
-                isAuthenticated: true,
-                isLoading: false,
-                error: null,
-            };
-
-        case 'AUTH_ERROR':
-            return {
-                ...state,
-                user: null,
-                isAuthenticated: false,
-                isLoading: false,
-                error: action.payload,
-            };
-
-        case 'AUTH_LOGOUT':
-            return {
-                ...state,
-                user: null,
-                isAuthenticated: false,
-                isLoading: false,
-                error: null,
-            };
-
-        case 'UPDATE_USER':
-            return {
-                ...state,
-                user: action.payload,
-                error: null,
-            };
-
-        case 'CLEAR_ERROR':
-            return {
-                ...state,
-                error: null,
-            };
-
-        default:
-            return state;
-    }
-}
-
 // Create Context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// Wrap các functions với useCallback trong AuthProvider:
+// Simplified AuthProvider với useState
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [state, dispatch] = useReducer(authReducer, initialState);
+    // Tách useReducer thành các useState riêng biệt - dễ hiểu hơn
+    const [user, setUser] = useState<User | null>(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    // useEffect không thay đổi
+    // Initialize auth khi app load
     useEffect(() => {
-        console.log('AuthProvider useEffect running');
         const initializeAuth = async () => {
             const token = authService.getStoredToken();
 
             if (token) {
                 try {
-                    dispatch({ type: 'AUTH_START' });
-                    const user = await authService.getCurrentUser();
-                    dispatch({ type: 'AUTH_SUCCESS', payload: user });
+                    setIsLoading(true);
+                    setError(null);
+                    const userData = await authService.getCurrentUser();
+
+                    // Set user data
+                    setUser(userData);
+                    setIsAuthenticated(true);
                 } catch (error) {
                     console.error('Token validation failed:', error);
                     authService.logout();
-                    dispatch({ type: 'AUTH_ERROR', payload: 'Phiên đăng nhập đã hết hạn' });
+                    setUser(null);
+                    setIsAuthenticated(false);
+                    setError('Phiên đăng nhập đã hết hạn');
                 }
             } else {
-                dispatch({ type: 'AUTH_ERROR', payload: '' });
+                setUser(null);
+                setIsAuthenticated(false);
+                setError(null);
             }
+
+            setIsLoading(false);
         };
 
         initializeAuth();
-    }, []); // Empty dependency array là đúng
+    }, []); // Chỉ chạy 1 lần khi mount
 
-    // Wrap functions với useCallback
-    const login = useCallback(async (credentials: LoginRequest): Promise<void> => {
+    // Login function - đơn giản
+    const login = async (credentials: LoginRequest): Promise<void> => {
         try {
-            dispatch({ type: 'AUTH_START' });
+            setIsLoading(true);
+            setError(null);
+
             const response = await authService.login(credentials);
-            dispatch({ type: 'AUTH_SUCCESS', payload: response.user });
+
+            setUser(response.user);
+            setIsAuthenticated(true);
         } catch (error) {
             const apiError = error as ApiError;
-            dispatch({
-                type: 'AUTH_ERROR',
-                payload: apiError.message || 'Đăng nhập thất bại'
-            });
-            throw error;
+            setUser(null);
+            setIsAuthenticated(false);
+            setError(apiError.message || 'Đăng nhập thất bại');
+            throw error; // Re-throw để component handle
+        } finally {
+            setIsLoading(false);
         }
-    }, []);
+    };
 
-    const register = useCallback(async (userData: RegisterRequest): Promise<void> => {
+    // Register function - đơn giản  
+    const register = async (userData: RegisterRequest): Promise<void> => {
         try {
-            dispatch({ type: 'AUTH_START' });
+            setIsLoading(true);
+            setError(null);
+
             await authService.register(userData);
-            dispatch({ type: 'AUTH_ERROR', payload: '' });
+
+            // Sau khi register thành công, không auto login
+            setError(null);
         } catch (error) {
             const apiError = error as ApiError;
-            dispatch({
-                type: 'AUTH_ERROR',
-                payload: apiError.message || 'Đăng ký thất bại'
-            });
+            setError(apiError.message || 'Đăng ký thất bại');
             throw error;
+        } finally {
+            setIsLoading(false);
         }
-    }, []);
+    };
 
-    const logout = useCallback(async (): Promise<void> => {
+    // Logout function - đơn giản
+    const logout = async (): Promise<void> => {
         try {
             await authService.logout();
         } catch (error) {
             console.error('Logout error:', error);
         } finally {
-            dispatch({ type: 'AUTH_LOGOUT' });
+            // Luôn luôn clear state khi logout
+            setUser(null);
+            setIsAuthenticated(false);
+            setError(null);
+            setIsLoading(false);
         }
-    }, []);
+    };
 
-    const updateProfile = useCallback(async (data: UpdateProfileRequest): Promise<void> => {
+    // Update profile - đơn giản
+    const updateProfile = async (data: UpdateProfileRequest): Promise<void> => {
         try {
-            if (state.user) {
-                const updatedUser = { ...state.user, ...data };
-                dispatch({ type: 'UPDATE_USER', payload: updatedUser });
+            if (user) {
+                const updatedUser = { ...user, ...data };
+                setUser(updatedUser);
+                setError(null);
             }
         } catch (error) {
             const apiError = error as ApiError;
-            dispatch({
-                type: 'AUTH_ERROR',
-                payload: apiError.message || 'Cập nhật thông tin thất bại'
-            });
+            setError(apiError.message || 'Cập nhật thông tin thất bại');
             throw error;
         }
-    }, [state.user]);
+    };
 
-    const clearError = useCallback((): void => {
-        dispatch({ type: 'CLEAR_ERROR' });
-    }, []);
+    // Clear error - đơn giản
+    const clearError = (): void => {
+        setError(null);
+    };
 
-    // Tạo value object với useMemo để tránh re-create
-    const value = useMemo(() => ({
-        ...state,
+    // Context value - không cần useMemo vì đã đơn giản
+    const value: AuthContextType = {
+        user,
+        isAuthenticated,
+        isLoading,
+        error,
         login,
         register,
         logout,
         updateProfile,
         clearError,
-    }), [state, login, register, logout, updateProfile, clearError]);
+    };
 
     return (
         <AuthContext.Provider value={value}>
@@ -207,6 +164,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     );
 }
 
+// Custom hook để sử dụng context
 export function useAuth() {
     const context = useContext(AuthContext);
     if (!context) {

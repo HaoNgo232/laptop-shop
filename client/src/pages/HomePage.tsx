@@ -1,9 +1,10 @@
-import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export function HomePage() {
+    const navigate = useNavigate();
     const { user, isAuthenticated, logout, isLoading } = useAuth();
 
     const handleLogout = async () => {
@@ -51,13 +52,13 @@ export function HomePage() {
                                     <Button
                                         variant="outline"
                                         size="sm"
-                                        onClick={() => window.location.href = '/login'}
+                                        onClick={() => navigate('/login')}
                                     >
                                         Đăng nhập
                                     </Button>
                                     <Button
                                         size="sm"
-                                        onClick={() => window.location.href = '/register'}
+                                        onClick={() => navigate('/register')}
                                     >
                                         Đăng ký
                                     </Button>
@@ -96,7 +97,7 @@ export function HomePage() {
                                     </div>
 
                                     <div className="flex space-x-2">
-                                        <Button onClick={() => window.location.href = '/profile'}>
+                                        <Button onClick={() => navigate('/profile')}>
                                             Cập nhật thông tin
                                         </Button>
                                         <Button variant="outline">
@@ -112,12 +113,12 @@ export function HomePage() {
                                         Bạn chưa đăng nhập. Đăng nhập ngay để trải nghiệm đầy đủ các tính năng!
                                     </p>
                                     <div className="flex justify-center space-x-2">
-                                        <Button onClick={() => window.location.href = '/login'}>
+                                        <Button onClick={() => navigate('/login')}>
                                             Đăng nhập
                                         </Button>
                                         <Button
                                             variant="outline"
-                                            onClick={() => window.location.href = '/register'}
+                                            onClick={() => navigate('/register')}
                                         >
                                             Đăng ký
                                         </Button>

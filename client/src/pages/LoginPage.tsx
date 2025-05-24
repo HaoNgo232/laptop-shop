@@ -1,41 +1,23 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LoginForm } from '@/components/forms/LoginForm';
 import { useAuth } from '@/contexts/AuthContext';
+import { useErrorHandler, useAuthRedirect } from '@/hooks/useErrorHandler';
 import type { LoginFormData } from '@/lib/validationSchemas';
 
 export function LoginPage() {
     const navigate = useNavigate();
     const { login, isLoading, error, clearError, isAuthenticated } = useAuth();
 
-    // Fix: Chỉ redirect khi authenticated thay đổi
-    React.useEffect(() => {
-        if (isAuthenticated) {
-            navigate('/', { replace: true });
-        }
-    }, [isAuthenticated, navigate]);
-
-    // Fix: Chỉ clear error khi mount, không depend vào clearError
-    React.useEffect(() => {
-        clearError();
-    }, []); // Remove clearError from dependencies
-
-    // Hoặc dùng useCallback trong component
-    const handleClearError = React.useCallback(() => {
-        clearError();
-    }, [clearError]);
-
-    React.useEffect(() => {
-        handleClearError();
-    }, []);
+    // Sử dụng custom hooks - đơn giản và tái sử dụng
+    useAuthRedirect(isAuthenticated, navigate);
+    useErrorHandler(clearError);
 
     const handleLogin = async (credentials: LoginFormData) => {
         try {
             await login(credentials);
-            // Navigation will be handled by useEffect above
-            navigate('/', { replace: true });
+            // Navigation sẽ được handle bởi useAuthRedirect
         } catch (error) {
-            // Error is handled by AuthContext
+            // Error đã được handle bởi AuthContext
             console.error('Login failed:', error);
         }
     };
