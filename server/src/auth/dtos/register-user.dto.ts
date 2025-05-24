@@ -4,6 +4,7 @@ import {
   IsString,
   Matches,
   MinLength,
+  MaxLength,
 } from 'class-validator';
 
 export class RegisterUserDto {
@@ -22,5 +23,7 @@ export class RegisterUserDto {
 
   @IsString()
   @IsNotEmpty()
+  @MinLength(3, { message: 'Tên người dùng phải có ít nhất 3 ký tự' })
+  @MaxLength(20, { message: 'Tên người dùng không được vượt quá 20 ký tự' })
   username: string;
 }

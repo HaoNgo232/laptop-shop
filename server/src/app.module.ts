@@ -12,10 +12,11 @@ import { ProductsModule } from './products/products.module';
 import appConfig from './config/app.config';
 import databaseConfig from './config/database.config';
 import jwtConfig from './auth/config/jwt.config';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_FILTER } from '@nestjs/core';
 import { AuthenticationGuard } from './auth/guards/authentication/authentication.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { CartModule } from './cart/cart.module';
+// import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 
 @Module({
   imports: [
@@ -57,6 +58,11 @@ import { CartModule } from './cart/cart.module';
       useClass: AuthenticationGuard,
     },
     AccessTokenGuard,
+    // Tạm thời comment out để handle lỗi manual
+    // {
+    //   provide: APP_FILTER,
+    //   useClass: GlobalExceptionFilter,
+    // },
   ],
 })
 export class AppModule {}

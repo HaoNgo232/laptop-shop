@@ -56,6 +56,7 @@ export function appCreate(app: INestApplication): void {
   // Sử dụng ClassSerializerInterceptor toàn cục
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   console.log(`Environment: ${configService.get('app.nodeEnv')}`);
+
   // Thiết lập CORS
   app.enableCors();
 }
