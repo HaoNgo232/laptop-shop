@@ -11,6 +11,7 @@ import { ProductDetailDto } from '../dtos/product-detail.dto';
 import { PaginatedResponse } from '../interfaces/paginated-response.interface';
 import { PaginationMeta } from '../interfaces/pagination-meta.interface';
 import { ProductsProvider } from '../providers/products.provider';
+import { ProductMapperProvider } from '../providers/product-mapper.provider';
 
 @Injectable()
 export class ProductsService {
@@ -21,6 +22,7 @@ export class ProductsService {
     private readonly categoryRepository: Repository<Category>,
 
     private readonly productsProvider: ProductsProvider,
+    private readonly productMapper: ProductMapperProvider,
   ) {}
 
   async findAll(
@@ -40,7 +42,7 @@ export class ProductsService {
       throw new NotFoundException(`Không tìm thấy sản phẩm với ID: ${id}`);
     }
 
-    return product;
+    return this.productMapper.toProductDetailDto(product);
   }
 
   async create(createProductDto: CreateProductDto): Promise<Product> {

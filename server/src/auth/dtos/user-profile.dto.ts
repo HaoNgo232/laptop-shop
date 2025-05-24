@@ -17,8 +17,9 @@ export class UserProfileDto {
   @IsEmail({}, { message: 'Email không hợp lệ' })
   email: string;
 
+  @IsOptional()
   @IsString()
-  full_name: string;
+  username?: string;
 
   @IsOptional()
   @IsString()

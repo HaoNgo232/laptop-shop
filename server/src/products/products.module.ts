@@ -1,5 +1,4 @@
-import { AuthModule } from './../auth/auth.module';
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { Product } from './entities/product.entity';
@@ -14,9 +13,16 @@ import { AdminProductsController } from './controllers/admin-products.controller
 import { AdminCategoriesController } from './controllers/admin-categories.controller';
 import { ProductsProvider } from './providers/products.provider';
 import { CategoryMapperProvider } from './providers/category-mapper.provider';
+import { ProductMapperProvider } from './providers/product-mapper.provider';
+import { CartModule } from '../cart/cart.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Product, Category]), AuthModule],
+  imports: [
+    TypeOrmModule.forFeature([Product, Category]),
+    forwardRef(() => CartModule),
+    forwardRef(() => AuthModule),
+  ],
   controllers: [
     ProductsController,
     CategoriesController,
@@ -27,8 +33,15 @@ import { CategoryMapperProvider } from './providers/category-mapper.provider';
     ProductsService,
     CategoriesService,
     CategoryMapperProvider,
+    ProductMapperProvider,
     ProductsProvider,
   ],
-  exports: [ProductsService, CategoriesService, CategoryMapperProvider],
+  exports: [
+    ProductsService,
+    CategoriesService,
+    CategoryMapperProvider,
+    ProductMapperProvider,
+    ProductsProvider,
+  ],
 })
 export class ProductsModule {}

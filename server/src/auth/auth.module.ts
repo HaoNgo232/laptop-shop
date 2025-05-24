@@ -1,5 +1,5 @@
 import { AccessTokenGuard } from './guards/access-token/access-token.guard';
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -21,6 +21,7 @@ import { AuthController } from './controllers/auth.controller';
 import { AuthService } from './services/auth.service';
 import { UsersService } from './services/users.service';
 import { RolesGuard } from './guards/authentication/roles.guard';
+import { CartModule } from '../cart/cart.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([TokenBlacklist, User]),
@@ -34,6 +35,7 @@ import { RolesGuard } from './guards/authentication/roles.guard';
         },
       }),
     }),
+    forwardRef(() => CartModule),
   ],
   controllers: [AuthController, UsersController],
   providers: [

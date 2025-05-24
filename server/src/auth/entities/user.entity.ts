@@ -2,11 +2,14 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { UserRole } from '../enums/user.role';
-import { IsEmail, IsString } from 'class-validator';
+import { IsEmail, IsString, MinLength } from 'class-validator';
+import { Cart } from '../../cart/entities/cart.entity';
 
 @Entity()
 export class User {
@@ -20,11 +23,12 @@ export class User {
   @Column()
   password_hash: string;
 
-  @Column()
-  @IsString({ message: 'Họ tên không hợp lệ' })
-  full_name: string;
+  @Column({ unique: true, length: 20, nullable: true })
+  @IsString({ message: 'Tên người dùng không hợp lệ' })
+  @MinLength(6, { message: 'Tên người dùng phải có ít nhất 6 ký tự' })
+  username?: string;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, length: 500 })
   @IsString({ message: 'Địa chỉ không hợp lệ' })
   address?: string;
 
@@ -48,6 +52,6 @@ export class User {
   // @OneToMany(() => Review, (review) => review.user)
   // reviews: Review[];
 
-  // @OneToOne(() => Cart, (cart) => cart.user)
-  // cart: Cart;
+  @OneToOne(() => Cart, (cart) => cart.user, { cascade: true })
+  cart: Cart;
 }

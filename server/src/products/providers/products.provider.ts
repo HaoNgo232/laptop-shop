@@ -7,6 +7,7 @@ import { QueryProductDto, SortOrder } from '../dtos/query-product.dto';
 import { ProductDto } from '../dtos/product.dto';
 import { PaginatedResponse } from '../interfaces/paginated-response.interface';
 import { PaginationMeta } from '../interfaces/pagination-meta.interface';
+import { ProductMapperProvider } from './product-mapper.provider';
 
 @Injectable()
 export class ProductsProvider {
@@ -15,6 +16,7 @@ export class ProductsProvider {
     private readonly productRepository: Repository<Product>,
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
+    private readonly productMapper: ProductMapperProvider,
   ) {}
 
   async findAllProducts(
@@ -66,8 +68,8 @@ export class ProductsProvider {
     // 5. Thực thi truy vấn
     const [products_list, total] = await queryBuilder.getManyAndCount();
 
-    // 6. Map dữ liệu sang DTO
-    const data = products_list;
+    // 6. Map dữ liệu sang DTO sử dụng mapper
+    const data = this.productMapper.toProductDtos(products_list);
 
     // 7. Tạo metadata phân trang
     const meta: PaginationMeta = {

@@ -10,14 +10,14 @@ export class UsersController {
 
   @Get('profile')
   async getUserProfile(
-    @CurrentUser('id') userId: string,
+    @CurrentUser('sub') userId: string,
   ): Promise<UserProfileDto> {
     return this.usersService.findById(userId);
   }
 
   @Put('profile')
   async updateUserProfile(
-    @CurrentUser('id') userId: string,
+    @CurrentUser('sub') userId: string,
     @Body()
     updateUserDto: UpdateUserProfileDto,
   ): Promise<UserProfileDto> {

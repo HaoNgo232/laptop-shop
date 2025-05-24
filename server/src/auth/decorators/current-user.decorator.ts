@@ -1,5 +1,6 @@
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 import { User } from '../entities/user.entity';
+import { JwtPayload } from '../interfaces/jwt-payload.interface';
 
 /**
  * Extracts the current user from the request object.
@@ -13,8 +14,8 @@ import { User } from '../entities/user.entity';
  * updateProfile(@CurrentUser('id') userId: string)
  */
 export const CurrentUser = createParamDecorator(
-  (data: keyof User | undefined, ctx: ExecutionContext) => {
-    const request = ctx.switchToHttp().getRequest<{ user?: User }>();
+  (data: keyof JwtPayload | undefined, ctx: ExecutionContext) => {
+    const request = ctx.switchToHttp().getRequest<{ user?: JwtPayload }>();
 
     const user = request.user;
 

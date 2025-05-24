@@ -11,7 +11,7 @@ export class ProductDetailDto {
 
   stock_quantity: number;
 
-  image_url: string;
+  image_url?: string;
 
   category: CategoryDto;
 

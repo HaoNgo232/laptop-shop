@@ -4,7 +4,7 @@ import type { UserRole } from "@/types/enums";
 export interface User {
   id: string;
   email: string;
-  full_name: string;
+  username: string;
   address?: string;
   phone_number?: string;
   role: UserRole;
@@ -21,11 +21,11 @@ export interface LoginRequest {
 export interface RegisterRequest {
   email: string;
   password: string;
-  full_name: string;
+  username: string;
 }
 
 export interface UpdateProfileRequest {
-  full_name?: string;
+  username?: string;
   address?: string;
   phone_number?: string;
 }

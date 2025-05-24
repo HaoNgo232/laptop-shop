@@ -17,7 +17,7 @@ export class UpdateUserProfileDto extends PartialType(
   @IsString()
   @MinLength(3, { message: 'Họ tên phải dài ít nhất 3 ký tự' })
   @MaxLength(50, { message: 'Họ tên không được vượt quá 50 ký tự' })
-  full_name?: string;
+  username?: string;
 
   @IsOptional()
   @IsString()

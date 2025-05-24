@@ -14,7 +14,7 @@ export class MailService {
       subject: 'Welcome to My Ecommerce Web!',
       template: 'welcome',
       context: {
-        name: user.full_name,
+        name: user.username,
         email: user.email,
         loginUrl: 'http://localhost:3000',
       },

@@ -9,7 +9,7 @@ export class ProductDto {
 
   price: number;
 
-  image_url: string;
+  image_url?: string;
 
   stock_quantity: number;
 

@@ -15,6 +15,7 @@ import jwtConfig from './auth/config/jwt.config';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthenticationGuard } from './auth/guards/authentication/authentication.guard';
 import { JwtModule } from '@nestjs/jwt';
+import { CartModule } from './cart/cart.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { JwtModule } from '@nestjs/jwt';
     AuthModule,
     MailModule,
     ProductsModule,
+    CartModule,
     ConfigModule.forFeature(jwtConfig),
     JwtModule.registerAsync(jwtConfig.asProvider()),
   ],

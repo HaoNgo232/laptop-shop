@@ -11,6 +11,7 @@ import { BcryptProvider } from './bcrypt.provider';
 import { User } from '../entities/user.entity';
 import { RegisterUserDto } from '../dtos/register-user.dto';
 import { MailService } from '../../mail/mail.service';
+import { CartService } from '../../cart/cart.service';
 
 @Injectable()
 export class CreateUserProvider {
@@ -19,6 +20,7 @@ export class CreateUserProvider {
     private readonly userRepository: Repository<User>,
     private readonly bcryptProvider: BcryptProvider,
     private readonly mailService: MailService,
+    private readonly cartService: CartService,
   ) {}
 
   async createUser(registerUserDto: RegisterUserDto) {
@@ -48,8 +50,8 @@ export class CreateUserProvider {
         password_hash: hashedPassword,
       });
       await this.userRepository.save(newUser);
-      // // Tạo giỏ hàng cho user
-      // await this.cartService.createCartForUser(newUser.id);
+      // Tạo giỏ hàng cho user
+      await this.cartService.getCartEntityByUserId(newUser.id);
 
       try {
         await this.mailService.sendUserWelcomeEmail(newUser);

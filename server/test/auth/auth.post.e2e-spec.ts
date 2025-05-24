@@ -1,11 +1,12 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
-import * as request from 'supertest';
+import request from 'supertest';
 import { AppModule } from '../../src/app.module';
 import { ConfigService } from '@nestjs/config';
 import { faker } from '@faker-js/faker';
+import '@types/jest';
 
 describe('[Auth] @Post Endpoint', () => {
   let app: INestApplication;
@@ -28,7 +29,7 @@ describe('[Auth] @Post Endpoint', () => {
         password: 'password123',
       });
 
-    accessToken = response.body.accessToken as string;
+    accessToken = (response.body as { accessToken: string }).accessToken;
   });
 
   afterAll(async () => {

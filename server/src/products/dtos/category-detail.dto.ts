@@ -17,8 +17,9 @@ export class CategoryDetailDto {
   @ApiProperty({
     description: 'Mô tả danh mục',
     example: 'Các sản phẩm điện thoại di động từ nhiều thương hiệu khác nhau',
+    required: false,
   })
-  description: string;
+  description?: string;
 
   @ApiProperty({
     description: 'Danh sách sản phẩm thuộc danh mục',

@@ -16,6 +16,19 @@ export class CategoryDto {
   @ApiProperty({
     description: 'Mô tả danh mục',
     example: 'Các sản phẩm điện thoại di động từ nhiều thương hiệu khác nhau',
+    required: false,
   })
-  description: string;
+  description?: string;
+
+  @ApiProperty({
+    description: 'Thời gian tạo',
+    example: '2024-01-01T00:00:00.000Z',
+  })
+  created_at: Date;
+
+  @ApiProperty({
+    description: 'Thời gian cập nhật',
+    example: '2024-01-01T00:00:00.000Z',
+  })
+  updated_at: Date;
 }

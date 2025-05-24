@@ -49,7 +49,7 @@ export class ForgotPasswordProvider {
       subject: 'Reset your password',
       template: 'reset-password',
       context: {
-        name: user.full_name || user.email,
+        name: user.username || user.email,
         resetUrl,
       },
     });
