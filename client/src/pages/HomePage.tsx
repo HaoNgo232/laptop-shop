@@ -1,11 +1,30 @@
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import { useProducts } from '@/contexts/ProductContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { ProductList } from '@/components/ProductList';
+import { SearchBar } from '@/components/SearchBar';
+import { MiniCart } from '@/components/cart/MiniCart';
 
 export function HomePage() {
     const navigate = useNavigate();
-    const { user, isAuthenticated, logout, isLoading } = useAuth();
+    const { user, isAuthenticated, logout, isLoading: authLoading } = useAuth();
+    const {
+        products,
+        isLoading: productsLoading,
+        error: productsError,
+        fetchProducts,
+        searchProducts,
+        clearError
+    } = useProducts();
+
+    // Load products khi component mount
+    useEffect(() => {
+        fetchProducts();
+    }, []); // Chỉ chạy 1 lần
 
     const handleLogout = async () => {
         try {
@@ -15,7 +34,16 @@ export function HomePage() {
         }
     };
 
-    if (isLoading) {
+    // Handle search
+    const handleSearch = async (searchTerm: string) => {
+        if (searchTerm.trim()) {
+            await searchProducts(searchTerm);
+        } else {
+            await fetchProducts(); // Show all products khi search empty
+        }
+    };
+
+    if (authLoading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -34,6 +62,9 @@ export function HomePage() {
                         </div>
 
                         <div className="flex items-center space-x-4">
+                            {/* MiniCart - hiển thị cho authenticated users */}
+                            {isAuthenticated && <MiniCart />}
+
                             {isAuthenticated ? (
                                 <>
                                     <span className="text-sm text-gray-700">
@@ -72,61 +103,100 @@ export function HomePage() {
             {/* Main Content */}
             <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
                 <div className="px-4 py-6 sm:px-0">
-                    <Card className="max-w-2xl mx-auto">
-                        <CardHeader>
-                            <CardTitle>Chào mừng đến với Web Ecommerce!</CardTitle>
-                            <CardDescription>
-                                {isAuthenticated
-                                    ? 'Bạn đã đăng nhập thành công. Bắt đầu mua sắm ngay!'
-                                    : 'Vui lòng đăng nhập hoặc đăng ký để bắt đầu mua sắm.'
-                                }
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            {isAuthenticated && user && (
-                                <div className="space-y-4">
-                                    <div className="bg-gray-50 p-4 rounded-lg">
-                                        <h3 className="font-medium text-gray-900 mb-2">Thông tin tài khoản:</h3>
-                                        <div className="space-y-1 text-sm text-gray-600">
-                                            <p><strong>Email:</strong> {user.email}</p>
-                                            <p><strong>Tên người dùng:</strong> {user.username}</p>
-                                            <p><strong>Vai trò:</strong> {user.role}</p>
-                                            {user.address && <p><strong>Địa chỉ:</strong> {user.address}</p>}
-                                            {user.phone_number && <p><strong>Số điện thoại:</strong> {user.phone_number}</p>}
-                                        </div>
-                                    </div>
 
-                                    <div className="flex space-x-2">
-                                        <Button onClick={() => navigate('/profile')}>
-                                            Cập nhật thông tin
-                                        </Button>
-                                        <Button variant="outline">
-                                            Xem sản phẩm
-                                        </Button>
-                                    </div>
+                    {/* Welcome Section cho User */}
+                    {isAuthenticated && user && (
+                        <Card className="max-w-2xl mx-auto mb-8">
+                            <CardHeader>
+                                <CardTitle>Chào mừng {user.username}!</CardTitle>
+                                <CardDescription>
+                                    Khám phá các sản phẩm tuyệt vời dưới đây
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="flex space-x-2">
+                                    <Button onClick={() => navigate('/profile')}>
+                                        Cập nhật thông tin
+                                    </Button>
+                                    <Button variant="outline">
+                                        Xem đơn hàng
+                                    </Button>
                                 </div>
-                            )}
+                            </CardContent>
+                        </Card>
+                    )}
 
-                            {!isAuthenticated && (
-                                <div className="text-center space-y-4">
-                                    <p className="text-gray-600">
-                                        Bạn chưa đăng nhập. Đăng nhập ngay để trải nghiệm đầy đủ các tính năng!
-                                    </p>
-                                    <div className="flex justify-center space-x-2">
-                                        <Button onClick={() => navigate('/login')}>
-                                            Đăng nhập
-                                        </Button>
-                                        <Button
-                                            variant="outline"
-                                            onClick={() => navigate('/register')}
-                                        >
-                                            Đăng ký
-                                        </Button>
-                                    </div>
+                    {/* Welcome Section cho Guest */}
+                    {!isAuthenticated && (
+                        <Card className="max-w-2xl mx-auto mb-8">
+                            <CardHeader>
+                                <CardTitle>Chào mừng đến với Web Ecommerce!</CardTitle>
+                                <CardDescription>
+                                    Khám phá hàng ngàn sản phẩm chất lượng với giá tốt nhất
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="flex justify-center space-x-2">
+                                    <Button onClick={() => navigate('/login')}>
+                                        Đăng nhập
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => navigate('/register')}
+                                    >
+                                        Đăng ký
+                                    </Button>
                                 </div>
+                            </CardContent>
+                        </Card>
+                    )}
+
+                    {/* Search Bar */}
+                    <div className="mb-8">
+                        <SearchBar onSearch={handleSearch} />
+                    </div>
+
+                    {/* Products Section */}
+                    <div className="space-y-6">
+                        <div className="flex justify-between items-center">
+                            <h2 className="text-2xl font-bold text-gray-900">Sản phẩm</h2>
+                            {productsError && (
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => {
+                                        clearError();
+                                        fetchProducts();
+                                    }}
+                                >
+                                    Thử lại
+                                </Button>
                             )}
-                        </CardContent>
-                    </Card>
+                        </div>
+
+                        {/* Error State */}
+                        {productsError && (
+                            <Card className="max-w-2xl mx-auto">
+                                <CardContent className="text-center py-6">
+                                    <p className="text-red-600 mb-4">{productsError}</p>
+                                    <Button onClick={() => {
+                                        clearError();
+                                        fetchProducts();
+                                    }}>
+                                        Thử lại
+                                    </Button>
+                                </CardContent>
+                            </Card>
+                        )}
+
+                        {/* Products List */}
+                        {!productsError && (
+                            <ProductList
+                                products={products}
+                                isLoading={productsLoading}
+                            />
+                        )}
+                    </div>
                 </div>
             </main>
         </div>

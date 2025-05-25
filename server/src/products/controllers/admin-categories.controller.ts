@@ -15,9 +15,7 @@ export class AdminCategoriesController {
   @Post()
   create(@Body() createCategoryDto: CreateCategoryDto): Promise<CategoryDto> {
     // Gọi service để tạo danh mục mới
-    return this.categoriesService.create(
-      createCategoryDto,
-    ) as Promise<CategoryDto>;
+    return this.categoriesService.create(createCategoryDto);
   }
 
   @Put(':id')
@@ -26,10 +24,7 @@ export class AdminCategoriesController {
     @Body() updateCategoryDto: UpdateCategoryDto,
   ): Promise<CategoryDto> {
     // Gọi service để cập nhật danh mục
-    return this.categoriesService.update(
-      id,
-      updateCategoryDto,
-    ) as Promise<CategoryDto>;
+    return this.categoriesService.update(id, updateCategoryDto);
   }
 
   @Delete(':id')

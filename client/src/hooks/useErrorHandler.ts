@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import type { NavigateOptions } from "react-router-dom";
 
 /**
- * Custom hook đơn giản để clear error khi component mount
+ * Custom hook để clear error khi component mount
  */
 export function useErrorHandler(clearError: () => void) {
   useEffect(() => {

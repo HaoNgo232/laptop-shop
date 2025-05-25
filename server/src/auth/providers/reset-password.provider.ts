@@ -23,21 +23,22 @@ export class ResetPasswordProvider {
   async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<void> {
     try {
       // Xác thực token
-      const payload = await this.jwtService.verifyAsync<ResetPasswordPayload>( // Sử dụng ResetPasswordPayload
-        resetPasswordDto.token,
-        {
-          secret: this.jwtConfiguration.secret,
-        },
-      );
+      const resetPayload =
+        await this.jwtService.verifyAsync<ResetPasswordPayload>( // Sử dụng ResetPasswordPayload
+          resetPasswordDto.token,
+          {
+            secret: this.jwtConfiguration.secret,
+          },
+        );
 
       // Kiểm tra loại token
-      if (payload.type !== 'password-reset') {
+      if (resetPayload.type !== 'password-reset') {
         throw new UnauthorizedException('Token không hợp lệ');
       }
 
       // Tìm user
       const user = await this.userRepository.findOne({
-        where: { id: payload.sub },
+        where: { id: resetPayload.sub },
       });
 
       if (!user) {

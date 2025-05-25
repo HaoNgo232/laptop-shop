@@ -11,7 +11,7 @@ class AuthService {
   // Login method
   async login(credentials: LoginRequest): Promise<LoginResponse> {
     try {
-      const response = await apiClient.post<LoginResponse>(
+      const response: LoginResponse = await apiClient.post<LoginResponse>(
         "/api/auth/login",
         credentials,
       );

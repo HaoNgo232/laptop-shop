@@ -66,21 +66,25 @@ class ApiClient {
     };
   }
 
-  // Public methods
-  get<T>(url: string, params?: object): Promise<T> {
-    return this.client.get(url, { params }).then((res) => res.data);
+  // Public methods - Sử dụng async/await thay vì .then()
+  async get<T>(url: string, params?: object): Promise<T> {
+    const response = await this.client.get(url, { params });
+    return response.data;
   }
 
-  post<T>(url: string, data?: object): Promise<T> {
-    return this.client.post(url, data).then((res) => res.data);
+  async post<T>(url: string, data?: object): Promise<T> {
+    const response = await this.client.post(url, data);
+    return response.data;
   }
 
-  put<T>(url: string, data?: object): Promise<T> {
-    return this.client.put(url, data).then((res) => res.data);
+  async put<T>(url: string, data?: object): Promise<T> {
+    const response = await this.client.put(url, data);
+    return response.data;
   }
 
-  delete<T>(url: string): Promise<T> {
-    return this.client.delete(url).then((res) => res.data);
+  async delete<T>(url: string): Promise<T> {
+    const response = await this.client.delete(url);
+    return response.data;
   }
 }
 

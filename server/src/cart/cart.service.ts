@@ -9,7 +9,7 @@ import { Repository } from 'typeorm';
 import { Cart } from './entities/cart.entity';
 import { CartItem } from './entities/cart-item.entity';
 import { CartDto } from './dtos/cart.dto';
-import { Product } from '@/products/entities/product.entity';
+import { Product } from '../products/entities/product.entity';
 
 @Injectable()
 export class CartService {
@@ -38,7 +38,11 @@ export class CartService {
   async getCartEntityByUserId(userId: string): Promise<Cart> {
     const cart = await this.cartRepository.findOne({
       where: { user: { id: userId } },
-      relations: ['cart_items', 'cart_items.product'],
+      relations: [
+        'cart_items',
+        'cart_items.product',
+        'cart_items.product.category',
+      ],
     });
 
     if (!cart) {
@@ -160,7 +164,11 @@ export class CartService {
   private async findOrCreateCart(userId: string): Promise<Cart> {
     let cart = await this.cartRepository.findOne({
       where: { user: { id: userId } },
-      relations: ['cart_items', 'cart_items.product'],
+      relations: [
+        'cart_items',
+        'cart_items.product',
+        'cart_items.product.category',
+      ],
     });
 
     if (!cart) {
@@ -172,7 +180,11 @@ export class CartService {
       // Reload với relations
       const reloadedCart = await this.cartRepository.findOne({
         where: { id: cart.id },
-        relations: ['cart_items', 'cart_items.product'],
+        relations: [
+          'cart_items',
+          'cart_items.product',
+          'cart_items.product.category',
+        ],
       });
 
       if (!reloadedCart) {
@@ -198,6 +210,14 @@ export class CartService {
             name: item.product.name,
             price: item.product.price,
             image_url: item.product.image_url ?? '',
+            description: item.product.description,
+            stock_quantity: item.product.stock_quantity,
+            category: {
+              id: item.product.category?.id || '',
+              name: item.product.category?.name || '',
+            },
+            createdAt: item.product.created_at.toISOString(),
+            updatedAt: item.product.updated_at.toISOString(),
           },
           quantity: item.quantity,
           price_at_addition: item.price_at_addition,
