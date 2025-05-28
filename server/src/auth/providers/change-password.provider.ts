@@ -1,8 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
@@ -41,9 +37,7 @@ export class ChangePasswordProvider {
     }
 
     // Mã hóa mật khẩu mới
-    const hashedNewPassword = await this.bcryptProvider.hashPassword(
-      changePasswordDto.newPassword,
-    );
+    const hashedNewPassword = await this.bcryptProvider.hashPassword(changePasswordDto.newPassword);
 
     // Cập nhật mật khẩu
     user.password_hash = hashedNewPassword;

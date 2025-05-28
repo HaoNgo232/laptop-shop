@@ -8,10 +8,7 @@ export class BcryptProvider implements HashingProvider {
     const salt = await bcrypt.genSalt(10);
     return bcrypt.hash(data, salt);
   }
-  public comparePassword(
-    data: string | Buffer,
-    encrypted: string,
-  ): Promise<boolean> {
+  public comparePassword(data: string | Buffer, encrypted: string): Promise<boolean> {
     return bcrypt.compare(data, encrypted);
   }
 }

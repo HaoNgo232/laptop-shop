@@ -22,12 +22,10 @@ describe('[Auth] @Post Endpoint', () => {
     await app.listen(3001); // Sử dụng cổng 3001 cho bài kiểm tra
 
     // Đăng nhập để lấy token
-    const response = await request(app.getHttpServer())
-      .post('/api/auth/login')
-      .send({
-        email: 'test@example.com',
-        password: 'password123',
-      });
+    const response = await request(app.getHttpServer()).post('/api/auth/login').send({
+      email: 'test@example.com',
+      password: 'password123',
+    });
 
     accessToken = (response.body as { accessToken: string }).accessToken;
   });

@@ -48,6 +48,8 @@ export function ProductProvider({ children }: { children: React.ReactNode }) {
 
             setProducts(response.data);
             setPagination(response.meta);
+            console.log('response.data', response.data);
+            console.log('response.meta', response.meta);
         } catch (error) {
             const apiError = error as ApiError;
             setError(apiError.message || 'Không thể tải danh sách sản phẩm');

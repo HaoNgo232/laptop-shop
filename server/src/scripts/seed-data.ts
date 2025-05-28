@@ -5,6 +5,7 @@ import { Category } from '../products/entities/category.entity';
 import { Product } from '../products/entities/product.entity';
 import { User } from '../auth/entities/user.entity';
 import { BcryptProvider } from '../auth/providers/bcrypt.provider';
+import { UserRole } from '../auth/enums/user.role';
 
 async function seedData() {
   const app = await NestFactory.create(AppModule);
@@ -12,72 +13,216 @@ async function seedData() {
   const bcryptProvider = new BcryptProvider();
 
   try {
-    // Tạo categories
+    // Tạo categories chuyên về công nghệ
     const categoryRepo = dataSource.getRepository(Category);
 
-    const electronics = await categoryRepo.save({
-      name: 'Điện tử',
-      description: 'Các thiết bị điện tử như điện thoại, laptop, tablet',
+    const laptops = await categoryRepo.save({
+      name: 'Laptop',
+      description: 'Laptop văn phòng, gaming, workstation cho mọi nhu cầu',
     });
 
-    const fashion = await categoryRepo.save({
-      name: 'Thời trang',
-      description: 'Quần áo, giày dép, phụ kiện thời trang',
+    const accessories = await categoryRepo.save({
+      name: 'Phụ kiện',
+      description: 'Chuột, bàn phím, tai nghe, webcam và các phụ kiện khác',
     });
 
-    const books = await categoryRepo.save({
-      name: 'Sách',
-      description: 'Sách giáo khoa, tiểu thuyết, sách kỹ năng',
+    const components = await categoryRepo.save({
+      name: 'Linh kiện',
+      description: 'RAM, SSD, ổ cứng, card đồ họa và linh kiện nâng cấp',
     });
 
-    // Tạo products
+    const monitors = await categoryRepo.save({
+      name: 'Màn hình',
+      description: 'Màn hình máy tính, gaming monitor, màn hình chuyên dụng',
+    });
+
+    const gadgets = await categoryRepo.save({
+      name: 'Thiết bị di động',
+      description: 'Tablet, smartphone, smartwatch và thiết bị thông minh',
+    });
+
+    // Tạo products chuyên về công nghệ
     const productRepo = dataSource.getRepository(Product);
 
     const products = [
+      // LAPTOPS
       {
-        name: 'iPhone 15 Pro',
-        description: 'Điện thoại thông minh cao cấp với chip A17 Pro',
-        price: 25000000,
+        name: 'MacBook Pro 14" M3 Pro',
+        description:
+          'Laptop chuyên nghiệp với chip M3 Pro, 18GB RAM, 512GB SSD. Màn hình Liquid Retina XDR 14.2 inch. Lý tưởng cho developers và designers.',
+        price: 52990000,
+        stock_quantity: 15,
+        image_url:
+          'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500',
+        category_id: laptops.id,
+      },
+      {
+        name: 'Dell XPS 13 Plus',
+        description:
+          'Ultrabook cao cấp Intel Core i7-1260P, 16GB RAM, 1TB SSD. Thiết kế siêu mỏng, màn hình 13.4" 4K OLED touchscreen.',
+        price: 42990000,
+        stock_quantity: 20,
+        image_url:
+          'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=500',
+        category_id: laptops.id,
+      },
+      {
+        name: 'ASUS ROG Strix G15',
+        description:
+          'Gaming laptop AMD Ryzen 7 6800H, RTX 4060 8GB, 16GB DDR5, 1TB SSD. Màn hình 15.6" 144Hz. Hoàn hảo cho gaming và streaming.',
+        price: 28990000,
+        stock_quantity: 25,
+        image_url:
+          'https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=500',
+        category_id: laptops.id,
+      },
+      {
+        name: 'ThinkPad X1 Carbon Gen 11',
+        description:
+          'Business laptop Intel Core i7-1355U, 32GB RAM, 1TB SSD. Chuẩn quân đội Mỹ, bàn phím TrackPoint. Dành cho doanh nghiệp.',
+        price: 48990000,
+        stock_quantity: 12,
+        image_url:
+          'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=500',
+        category_id: laptops.id,
+      },
+      {
+        name: 'HP Pavilion 15',
+        description:
+          'Laptop tầm trung Intel Core i5-1235U, 8GB RAM, 512GB SSD. Màn hình 15.6" Full HD. Phù hợp học tập và làm việc.',
+        price: 16990000,
+        stock_quantity: 40,
+        image_url:
+          'https://images.unsplash.com/photo-1484788984921-03950022c9ef?w=500',
+        category_id: laptops.id,
+      },
+
+      // PHỤ KIỆN
+      {
+        name: 'Logitech MX Master 3S',
+        description:
+          'Chuột không dây cao cấp, sensor 8000 DPI, pin 70 ngày, cuộn ngang. Tương thích đa thiết bị với Logitech Flow.',
+        price: 2490000,
         stock_quantity: 50,
         image_url:
-          'https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=400',
-        category_id: electronics.id,
+          'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=500',
+        category_id: accessories.id,
       },
       {
-        name: 'MacBook Air M2',
-        description: 'Laptop siêu mỏng với chip Apple M2 mạnh mẽ',
-        price: 28000000,
+        name: 'Keychron K8 Pro',
+        description:
+          'Bàn phím cơ không dây 87 phím, hotswap switch, LED RGB, pin 4000mAh. Tương thích Mac/Windows với keycap kép.',
+        price: 3590000,
         stock_quantity: 30,
         image_url:
-          'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400',
-        category_id: electronics.id,
+          'https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=500',
+        category_id: accessories.id,
       },
       {
-        name: 'Áo thun nam cao cấp',
-        description: 'Áo thun cotton 100% thoáng mát, form slim fit',
-        price: 299000,
-        stock_quantity: 100,
+        name: 'Sony WH-1000XM5',
+        description:
+          'Tai nghe chống ồn hàng đầu, driver 30mm, pin 30 giờ, sạc nhanh 3 phút dùng 3 giờ. Codec LDAC Hi-Res.',
+        price: 8990000,
+        stock_quantity: 25,
         image_url:
-          'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400',
-        category_id: fashion.id,
+          'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500',
+        category_id: accessories.id,
       },
       {
-        name: 'Giày sneaker trắng',
-        description: 'Giày thể thao thời trang, phù hợp mọi độ tuổi',
-        price: 850000,
-        stock_quantity: 75,
+        name: 'Logitech C920s Pro HD',
+        description:
+          'Webcam Full HD 1080p/30fps, autofocus, mic stereo tích hợp, privacy shutter. Tối ưu cho meetings và streaming.',
+        price: 1890000,
+        stock_quantity: 60,
         image_url:
-          'https://images.unsplash.com/photo-1549298916-b41d501d3772?w=400',
-        category_id: fashion.id,
+          'https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=500',
+        category_id: accessories.id,
+      },
+
+      // LINH KIỆN
+      {
+        name: 'Corsair Vengeance LPX 32GB DDR4',
+        description:
+          'RAM DDR4-3200 (2x16GB), timings 16-18-18-36, tản nhiệt nhôm. Tương thích Intel XMP 2.0 và AMD DOCP.',
+        price: 2890000,
+        stock_quantity: 35,
+        image_url:
+          'https://images.unsplash.com/photo-1591238371519-95f9dbfe7bb6?w=500',
+        category_id: components.id,
       },
       {
-        name: 'Clean Code',
-        description: 'Sách lập trình - Nghệ thuật viết code sạch',
-        price: 320000,
-        stock_quantity: 200,
+        name: 'Samsung 980 PRO 2TB',
+        description:
+          'SSD NVMe PCIe 4.0, tốc độ đọc 7000MB/s, ghi 6900MB/s. Bảo hành 5 năm, TBW 1200TB. Tăng tốc hệ thống và games.',
+        price: 4490000,
+        stock_quantity: 40,
         image_url:
-          'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400',
-        category_id: books.id,
+          'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=500',
+        category_id: components.id,
+      },
+      {
+        name: 'Seagate BarraCuda 4TB',
+        description:
+          'Ổ cứng HDD 3.5" 7200RPM, cache 256MB, SATA 6Gb/s. Lưu trữ lớn cho dữ liệu, phim ảnh và backup.',
+        price: 2290000,
+        stock_quantity: 45,
+        image_url:
+          'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500',
+        category_id: components.id,
+      },
+
+      // MÀN HÌNH
+      {
+        name: 'LG UltraGear 27GP850',
+        description:
+          'Gaming monitor 27" 2K QHD, 165Hz, 1ms GtG, G-Sync Compatible, HDR400. Panel Nano IPS với 98% DCI-P3.',
+        price: 8490000,
+        stock_quantity: 20,
+        image_url:
+          'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500',
+        category_id: monitors.id,
+      },
+      {
+        name: 'Dell U2723QE',
+        description:
+          'Màn hình chuyên nghiệp 27" 4K IPS, 100% sRGB, 95% DCI-P3, USB-C 90W, KVM switch. Dành cho content creators.',
+        price: 12990000,
+        stock_quantity: 15,
+        image_url:
+          'https://images.unsplash.com/photo-1551739440-5dd934d3a94a?w=500',
+        category_id: monitors.id,
+      },
+
+      // THIẾT BỊ DI ĐỘNG
+      {
+        name: 'iPad Pro 12.9" M2',
+        description:
+          'Tablet cao cấp chip M2, 128GB WiFi, màn hình Liquid Retina XDR 12.9", hỗ trợ Apple Pencil 2. Thay thế laptop.',
+        price: 26990000,
+        stock_quantity: 18,
+        image_url:
+          'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=500',
+        category_id: gadgets.id,
+      },
+      {
+        name: 'Samsung Galaxy Tab S9+',
+        description:
+          'Android tablet Snapdragon 8 Gen 2, 12.4" Dynamic AMOLED 2X, S Pen trong hộp, chống nước IP68.',
+        price: 22990000,
+        stock_quantity: 22,
+        image_url:
+          'https://images.unsplash.com/photo-1561154464-82e9adf32764?w=500',
+        category_id: gadgets.id,
+      },
+      {
+        name: 'Apple Watch Series 9',
+        description:
+          'Smartwatch chip S9 SiP, màn hình Always-On Retina 45mm, GPS + Cellular, theo dõi sức khỏe toàn diện.',
+        price: 10990000,
+        stock_quantity: 30,
+        image_url:
+          'https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=500',
+        category_id: gadgets.id,
       },
     ];
 
@@ -85,28 +230,47 @@ async function seedData() {
       await productRepo.save(productData);
     }
 
-    // Tạo test user
+    // Tạo admin và customer test users
     const userRepo = dataSource.getRepository(User);
 
     const hashedPassword = await bcryptProvider.hashPassword('123456789');
+    const hashedAdminPassword = await bcryptProvider.hashPassword('admin123');
 
+    // Admin user
     await userRepo.save({
-      email: 'test@example.com',
-      username: 'testuser',
-      password_hash: hashedPassword,
-      address: 'Hà Nội, Việt Nam',
-      phone_number: '0123456789',
+      email: 'admin@techstore.com',
+      username: 'admin',
+      password_hash: hashedAdminPassword,
+      address: 'Trụ sở chính - 123 Nguyễn Văn Cừ, Q1, HCM',
+      phone_number: '0909123456',
+      role: UserRole.ADMIN,
     });
 
-    console.log('✅ Seed data completed successfully!');
-    console.log('Test user: test@example.com / 123456789');
+    // Test customer
+    await userRepo.save({
+      email: 'customer@gmail.com',
+      username: 'customer',
+      password_hash: hashedPassword,
+      address: '456 Lê Văn Việt, Q9, TP.HCM',
+      phone_number: '0987654321',
+      role: UserRole.USER,
+    });
+
+    console.log(' Tech Store seed data completed successfully!');
+    console.log(
+      ' Categories: Laptop, Phụ kiện, Linh kiện, Màn hình, Thiết bị di động',
+    );
+    console.log(' Products: 18 sản phẩm công nghệ cao cấp');
+    console.log(' Test users:');
+    console.log('   - Admin: admin@techstore.com / admin123');
+    console.log('   - Customer: customer@gmail.com / 123456789');
   } catch (error) {
-    console.error('❌ Seed data failed:', error);
+    console.error(' Seed data failed:', error);
   } finally {
     await app.close();
   }
 }
 
 if (require.main === module) {
-  seedData();
+  void seedData();
 }

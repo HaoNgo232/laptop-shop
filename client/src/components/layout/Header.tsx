@@ -46,7 +46,7 @@ export function Header() {
                             className="flex items-center cursor-pointer"
                             onClick={() => navigate('/')}
                         >
-                            <h1 className="text-xl font-bold text-primary">Web Ecommerce</h1>
+                            <h1 className="text-xl font-bold text-primary">TechNow</h1>
                         </div>
 
                         {/* Navigation Menu */}
