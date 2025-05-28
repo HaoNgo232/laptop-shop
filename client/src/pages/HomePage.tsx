@@ -7,11 +7,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ProductList } from '@/components/ProductList';
 import { SearchBar } from '@/components/SearchBar';
-import { MiniCart } from '@/components/cart/MiniCart';
+import { Header } from '@/components/layout/Header';
 
 export function HomePage() {
     const navigate = useNavigate();
-    const { user, isAuthenticated, logout, isLoading: authLoading } = useAuth();
+    const { user, isAuthenticated, isLoading: authLoading } = useAuth();
     const {
         products,
         isLoading: productsLoading,
@@ -26,13 +26,7 @@ export function HomePage() {
         fetchProducts();
     }, []); // Chỉ chạy 1 lần
 
-    const handleLogout = async () => {
-        try {
-            await logout();
-        } catch (error) {
-            console.error('Logout failed:', error);
-        }
-    };
+
 
     // Handle search
     const handleSearch = async (searchTerm: string) => {
@@ -53,52 +47,7 @@ export function HomePage() {
 
     return (
         <div className="min-h-screen bg-gray-50">
-            {/* Header */}
-            <header className="bg-white shadow-sm border-b">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                    <div className="flex justify-between h-16">
-                        <div className="flex items-center">
-                            <h1 className="text-xl font-bold text-gray-900">Web Ecommerce</h1>
-                        </div>
-
-                        <div className="flex items-center space-x-4">
-                            {/* MiniCart - hiển thị cho authenticated users */}
-                            {isAuthenticated && <MiniCart />}
-
-                            {isAuthenticated ? (
-                                <>
-                                    <span className="text-sm text-gray-700">
-                                        Xin chào, {user?.username}!
-                                    </span>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={handleLogout}
-                                    >
-                                        Đăng xuất
-                                    </Button>
-                                </>
-                            ) : (
-                                <>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={() => navigate('/login')}
-                                    >
-                                        Đăng nhập
-                                    </Button>
-                                    <Button
-                                        size="sm"
-                                        onClick={() => navigate('/register')}
-                                    >
-                                        Đăng ký
-                                    </Button>
-                                </>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </header>
+            <Header />
 
             {/* Main Content */}
             <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
