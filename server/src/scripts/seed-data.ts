@@ -5,7 +5,7 @@ import { Category } from '../products/entities/category.entity';
 import { Product } from '../products/entities/product.entity';
 import { User } from '../auth/entities/user.entity';
 import { BcryptProvider } from '../auth/providers/bcrypt.provider';
-import { UserRole } from '../auth/enums/user.role';
+import { UserRole } from '../auth/enums/user-role';
 
 async function seedData() {
   const app = await NestFactory.create(AppModule);
@@ -52,8 +52,7 @@ async function seedData() {
           'Laptop chuyên nghiệp với chip M3 Pro, 18GB RAM, 512GB SSD. Màn hình Liquid Retina XDR 14.2 inch. Lý tưởng cho developers và designers.',
         price: 52990000,
         stock_quantity: 15,
-        image_url:
-          'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500',
+        image_url: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500',
         category_id: laptops.id,
       },
       {
@@ -62,8 +61,7 @@ async function seedData() {
           'Ultrabook cao cấp Intel Core i7-1260P, 16GB RAM, 1TB SSD. Thiết kế siêu mỏng, màn hình 13.4" 4K OLED touchscreen.',
         price: 42990000,
         stock_quantity: 20,
-        image_url:
-          'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=500',
+        image_url: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=500',
         category_id: laptops.id,
       },
       {
@@ -72,8 +70,7 @@ async function seedData() {
           'Gaming laptop AMD Ryzen 7 6800H, RTX 4060 8GB, 16GB DDR5, 1TB SSD. Màn hình 15.6" 144Hz. Hoàn hảo cho gaming và streaming.',
         price: 28990000,
         stock_quantity: 25,
-        image_url:
-          'https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=500',
+        image_url: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=500',
         category_id: laptops.id,
       },
       {
@@ -82,8 +79,7 @@ async function seedData() {
           'Business laptop Intel Core i7-1355U, 32GB RAM, 1TB SSD. Chuẩn quân đội Mỹ, bàn phím TrackPoint. Dành cho doanh nghiệp.',
         price: 48990000,
         stock_quantity: 12,
-        image_url:
-          'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=500',
+        image_url: 'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=500',
         category_id: laptops.id,
       },
       {
@@ -92,8 +88,7 @@ async function seedData() {
           'Laptop tầm trung Intel Core i5-1235U, 8GB RAM, 512GB SSD. Màn hình 15.6" Full HD. Phù hợp học tập và làm việc.',
         price: 16990000,
         stock_quantity: 40,
-        image_url:
-          'https://images.unsplash.com/photo-1484788984921-03950022c9ef?w=500',
+        image_url: 'https://images.unsplash.com/photo-1484788984921-03950022c9ef?w=500',
         category_id: laptops.id,
       },
 
@@ -104,8 +99,7 @@ async function seedData() {
           'Chuột không dây cao cấp, sensor 8000 DPI, pin 70 ngày, cuộn ngang. Tương thích đa thiết bị với Logitech Flow.',
         price: 2490000,
         stock_quantity: 50,
-        image_url:
-          'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=500',
+        image_url: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=500',
         category_id: accessories.id,
       },
       {
@@ -114,8 +108,7 @@ async function seedData() {
           'Bàn phím cơ không dây 87 phím, hotswap switch, LED RGB, pin 4000mAh. Tương thích Mac/Windows với keycap kép.',
         price: 3590000,
         stock_quantity: 30,
-        image_url:
-          'https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=500',
+        image_url: 'https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=500',
         category_id: accessories.id,
       },
       {
@@ -124,8 +117,7 @@ async function seedData() {
           'Tai nghe chống ồn hàng đầu, driver 30mm, pin 30 giờ, sạc nhanh 3 phút dùng 3 giờ. Codec LDAC Hi-Res.',
         price: 8990000,
         stock_quantity: 25,
-        image_url:
-          'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500',
+        image_url: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500',
         category_id: accessories.id,
       },
       {
@@ -134,8 +126,7 @@ async function seedData() {
           'Webcam Full HD 1080p/30fps, autofocus, mic stereo tích hợp, privacy shutter. Tối ưu cho meetings và streaming.',
         price: 1890000,
         stock_quantity: 60,
-        image_url:
-          'https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=500',
+        image_url: 'https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=500',
         category_id: accessories.id,
       },
 
@@ -146,8 +137,7 @@ async function seedData() {
           'RAM DDR4-3200 (2x16GB), timings 16-18-18-36, tản nhiệt nhôm. Tương thích Intel XMP 2.0 và AMD DOCP.',
         price: 2890000,
         stock_quantity: 35,
-        image_url:
-          'https://images.unsplash.com/photo-1591238371519-95f9dbfe7bb6?w=500',
+        image_url: 'https://images.unsplash.com/photo-1591238371519-95f9dbfe7bb6?w=500',
         category_id: components.id,
       },
       {
@@ -156,8 +146,7 @@ async function seedData() {
           'SSD NVMe PCIe 4.0, tốc độ đọc 7000MB/s, ghi 6900MB/s. Bảo hành 5 năm, TBW 1200TB. Tăng tốc hệ thống và games.',
         price: 4490000,
         stock_quantity: 40,
-        image_url:
-          'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=500',
+        image_url: 'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=500',
         category_id: components.id,
       },
       {
@@ -166,8 +155,7 @@ async function seedData() {
           'Ổ cứng HDD 3.5" 7200RPM, cache 256MB, SATA 6Gb/s. Lưu trữ lớn cho dữ liệu, phim ảnh và backup.',
         price: 2290000,
         stock_quantity: 45,
-        image_url:
-          'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500',
+        image_url: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500',
         category_id: components.id,
       },
 
@@ -178,8 +166,7 @@ async function seedData() {
           'Gaming monitor 27" 2K QHD, 165Hz, 1ms GtG, G-Sync Compatible, HDR400. Panel Nano IPS với 98% DCI-P3.',
         price: 8490000,
         stock_quantity: 20,
-        image_url:
-          'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500',
+        image_url: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500',
         category_id: monitors.id,
       },
       {
@@ -188,8 +175,7 @@ async function seedData() {
           'Màn hình chuyên nghiệp 27" 4K IPS, 100% sRGB, 95% DCI-P3, USB-C 90W, KVM switch. Dành cho content creators.',
         price: 12990000,
         stock_quantity: 15,
-        image_url:
-          'https://images.unsplash.com/photo-1551739440-5dd934d3a94a?w=500',
+        image_url: 'https://images.unsplash.com/photo-1551739440-5dd934d3a94a?w=500',
         category_id: monitors.id,
       },
 
@@ -200,8 +186,7 @@ async function seedData() {
           'Tablet cao cấp chip M2, 128GB WiFi, màn hình Liquid Retina XDR 12.9", hỗ trợ Apple Pencil 2. Thay thế laptop.',
         price: 26990000,
         stock_quantity: 18,
-        image_url:
-          'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=500',
+        image_url: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=500',
         category_id: gadgets.id,
       },
       {
@@ -210,8 +195,7 @@ async function seedData() {
           'Android tablet Snapdragon 8 Gen 2, 12.4" Dynamic AMOLED 2X, S Pen trong hộp, chống nước IP68.',
         price: 22990000,
         stock_quantity: 22,
-        image_url:
-          'https://images.unsplash.com/photo-1561154464-82e9adf32764?w=500',
+        image_url: 'https://images.unsplash.com/photo-1561154464-82e9adf32764?w=500',
         category_id: gadgets.id,
       },
       {
@@ -220,8 +204,7 @@ async function seedData() {
           'Smartwatch chip S9 SiP, màn hình Always-On Retina 45mm, GPS + Cellular, theo dõi sức khỏe toàn diện.',
         price: 10990000,
         stock_quantity: 30,
-        image_url:
-          'https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=500',
+        image_url: 'https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=500',
         category_id: gadgets.id,
       },
     ];
@@ -257,9 +240,7 @@ async function seedData() {
     });
 
     console.log(' Tech Store seed data completed successfully!');
-    console.log(
-      ' Categories: Laptop, Phụ kiện, Linh kiện, Màn hình, Thiết bị di động',
-    );
+    console.log(' Categories: Laptop, Phụ kiện, Linh kiện, Màn hình, Thiết bị di động');
     console.log(' Products: 18 sản phẩm công nghệ cao cấp');
     console.log(' Test users:');
     console.log('   - Admin: admin@techstore.com / admin123');

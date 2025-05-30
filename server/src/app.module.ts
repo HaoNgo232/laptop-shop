@@ -16,6 +16,7 @@ import { APP_GUARD, APP_FILTER } from '@nestjs/core';
 import { AuthenticationGuard } from './auth/guards/authentication/authentication.guard';
 import { JwtModule } from '@nestjs/jwt';
 import { CartModule } from './cart/cart.module';
+import { OrdersModule } from '@/orders/orders.module';
 // import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
 
 @Module({
@@ -47,6 +48,7 @@ import { CartModule } from './cart/cart.module';
     MailModule,
     ProductsModule,
     CartModule,
+    OrdersModule,
     ConfigModule.forFeature(jwtConfig),
     JwtModule.registerAsync(jwtConfig.asProvider()),
   ],

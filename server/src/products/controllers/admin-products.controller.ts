@@ -1,18 +1,10 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Param,
-  Post,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { ProductsService } from '../services/products.service';
 import { CreateProductDto } from '../dtos/create-product.dto';
 import { UpdateProductDto } from '../dtos/update-product.dto';
 import { ProductDto } from '../dtos/product.dto';
 import { AuthType } from '../../auth/enums/auth-type.enum';
-import { UserRole } from '../../auth/enums/user.role';
+import { UserRole } from '../../auth/enums/user-role';
 import { Auth } from '../../auth/decorators/auth.decorator';
 
 @Controller('api/admin.products')
@@ -21,9 +13,7 @@ export class AdminProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Post()
-  public create(
-    @Body() createProductDto: CreateProductDto,
-  ): Promise<ProductDto> {
+  public create(@Body() createProductDto: CreateProductDto): Promise<ProductDto> {
     return this.productsService.create(createProductDto) as Promise<ProductDto>;
   }
 
@@ -32,10 +22,7 @@ export class AdminProductsController {
     @Param('id') id: string,
     @Body() updateProductDto: UpdateProductDto,
   ): Promise<ProductDto> {
-    return this.productsService.update(
-      id,
-      updateProductDto,
-    ) as Promise<ProductDto>;
+    return this.productsService.update(id, updateProductDto) as Promise<ProductDto>;
   }
 
   @Delete(':id')

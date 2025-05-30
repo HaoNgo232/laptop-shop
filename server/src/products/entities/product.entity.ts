@@ -1,22 +1,11 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  JoinColumn,
-  OneToMany,
-  CreateDateColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Category } from './category.entity';
 import { CartItem } from '../../cart/entities/cart-item.entity';
-import { IsNotEmpty, IsString, Min, MinLength } from 'class-validator';
+import { Min, MinLength } from 'class-validator';
+import { BaseEntity } from '../../common/entities/base.entity';
 
 @Entity('products')
-export class Product {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class Product extends BaseEntity {
   @MinLength(3, { message: 'Tên sản phẩm phải có ít nhất 3 ký tự' })
   @Column({ unique: true })
   name: string;
@@ -36,12 +25,6 @@ export class Product {
 
   @Column({ name: 'category_id' })
   category_id: string;
-
-  @CreateDateColumn({ name: 'created_at' })
-  created_at: Date;
-
-  @UpdateDateColumn({ name: 'updated_at' })
-  updated_at: Date;
 
   // Relationships
   @ManyToOne(() => Category, (category) => category.products)

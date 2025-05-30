@@ -1,21 +1,11 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  OneToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
-import { UserRole } from '../enums/user.role';
+import { Column, Entity, OneToOne } from 'typeorm';
+import { UserRole } from '../enums/user-role';
 import { IsEmail, IsString, MinLength } from 'class-validator';
 import { Cart } from '../../cart/entities/cart.entity';
+import { BaseEntity } from '../../common/entities/base.entity';
 
 @Entity()
-export class User {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class User extends BaseEntity {
   @Column({ unique: true })
   @IsEmail({}, { message: 'Email không hợp lệ' })
   email: string;
@@ -38,12 +28,6 @@ export class User {
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
   role: UserRole;
-
-  @CreateDateColumn()
-  created_at: Date;
-
-  @UpdateDateColumn()
-  updated_at: Date;
 
   // // Relationships
   // @OneToMany(() => Order, (order) => order.user)

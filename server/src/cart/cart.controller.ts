@@ -16,7 +16,7 @@ import { UpdateCartItemDto } from './dtos/update-cart-item.dto';
 import { Auth } from '../auth/decorators/auth.decorator';
 import { AuthType } from '../auth/enums/auth-type.enum';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { UserRole } from '../auth/enums/user.role';
+import { UserRole } from '../auth/enums/user-role';
 
 @Controller('api/cart')
 @Auth(AuthType.Bearer, UserRole.USER, UserRole.ADMIN)
@@ -39,11 +39,7 @@ export class CartController {
     @CurrentUser('sub') userId: string,
     @Body() addItemDto: AddCartItemDto,
   ): Promise<CartDto> {
-    return this.cartService.addItemToCart(
-      userId,
-      addItemDto.productId,
-      addItemDto.quantity,
-    );
+    return this.cartService.addItemToCart(userId, addItemDto.productId, addItemDto.quantity);
   }
 
   /**
@@ -55,11 +51,7 @@ export class CartController {
     @Param('productId') productId: string,
     @Body() updateItemDto: UpdateCartItemDto,
   ): Promise<CartDto> {
-    return this.cartService.updateCartItemQuantity(
-      userId,
-      productId,
-      updateItemDto.quantity,
-    );
+    return this.cartService.updateCartItemQuantity(userId, productId, updateItemDto.quantity);
   }
 
   /**

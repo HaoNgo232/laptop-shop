@@ -4,7 +4,7 @@ import { CreateCategoryDto } from '../dtos/create-category.dto';
 import { UpdateCategoryDto } from '../dtos/update-category.dto';
 import { CategoryDto } from '../dtos/category.dto';
 import { AuthType } from '../../auth/enums/auth-type.enum';
-import { UserRole } from '../../auth/enums/user.role';
+import { UserRole } from '../../auth/enums/user-role';
 import { Auth } from '../../auth/decorators/auth.decorator';
 
 @Controller('api/admin.categories')

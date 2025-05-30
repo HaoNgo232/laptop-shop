@@ -1,6 +1,6 @@
 import { applyDecorators, SetMetadata, UseGuards } from '@nestjs/common';
 import { AuthType } from '../enums/auth-type.enum';
-import { UserRole } from '../enums/user.role';
+import { UserRole } from '../enums/user-role';
 import { AUTH_TYPE_KEY } from '../constants/auth.constants';
 import { RolesGuard, ROLES_KEY } from '../guards/authentication/roles.guard';
 import { AuthenticationGuard } from '../guards/authentication/authentication.guard';
@@ -10,10 +10,7 @@ import { AuthenticationGuard } from '../guards/authentication/authentication.gua
  * @param authType - Loại xác thực (mặc định là Bearer)
  * @param roles - Danh sách vai trò được phép truy cập
  */
-export function Auth(
-  authType: AuthType = AuthType.Bearer,
-  ...roles: UserRole[]
-) {
+export function Auth(authType: AuthType = AuthType.Bearer, ...roles: UserRole[]) {
   // Khởi tạo mảng decorators với các guard cơ bản
   const decorators = [
     // Lưu loại xác thực vào metadata

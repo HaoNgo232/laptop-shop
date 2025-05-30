@@ -1,16 +1,8 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-  Index,
-} from 'typeorm';
+import { Entity, Column, Index } from 'typeorm';
+import { BaseEntity } from '../../common/entities/base.entity';
 
 @Entity()
-export class TokenBlacklist {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
-
+export class TokenBlacklist extends BaseEntity {
   @Column()
   @Index() // Thêm index cho token để tìm kiếm nhanh
   token: string;
@@ -21,7 +13,4 @@ export class TokenBlacklist {
   @Column({ type: 'timestamp' })
   @Index() // Thêm index cho expiresAt để dễ dàng loại bỏ token hết hạn
   expiresAt: Date;
-
-  @CreateDateColumn()
-  created_at: Date;
 }

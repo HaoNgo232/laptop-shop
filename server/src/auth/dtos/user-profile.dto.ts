@@ -1,13 +1,6 @@
 import { Exclude, Expose } from 'class-transformer';
-import {
-  IsEmail,
-  IsEnum,
-  IsString,
-  IsUUID,
-  IsDate,
-  IsOptional,
-} from 'class-validator';
-import { UserRole } from '../enums/user.role';
+import { IsEmail, IsEnum, IsString, IsUUID, IsDate, IsOptional } from 'class-validator';
+import { UserRole } from '../enums/user-role';
 
 @Expose() // Chỉ hiển thị các trường được định nghĩa rõ ràng
 export class UserProfileDto {

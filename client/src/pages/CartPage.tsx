@@ -9,6 +9,7 @@ import { CartSummary } from '@/components/cart/CartSummary';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/contexts/AuthContext';
 
+
 export function CartPage() {
     const navigate = useNavigate();
     const { isAuthenticated } = useAuth();
