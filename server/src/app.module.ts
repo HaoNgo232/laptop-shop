@@ -18,13 +18,15 @@ import { JwtModule } from '@nestjs/jwt';
 import { CartModule } from './cart/cart.module';
 import { OrdersModule } from '@/orders/orders.module';
 // import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+import { PaymentModule } from './payment/payment.module';
+import sepayConfig from '@/config/sepay.config';
 
 @Module({
   imports: [
     // Cấu hình ConfigModule
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [appConfig, databaseConfig, jwtConfig],
+      load: [appConfig, databaseConfig, jwtConfig, sepayConfig],
       envFilePath: `.env.${process.env.NODE_ENV ?? 'development'}`,
       validationSchema,
     }),
@@ -51,6 +53,7 @@ import { OrdersModule } from '@/orders/orders.module';
     OrdersModule,
     ConfigModule.forFeature(jwtConfig),
     JwtModule.registerAsync(jwtConfig.asProvider()),
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [

@@ -3,7 +3,7 @@ import { CartService } from '@/cart/cart.service';
 import { Order } from '@/orders/entities/order.entity';
 import { OrdersProvider } from '@/orders/providers/order.provider';
 import { Product } from '@/products/entities/product.entity';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CreateOrderDto } from '@/orders/dtos/create-order.dto';
 import { OrderDto } from '@/orders/dtos/order.dto';
@@ -17,9 +17,14 @@ import { OrderDetailDto } from '@/orders/dtos/order-detail.dto';
 import { UpdateOrderStatusDto } from '@/orders/dtos/update-order-status.dto';
 import { PaginationMeta } from '@/products/interfaces/pagination-meta.interface';
 import { OrderMapperProvider } from '@/orders/providers/order-mapper.provider';
+import { PaymentService } from '@/payment/payment.service';
+import { PaymentMethodEnum } from '@/payment/enums/payment-method.enum';
+import { QRCodeResponse } from '@/payment/interfaces/payment-provider.interfaces';
 
 @Injectable()
 export class OrdersService {
+  private readonly logger = new Logger(OrdersService.name);
+
   constructor(
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
@@ -29,12 +34,16 @@ export class OrdersService {
     private readonly ordersProvider: OrdersProvider,
     private readonly orderMapperProvider: OrderMapperProvider,
     private readonly dataSource: DataSource,
+    private readonly paymentService: PaymentService,
   ) {}
 
   /**
    * Tạo đơn hàng mới từ giỏ hàng
    */
-  async createOrder(userId: string, createOrderDto: CreateOrderDto): Promise<OrderDto> {
+  async createOrder(
+    userId: string,
+    createOrderDto: CreateOrderDto,
+  ): Promise<{ order: OrderDto; qrCode?: QRCodeResponse }> {
     // 1. Lấy cart items của user
     const cart = await this.cartService.getCartEntityByUserId(userId);
 
@@ -84,37 +93,70 @@ export class OrdersService {
     }
 
     // 3. Tạo đơn hàng trong transaction
-    return await this.dataSource.transaction(async (manager) => {
-      // Tạo order
-      const order = manager.create(Order, {
-        user_id: userId,
-        total_amount: totalAmount,
-        shipping_address: createOrderDto.shippingAddress,
-        payment_method: createOrderDto.paymentMethod,
-        note: createOrderDto.note,
-        status: OrderStatusEnum.PENDING,
-        payment_status: PaymentStatusEnum.PENDING,
+    try {
+      const order = await this.dataSource.transaction(async (manager) => {
+        // Tạo order
+        const order = manager.create(Order, {
+          user_id: userId,
+          total_amount: totalAmount,
+          shipping_address: createOrderDto.shippingAddress,
+          payment_method: createOrderDto.paymentMethod,
+          note: createOrderDto.note,
+          status: OrderStatusEnum.PENDING,
+          payment_status: PaymentStatusEnum.PENDING,
+        });
+
+        const savedOrder = await manager.save(order);
+
+        // Tạo order items
+        for (const item of orderItems) {
+          const orderItem = manager.create(OrderItem, {
+            ...item,
+            order_id: savedOrder.id,
+          });
+          await manager.save(orderItem);
+
+          // Cập nhật stock
+          await manager.decrement(
+            Product,
+            { id: item.product_id },
+            'stock_quantity',
+            item.quantity,
+          );
+        }
+
+        // Xóa giỏ hàng
+        await this.cartService.clearUserCart(userId);
+
+        return savedOrder;
       });
 
-      const savedOrder = await manager.save(order);
+      let qrCode: QRCodeResponse | undefined;
 
-      // Tạo order items
-      for (const item of orderItems) {
-        const orderItem = manager.create(OrderItem, {
-          ...item,
-          order_id: savedOrder.id,
-        });
-        await manager.save(orderItem);
-
-        // Cập nhật stock
-        await manager.decrement(Product, { id: item.product_id }, 'stock_quantity', item.quantity);
+      // Nếu payment method là SEPAY_QR, tạo QR code
+      if (createOrderDto.paymentMethod === PaymentMethodEnum.SEPAY_QR) {
+        try {
+          qrCode = await this.paymentService.generateQRCode(
+            order.id,
+            Number(order.total_amount),
+            PaymentMethodEnum.SEPAY_QR,
+          );
+          this.logger.log(`QR code generated successfully for order ${order.id}`);
+        } catch (qrError) {
+          this.logger.error(`Failed to generate QR code for order ${order.id}:`, qrError);
+          // QR generation fails không làm fail tạo order
+          // Có thể retry sau hoặc chuyển sang COD
+        }
       }
 
-      // Xóa giỏ hàng
-      await this.cartService.clearUserCart(userId);
-
-      return this.orderMapperProvider.mapOrderToDto(savedOrder);
-    });
+      return {
+        order: this.orderMapperProvider.mapOrderToDto(order),
+        qrCode,
+      };
+    } catch (error) {
+      this.logger.error('Error creating order:', error);
+      throw new BadRequestException(`Không thể tạo đơn hàng: ${error.message}`);
+    }
   }
 
   /**
@@ -207,5 +249,73 @@ export class OrdersService {
   ): Promise<OrderDto> {
     const order = await this.ordersProvider.updateOrderStatus(orderId, updateStatusDto.status);
     return this.orderMapperProvider.mapOrderToDto(order);
+  }
+
+  // Method để cập nhật order khi nhận webhook với transaction handling
+  async updateOrderPaymentStatus(
+    orderId: string,
+    transactionId: string,
+    paymentStatus: PaymentStatusEnum,
+  ): Promise<Order> {
+    return await this.dataSource.transaction(async (manager) => {
+      const order = await manager.findOne(Order, {
+        where: { id: orderId },
+        lock: { mode: 'pessimistic_write' }, // Lock để tránh race condition
+      });
+
+      if (!order) {
+        throw new NotFoundException(`Order with ID ${orderId} not found`);
+      }
+
+      // Chỉ cập nhật nếu đang PENDING
+      if (order.payment_status !== PaymentStatusEnum.PENDING) {
+        this.logger.warn(
+          `Attempted to update payment status for order ${orderId} ` +
+            `but current status is ${order.payment_status}`,
+        );
+        return order;
+      }
+
+      // Kiểm tra duplicate transaction
+      if (order.transaction_id && order.transaction_id === transactionId) {
+        this.logger.warn(`Duplicate transaction ${transactionId} for order ${orderId}`);
+        return order;
+      }
+
+      order.payment_status = paymentStatus;
+      order.transaction_id = transactionId;
+
+      // Nếu thanh toán thành công, chuyển order status
+      if (paymentStatus === PaymentStatusEnum.PAID) {
+        order.status = OrderStatusEnum.PROCESSING;
+      } else if (paymentStatus === PaymentStatusEnum.FAILED) {
+        order.status = OrderStatusEnum.CANCELLED;
+
+        // Hoàn trả stock nếu thanh toán thất bại
+        const orderWithItems = await manager.findOne(Order, {
+          where: { id: orderId },
+          relations: ['items'],
+        });
+
+        if (orderWithItems?.items) {
+          for (const item of orderWithItems.items) {
+            await manager.increment(
+              Product,
+              { id: item.product_id },
+              'stock_quantity',
+              item.quantity,
+            );
+          }
+        }
+      }
+
+      const savedOrder = await manager.save(order);
+      this.logger.log(
+        `Order ${orderId} payment status updated: ${paymentStatus}, ` +
+          `order status: ${savedOrder.status}`,
+      );
+
+      return savedOrder;
+    });
   }
 }

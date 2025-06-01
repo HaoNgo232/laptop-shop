@@ -10,6 +10,7 @@ import { OrderDto } from './dtos/order.dto';
 import { OrderDetailDto } from './dtos/order-detail.dto';
 import { PaginationQueryDto } from './dtos/pagination-query.dto';
 import { PaginatedResponse } from '@/products/interfaces/paginated-response.interface';
+import { QRCodeResponse } from '@/payment/interfaces/payment-provider.interfaces';
 
 @ApiTags('Orders')
 @ApiBearerAuth()
@@ -24,7 +25,7 @@ export class OrdersController {
   async createOrder(
     @CurrentUser('sub') userId: string,
     @Body() createOrderDto: CreateOrderDto,
-  ): Promise<OrderDto> {
+  ): Promise<{ order: OrderDto; qrCode?: QRCodeResponse }> {
     return await this.ordersService.createOrder(userId, createOrderDto);
   }
 

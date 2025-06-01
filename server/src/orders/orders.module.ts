@@ -7,12 +7,18 @@ import { OrdersController } from '@/orders/orders.controller';
 import { OrdersService } from '@/orders/orders.service';
 import { OrderMapperProvider } from '@/orders/providers/order-mapper.provider';
 import { OrdersProvider } from '@/orders/providers/order.provider';
+import { PaymentModule } from '@/payment/payment.module';
 import { Product } from '@/products/entities/product.entity';
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Order, OrderItem, Product]), CartModule, AuthModule],
+  imports: [
+    TypeOrmModule.forFeature([Order, OrderItem, Product]),
+    CartModule,
+    AuthModule,
+    forwardRef(() => PaymentModule),
+  ],
   controllers: [OrdersController, AdminOrdersController],
   providers: [OrdersService, OrdersProvider, OrderMapperProvider],
   exports: [OrdersService],

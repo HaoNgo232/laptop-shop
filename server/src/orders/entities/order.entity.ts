@@ -5,6 +5,7 @@ import { OrderStatusEnum } from '@/orders/enums/order-status.enum';
 import { PaymentStatusEnum } from '@/orders/enums/payment-status.enum';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, Index } from 'typeorm';
 import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
+import { PaymentMethodEnum } from '@/payment/enums/payment-method.enum';
 
 @Entity('orders')
 @Index(['user_id'])
@@ -41,20 +42,30 @@ export class Order extends BaseEntity {
   @IsString()
   shipping_address: string;
 
-  @Column({ length: 50 })
-  @IsNotEmpty()
+  @Column({
+    type: 'enum',
+    enum: PaymentMethodEnum,
+    default: PaymentMethodEnum.SEPAY_QR,
+    name: 'payment_method',
+  })
+  @IsEnum(PaymentMethodEnum)
+  payment_method: PaymentMethodEnum;
+
+  @Column('text', { nullable: true, name: 'transaction_id' })
+  @IsOptional()
   @IsString()
-  payment_method: string;
+  transaction_id?: string;
 
   @Column({
     type: 'enum',
     enum: PaymentStatusEnum,
     default: PaymentStatusEnum.PENDING,
+    name: 'payment_status',
   })
   @IsEnum(PaymentStatusEnum)
   payment_status: PaymentStatusEnum;
 
-  @Column('text', { nullable: true })
+  @Column('text', { nullable: true, name: 'note' })
   @IsOptional()
   @IsString()
   note?: string;

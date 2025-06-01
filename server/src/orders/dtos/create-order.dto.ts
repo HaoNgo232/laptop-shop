@@ -1,5 +1,6 @@
-import { IsNotEmpty, IsOptional, IsString, MinLength, MaxLength } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, MinLength, MaxLength, IsEnum } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { PaymentMethodEnum } from '@/payment/enums/payment-method.enum';
 
 export class CreateOrderDto {
   @ApiProperty({
@@ -14,12 +15,12 @@ export class CreateOrderDto {
 
   @ApiProperty({
     description: 'Phương thức thanh toán',
-    example: 'COD',
-    enum: ['COD', 'SEPAY_QR', 'BANK_TRANSFER'],
+    enum: PaymentMethodEnum,
+    example: PaymentMethodEnum.SEPAY_QR,
   })
   @IsNotEmpty({ message: 'Phương thức thanh toán không được để trống' })
-  @IsString()
-  paymentMethod: string;
+  @IsEnum(PaymentMethodEnum, { message: 'Phương thức thanh toán không hợp lệ' })
+  paymentMethod: PaymentMethodEnum;
 
   @ApiPropertyOptional({
     description: 'Ghi chú đơn hàng',
