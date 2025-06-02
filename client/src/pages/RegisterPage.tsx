@@ -1,15 +1,22 @@
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { RegisterForm } from '@/components/forms/RegisterForm';
-import { useAuth } from '@/contexts/AuthContext';
-import { useErrorHandler, useAuthRedirect } from '@/hooks/useErrorHandler';
 import type { RegisterFormData } from '@/lib/validationSchemas';
+import { useAuthStore } from '@/stores/authStore';
 
 export function RegisterPage() {
     const navigate = useNavigate();
-    const { register, isLoading, error, clearError, isAuthenticated } = useAuth();
+    const { register, isLoading, error, clearError, isAuthenticated } = useAuthStore();
 
-    useAuthRedirect(isAuthenticated, navigate);
-    useErrorHandler(clearError);
+    useEffect(() => {
+        if (isAuthenticated) {
+            navigate('/', { replace: true });
+        }
+    }, [isAuthenticated, navigate]);
+
+    useEffect(() => {
+        clearError();
+    }, [clearError]);
 
     const handleRegister = async (userData: RegisterFormData) => {
         try {
@@ -22,7 +29,7 @@ export function RegisterPage() {
                 }
             });
         } catch (error) {
-            // Error đã được handle bởi AuthContext
+            // Error đã được handle bởi store
             console.error('Register failed:', error);
         }
     };

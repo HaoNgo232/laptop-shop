@@ -1,17 +1,21 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { useProducts } from '@/contexts/ProductContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { ProductList } from '@/components/ProductList';
 import { SearchBar } from '@/components/SearchBar';
 import { Header } from '@/components/layout/Header';
+import { useAuthStore } from '@/stores/authStore';
+import { useProductStore } from '@/stores/productStore';
 
 export function HomePage() {
+
     const navigate = useNavigate();
-    const { user, isAuthenticated, isLoading: authLoading } = useAuth();
+
+    const { user, isAuthenticated, isLoading: authLoading } = useAuthStore();
+    console.log('Auth state:', { isAuthenticated, authLoading, user: user?.username });
+
     const {
         products,
         isLoading: productsLoading,
@@ -19,21 +23,18 @@ export function HomePage() {
         fetchProducts,
         searchProducts,
         clearError
-    } = useProducts();
+    } = useProductStore();
 
-    // Load products khi component mount
+
     useEffect(() => {
         fetchProducts();
-    }, []); // Chỉ chạy 1 lần
+    }, []);
 
-
-
-    // Handle search
     const handleSearch = async (searchTerm: string) => {
         if (searchTerm.trim()) {
             await searchProducts(searchTerm);
         } else {
-            await fetchProducts(); // Show all products khi search empty
+            await fetchProducts();
         }
     };
 
@@ -41,6 +42,7 @@ export function HomePage() {
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                <span className="ml-2">Loading auth...</span>
             </div>
         );
     }
@@ -138,8 +140,16 @@ export function HomePage() {
                             </Card>
                         )}
 
+                        {/* Loading state debug */}
+                        {productsLoading && (
+                            <div className="text-center py-8">
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                                <p className="mt-2">Đang tải sản phẩm...</p>
+                            </div>
+                        )}
+
                         {/* Products List */}
-                        {!productsError && (
+                        {!productsError && !productsLoading && (
                             <ProductList
                                 products={products}
                                 isLoading={productsLoading}

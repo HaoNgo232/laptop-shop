@@ -1,7 +1,6 @@
-import type { SortOrder } from "@/types/enums";
+import type { SortOrder } from "@/enums/product";
 import type { PaginatedResponse } from "@/types/api";
 
-// Category types
 export interface Category {
   id: string;
   name: string;
@@ -19,7 +18,6 @@ export interface CategoryDetail extends Category {
   products: Product[];
 }
 
-// Product types
 export interface Product {
   id: string;
   name: string;
@@ -36,8 +34,7 @@ export interface ProductDetail extends Omit<Product, "category"> {
   category: Category;
 }
 
-// Request types
-export interface CreateProductRequest {
+export interface CreateProductDto {
   name: string;
   description: string;
   price: number;
@@ -46,21 +43,20 @@ export interface CreateProductRequest {
   category_id: string;
 }
 
-export interface UpdateProductRequest extends Partial<CreateProductRequest> {
+export interface UpdateProductDto extends Partial<CreateProductDto> {
   active?: boolean;
 }
 
-export interface CreateCategoryRequest {
+export interface CreateCategoryDto {
   name: string;
   description?: string;
 }
 
-export interface UpdateCategoryRequest extends Partial<CreateCategoryRequest> {
+export interface UpdateCategoryDto extends Partial<CreateCategoryDto> {
   active?: boolean;
 }
 
-// Query types
-export interface ProductQueryParams {
+export interface QueryProductDto {
   page?: number;
   limit?: number;
   category_id?: string;
@@ -71,6 +67,5 @@ export interface ProductQueryParams {
   search?: string;
 }
 
-// Response types
 export type ProductListResponse = PaginatedResponse<Product>;
 export type CategoryListResponse = Category[];

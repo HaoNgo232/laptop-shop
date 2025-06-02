@@ -6,7 +6,6 @@ import axios, {
 } from "axios";
 import type { ApiError } from "@/types/api";
 
-// Strategy: Tạo axios instance với interceptors
 class ApiClient {
   private client: AxiosInstance;
 
@@ -47,7 +46,8 @@ class ApiClient {
           // For now, just clear tokens and redirect
           localStorage.removeItem("accessToken");
           localStorage.removeItem("refreshToken");
-          window.location.href = "/login";
+
+          console.warn("🚨 401 Unauthorized - Token cleared");
         }
 
         return Promise.reject(this.transformError(error));
@@ -66,7 +66,6 @@ class ApiClient {
     };
   }
 
-  // Public methods - Sử dụng async/await thay vì .then()
   async get<T>(url: string, params?: object): Promise<T> {
     const response = await this.client.get(url, { params });
     return response.data;

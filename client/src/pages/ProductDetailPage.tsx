@@ -1,27 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ShoppingCart, Plus, Minus, Star, Package, Truck, Shield } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { useProducts } from '@/contexts/ProductContext';
-import { useCart } from '@/contexts/CartContext';
-import { useAuth } from '@/contexts/AuthContext';
+import { useProductStore } from '@/stores/productStore';
+import { useCartStore } from '@/stores/cartStore';
+import { useAuthStore } from '@/stores/authStore';
 import { formatCurrency } from '@/utils/currency';
 
 export function ProductDetailPage() {
     const { id } = useParams<{ id: string }>();
     const navigate = useNavigate();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated } = useAuthStore();
     const {
         selectedProduct: product,
         isLoading,
         error,
         fetchProductById,
         clearError
-    } = useProducts();
-    const { addToCart, cartSummary } = useCart();
+    } = useProductStore();
+    const { addToCart, cartSummary } = useCartStore();
 
     const [quantity, setQuantity] = useState(1);
     const [isAddingToCart, setIsAddingToCart] = useState(false);
@@ -31,7 +31,7 @@ export function ProductDetailPage() {
         if (id) {
             fetchProductById(id);
         }
-    }, [id]);
+    }, [id, fetchProductById]);
 
     // Handle quantity change
     const handleQuantityChange = (change: number) => {

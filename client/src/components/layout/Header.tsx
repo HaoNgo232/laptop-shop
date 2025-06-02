@@ -1,14 +1,13 @@
-import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, Package, User, ShoppingBag, LogIn, UserPlus, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { MiniCart } from '@/components/cart/MiniCart';
-import { useAuth } from '@/contexts/AuthContext';
+import { useAuthStore } from '@/stores/authStore';
 
 export function Header() {
     const navigate = useNavigate();
     const location = useLocation();
-    const { user, isAuthenticated, logout } = useAuth();
+    const { user, isAuthenticated, logout } = useAuthStore();
 
     const handleLogout = async () => {
         try {

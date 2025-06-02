@@ -1,18 +1,17 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { CartItemComponent } from '@/components/cart/CartItem';
 import { CartSummary } from '@/components/cart/CartSummary';
-import { useCart } from '@/contexts/CartContext';
-import { useAuth } from '@/contexts/AuthContext';
-
+import { useCartStore } from '@/stores/cartStore'; // Thay đổi import
+import { useAuthStore } from '@/stores/authStore';
 
 export function CartPage() {
     const navigate = useNavigate();
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated } = useAuthStore();
     const {
         cart,
         isLoading,
@@ -21,10 +20,10 @@ export function CartPage() {
         removeCartItem,
         clearCart,
         clearError
-    } = useCart();
+    } = useCartStore(); // Sử dụng Zustand store
 
     // Redirect nếu chưa đăng nhập
-    React.useEffect(() => {
+    useEffect(() => {
         if (!isAuthenticated) {
             navigate('/login', {
                 state: { from: '/cart' },

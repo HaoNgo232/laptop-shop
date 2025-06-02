@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import { SearchBar } from '@/components/SearchBar';
@@ -6,8 +6,8 @@ import { ProductList } from '@/components/ProductList';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useProducts } from '@/contexts/ProductContext';
-import { SortOrder } from '@/types/enums';
+import { SortOrder } from '@/enums/product';
+import { useProductStore } from '@/stores/productStore';
 
 export function ProductsPage() {
     const [searchParams] = useSearchParams();
@@ -20,7 +20,7 @@ export function ProductsPage() {
         fetchCategories,
         searchProducts,
         clearError
-    } = useProducts();
+    } = useProductStore();
 
     const [currentCategory, setCurrentCategory] = useState<string>('all');
     const [sortBy, setSortBy] = useState('created_at');

@@ -1,4 +1,14 @@
-import { Controller, Get, Post, Patch, Param, Body, Query, ParseUUIDPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Param,
+  Body,
+  Query,
+  ParseUUIDPipe,
+  Delete,
+} from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { Auth } from '@/auth/decorators/auth.decorator';
 import { CurrentUser } from '@/auth/decorators/current-user.decorator';
@@ -49,7 +59,7 @@ export class OrdersController {
     return await this.ordersService.getUserOrderById(userId, orderId);
   }
 
-  @Patch(':orderId/cancel')
+  @Delete(':orderId/cancel')
   @ApiOperation({ summary: 'Hủy đơn hàng' })
   @ApiResponse({ status: 200, description: 'Đơn hàng đã được hủy', type: OrderDto })
   async cancelOrder(

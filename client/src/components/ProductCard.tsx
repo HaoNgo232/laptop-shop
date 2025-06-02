@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useCart } from '@/contexts/CartContext';
-import { useAuth } from '@/contexts/AuthContext';
+import { useCartStore } from '@/stores/cartStore';
+import { useAuthStore } from '@/stores/authStore';
 import type { Product } from '@/types/product';
 
 interface ProductCardProps {
@@ -12,8 +12,8 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
     const navigate = useNavigate();
-    const { isAuthenticated } = useAuth();
-    const { addToCart } = useCart();
+    const { isAuthenticated } = useAuthStore();
+    const { addToCart } = useCartStore();
     const [isAddingToCart, setIsAddingToCart] = useState(false);
 
     const formatPrice = (price: number): string => {

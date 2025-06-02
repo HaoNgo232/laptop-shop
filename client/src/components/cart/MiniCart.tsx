@@ -1,12 +1,11 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ShoppingCart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useCart } from '@/contexts/CartContext';
+import { useCartStore } from '@/stores/cartStore';
 
 export function MiniCart() {
     const navigate = useNavigate();
-    const { cartSummary } = useCart();
+    const { cartSummary } = useCartStore();
 
     // Format giá tiền ngắn gọn
     const formatPrice = (price: number): string => {

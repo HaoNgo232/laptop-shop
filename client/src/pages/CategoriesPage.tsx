@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useProducts } from '@/contexts/ProductContext';
+import { useProductStore } from '@/stores/productStore';
 import { Package } from 'lucide-react';
 
 export function CategoriesPage() {
@@ -14,7 +14,7 @@ export function CategoriesPage() {
         error,
         fetchCategories,
         clearError
-    } = useProducts();
+    } = useProductStore();
 
     // Load categories khi component mount
     useEffect(() => {

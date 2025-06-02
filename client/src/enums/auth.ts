@@ -3,11 +3,6 @@ export enum UserRole {
   USER = "user",
 }
 
-export enum SortOrder {
-  ASC = "ASC",
-  DESC = "DESC",
-}
-
 export enum AuthType {
   Bearer = "Bearer",
   None = "None",

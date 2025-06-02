@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@/contexts/AuthContext';
-import { UserRole } from '@/types/enums';
+import type { UserRole } from '@/enums/auth';
+import { useAuthStore } from '@/stores/authStore';
 
 interface ProtectedRouteProps {
     children: React.ReactNode;
@@ -14,7 +14,7 @@ export function ProtectedRoute({
     requiredRole,
     redirectTo = '/login'
 }: ProtectedRouteProps) {
-    const { isAuthenticated, isLoading, user } = useAuth();
+    const { isAuthenticated, isLoading, user } = useAuthStore();
     const location = useLocation();
 
     // Show loading while checking authentication

@@ -1,6 +1,5 @@
-import type { UserRole } from "@/types/enums";
+import type { UserRole } from "@/enums/auth";
 
-// Base User type (mirror User entity)
 export interface User {
   id: string;
   email: string;
@@ -8,49 +7,45 @@ export interface User {
   address?: string;
   phone_number?: string;
   role: UserRole;
-  created_at: Date; // ISO date string
+  created_at: Date;
   updated_at: Date;
 }
 
-// Request types (từ DTOs)
-export interface LoginRequest {
+export interface LoginUserDto {
   email: string;
   password: string;
 }
 
-export interface RegisterRequest {
+export interface RegisterUserDto {
   email: string;
   password: string;
   username: string;
 }
 
-export interface UpdateProfileRequest {
+export interface UpdateProfileDto {
   username?: string;
   address?: string;
   phone_number?: string;
 }
 
-// Response types
 export interface LoginResponse {
   accessToken: string;
   refreshToken: string;
   user: User;
 }
 
-export interface RefreshTokenRequest {
+export interface RefreshTokenDto {
   refreshToken: string;
 }
 
-// Password related
-export interface ForgotPasswordRequest {
+export interface ForgotPasswordDto {
   email: string;
 }
 
-export interface ResetPasswordRequest {
+export interface ResetPasswordDto {
   token: string;
   newPassword: string;
   confirmPassword: string;
 }
 
-// Profile response type
 export type UserProfile = Omit<User, "password_hash">;

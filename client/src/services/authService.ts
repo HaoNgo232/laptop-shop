@@ -1,15 +1,15 @@
 import { apiClient } from "./api";
 import type {
-  LoginRequest,
-  LoginResponse,
-  RegisterRequest,
+  LoginUserDto,
+  RegisterUserDto,
   User,
-  ResetPasswordRequest,
+  LoginResponse,
+  ResetPasswordDto,
 } from "@/types/auth";
 
 class AuthService {
   // Login method
-  async login(credentials: LoginRequest): Promise<LoginResponse> {
+  async login(credentials: LoginUserDto): Promise<LoginResponse> {
     try {
       const response: LoginResponse = await apiClient.post<LoginResponse>(
         "/api/auth/login",
@@ -32,7 +32,7 @@ class AuthService {
   }
 
   // Register method
-  async register(userData: RegisterRequest): Promise<User> {
+  async register(userData: RegisterUserDto): Promise<User> {
     try {
       const response = await apiClient.post<User>(
         "/api/auth/register",
@@ -115,7 +115,7 @@ class AuthService {
   }
 
   // Reset password
-  async resetPassword(data: ResetPasswordRequest): Promise<void> {
+  async resetPassword(data: ResetPasswordDto): Promise<void> {
     try {
       await apiClient.post("/api/auth/reset-password", data);
     } catch (error) {
