@@ -1,0 +1,27 @@
+{
+    "name": "web-ecom-monorepo",
+    "private": true,
+    "description": "E-commerce application with NestJS backend and React frontend",
+    "workspaces": [
+        "apps/*",
+        "packages/*"
+    ],
+    "engines": {
+        "node": ">=18.0.0",
+        "pnpm": ">=8.0.0"
+    },
+    "scripts": {
+        "dev": "pnpm --parallel --filter \"./apps/*\" dev",
+        "build": "pnpm --filter \"./packages/*\" build && pnpm --filter \"./apps/*\" build",
+        "lint": "pnpm --parallel --filter \"./apps/*\" lint",
+        "test": "pnpm --parallel --filter \"./apps/*\" test",
+        "frontend:dev": "pnpm --filter frontend dev",
+        "backend:dev": "pnpm --filter backend dev",
+        "frontend:build": "pnpm --filter frontend build",
+        "backend:build": "pnpm --filter backend build"
+    },
+    "devDependencies": {
+        "typescript": "^5.7.3",
+        "prettier": "^3.4.2"
+    }
+}

@@ -1,5 +1,5 @@
 {
-  "name": "server",
+  "name": "backend",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -26,6 +26,7 @@
     "seed": "ts-node src/scripts/seed-data.ts"
   },
   "dependencies": {
+    "@web-ecom/shared-types": "workspace:*",
     "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
