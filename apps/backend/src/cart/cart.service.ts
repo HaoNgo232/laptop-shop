@@ -184,7 +184,7 @@ export class CartService {
       id: cart.id,
       items:
         cart.cart_items?.map((item) => ({
-          id: item.id,
+          id: item.product_id,
           product: {
             id: item.product.id,
             name: item.product.name,

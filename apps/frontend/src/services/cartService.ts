@@ -10,14 +10,11 @@ class CartService {
   // Lấy giỏ hàng hiện tại
   async getCart(): Promise<Cart> {
     try {
-      console.log("🌐 Making GET request to /api/cart");
       const response = await apiClient.get<CartResponse>("/api/cart");
-      console.log("🌐 Raw response from /api/cart:", response);
 
-      // Backend trả về direct CartDto, không wrap trong data
       return response as unknown as Cart;
     } catch (error) {
-      console.error("Get cart error:", error);
+      console.error("Get cart error");
       throw error;
     }
   }
@@ -25,17 +22,14 @@ class CartService {
   // Thêm sản phẩm vào giỏ hàng
   async addToCart(request: AddToCart): Promise<Cart> {
     try {
-      console.log("🌐 Making POST request to /api/cart/items:", request);
       const response = await apiClient.post<CartResponse>(
         "/api/cart/items",
         request,
       );
-      console.log("🌐 Raw response from /api/cart/items:", response);
 
-      // Backend trả về direct CartDto, không wrap trong data
       return response as unknown as Cart;
     } catch (error) {
-      console.error("Add to cart error:", error);
+      console.error("Add to cart error");
       throw error;
     }
   }
@@ -45,13 +39,12 @@ class CartService {
     try {
       const response = await apiClient.put<CartResponse>(
         `/api/cart/items/${request.productId}`,
-        { quantity: request.quantity },
+        request,
       );
 
-      // Backend trả về direct CartDto, không wrap trong data
       return response as unknown as Cart;
     } catch (error) {
-      console.error("Update cart item error:", error);
+      console.error("Update cart item error");
       throw error;
     }
   }
@@ -63,10 +56,9 @@ class CartService {
         `/api/cart/items/${productId}`,
       );
 
-      // Backend trả về direct CartDto, không wrap trong data
       return response as unknown as Cart;
     } catch (error) {
-      console.error("Remove cart item error:", error);
+      console.error("Remove cart item error");
       throw error;
     }
   }
@@ -76,7 +68,7 @@ class CartService {
     try {
       await apiClient.delete("/api/cart");
     } catch (error) {
-      console.error("Clear cart error:", error);
+      console.error("Clear cart error");
       throw error;
     }
   }
