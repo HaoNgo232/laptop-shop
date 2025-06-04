@@ -1,19 +1,9 @@
-import {
-  IsEnum,
-  IsInt,
-  IsOptional,
-  IsString,
-  IsUUID,
-  Min,
-} from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString, IsUUID, Min } from 'class-validator';
 import { Type } from 'class-transformer';
+import { IQueryProduct } from '@web-ecom/shared-types/products/interfaces';
+import { SortOrder } from '@web-ecom/shared-types/products/enums';
 
-export enum SortOrder {
-  ASC = 'ASC',
-  DESC = 'DESC',
-}
-
-export class QueryProductDto {
+export class QueryProductDto implements IQueryProduct {
   @IsOptional()
   @Type(() => Number)
   @IsInt()
@@ -32,7 +22,7 @@ export class QueryProductDto {
 
   @IsOptional()
   @IsString()
-  sortBy?: string = 'created_at';
+  sortBy?: string = 'createdAt';
 
   @IsOptional()
   @IsEnum(SortOrder)

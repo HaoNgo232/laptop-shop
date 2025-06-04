@@ -3,8 +3,8 @@ import { useEffect } from 'react';
 import { LoginForm } from '@/components/forms/LoginForm';
 import { useAuthStore } from '@/stores/authStore';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import type { LoginFormData } from '@/lib/validationSchemas';
 import { Header } from '@/components/layout/Header';
+import type { LoginUser } from '@/types/auth';
 
 export function LoginPage() {
     const navigate = useNavigate();
@@ -23,7 +23,7 @@ export function LoginPage() {
         clearError();
     }, [clearError]);
 
-    const handleLogin = async (credentials: LoginFormData) => {
+    const handleLogin = async (credentials: LoginUser) => {
         try {
             await login(credentials);
         } catch (error) {
@@ -46,7 +46,7 @@ export function LoginPage() {
 
                     <LoginForm
                         onSubmit={handleLogin}
-                        isLoading={isLoading}
+                        loading={isLoading}
                         error={error}
                     />
                 </div>

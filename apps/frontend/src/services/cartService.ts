@@ -2,8 +2,8 @@ import { apiClient } from "./api";
 import type {
   Cart,
   CartResponse,
-  AddToCartRequest,
-  UpdateCartItemRequest,
+  AddToCart,
+  UpdateCartItem,
 } from "@/types/cart";
 
 class CartService {
@@ -23,7 +23,7 @@ class CartService {
   }
 
   // Thêm sản phẩm vào giỏ hàng
-  async addToCart(request: AddToCartRequest): Promise<Cart> {
+  async addToCart(request: AddToCart): Promise<Cart> {
     try {
       console.log("🌐 Making POST request to /api/cart/items:", request);
       const response = await apiClient.post<CartResponse>(
@@ -41,7 +41,7 @@ class CartService {
   }
 
   // Cập nhật số lượng sản phẩm trong giỏ
-  async updateCartItem(request: UpdateCartItemRequest): Promise<Cart> {
+  async updateCartItem(request: UpdateCartItem): Promise<Cart> {
     try {
       const response = await apiClient.put<CartResponse>(
         `/api/cart/items/${request.productId}`,

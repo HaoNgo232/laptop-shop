@@ -8,7 +8,7 @@ import { CategoriesPage } from '@/pages/CategoriesPage';
 import { ProductDetailPage } from '@/pages/ProductDetailPage';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { CheckoutPage } from '@/pages/CheckoutPage';
-import { UserRole } from '@/enums/auth';
+import { UserRole } from '@web-ecom/shared-types/auth/enums';
 import { useEffect } from 'react';
 import { useAuthStore } from '@/stores/authStore';
 

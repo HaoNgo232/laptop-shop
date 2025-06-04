@@ -6,8 +6,8 @@ import { ProductList } from '@/components/ProductList';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { SortOrder } from '@/enums/product';
 import { useProductStore } from '@/stores/productStore';
+import { SortOrder } from '@web-ecom/shared-types/products/enums';
 
 export function ProductsPage() {
     const [searchParams] = useSearchParams();
@@ -23,7 +23,7 @@ export function ProductsPage() {
     } = useProductStore();
 
     const [currentCategory, setCurrentCategory] = useState<string>('all');
-    const [sortBy, setSortBy] = useState('created_at');
+    const [sortBy, setSortBy] = useState('createdAt');
     const [sortOrder, setSortOrder] = useState<SortOrder>(SortOrder.DESC);
 
     // Load data khi component mount
@@ -136,7 +136,7 @@ export function ProductsPage() {
                                     <SelectValue placeholder="Sắp xếp" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="created_at">Mới nhất</SelectItem>
+                                    <SelectItem value="createdAt">Mới nhất</SelectItem>
                                     <SelectItem value="name">Tên A-Z</SelectItem>
                                     <SelectItem value="price">Giá</SelectItem>
                                 </SelectContent>

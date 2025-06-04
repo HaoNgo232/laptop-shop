@@ -48,6 +48,10 @@ export class OrderMapperProvider {
           name: item.product.name,
           price: Number(item.product.price),
           image_url: item.product.image_url || '',
+          category: {
+            id: item.product.category.id,
+            name: item.product.category.name,
+          },
         },
       })),
       order_date: order.order_date,
@@ -93,6 +97,10 @@ export class OrderMapperProvider {
             name: item.product.name,
             price: Number(item.product.price),
             image_url: item.product.image_url || '',
+            category: {
+              id: item.product.category.id,
+              name: item.product.category.name,
+            },
           },
           quantity: item.quantity,
           price_at_purchase: Number(item.price_at_purchase),

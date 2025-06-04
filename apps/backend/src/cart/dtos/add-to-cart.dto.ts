@@ -1,6 +1,7 @@
+import { IAddToCart } from '@web-ecom/shared-types';
 import { IsNumber, IsUUID, Min } from 'class-validator';
 
-export class AddCartItemDto {
+export class AddToCartDto implements IAddToCart {
   @IsUUID()
   productId: string;
 

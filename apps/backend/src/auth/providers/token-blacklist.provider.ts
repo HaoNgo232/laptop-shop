@@ -2,9 +2,10 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThan } from 'typeorm';
-import { TokenBlacklist } from '../entities/token-blacklist.entity';
 import { JwtService } from '@nestjs/jwt';
-import { JwtPayload } from '../interfaces/jwt-payload.interface';
+import { JwtPayload } from '@/auth/interfaces/jwt-payload.interface';
+import { TokenBlacklist } from '@/auth/entities/token-blacklist.entity';
+
 @Injectable()
 export class TokenBlacklistProvider {
   constructor(
@@ -21,10 +22,7 @@ export class TokenBlacklistProvider {
    * @param token Token cần thêm vào blacklist
    * @param type Loại token (access/refresh)
    */
-  async addToBlacklist(
-    token: string,
-    type: 'access' | 'refresh',
-  ): Promise<void> {
+  async addToBlacklist(token: string, type: 'access' | 'refresh'): Promise<void> {
     try {
       // Giải mã token để lấy thời gian hết hạn
       const decoded: JwtPayload = this.jwtService.decode(token);

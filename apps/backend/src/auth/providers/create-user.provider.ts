@@ -7,11 +7,11 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { BcryptProvider } from './bcrypt.provider';
-import { User } from '../entities/user.entity';
-import { RegisterUserDto } from '../dtos/register-user.dto';
-import { MailService } from '../../mail/mail.service';
-import { CartService } from '../../cart/cart.service';
+import { BcryptProvider } from '@/auth/providers/bcrypt.provider';
+import { User } from '@/auth/entities/user.entity';
+import { RegisterUserDto } from '@/auth/dtos/register-user.dto';
+import { MailService } from '@/mail/mail.service';
+import { CartService } from '@/cart/cart.service';
 
 @Injectable()
 export class CreateUserProvider {

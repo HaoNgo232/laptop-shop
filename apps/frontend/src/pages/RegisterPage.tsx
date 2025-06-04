@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 import { RegisterForm } from '@/components/forms/RegisterForm';
-import type { RegisterFormData } from '@/lib/validationSchemas';
+import type { RegisterUser } from '@/types/auth';
 import { useAuthStore } from '@/stores/authStore';
 
 export function RegisterPage() {
@@ -18,7 +18,7 @@ export function RegisterPage() {
         clearError();
     }, [clearError]);
 
-    const handleRegister = async (userData: RegisterFormData) => {
+    const handleRegister = async (userData: RegisterUser) => {
         try {
             await register(userData);
             // Sau khi đăng ký thành công, chuyển đến trang login

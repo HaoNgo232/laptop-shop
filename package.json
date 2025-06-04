@@ -11,14 +11,20 @@
         "pnpm": ">=8.0.0"
     },
     "scripts": {
-        "dev": "pnpm --parallel --filter \"./apps/*\" dev",
+        "dev": "pnpm run dev:setup && concurrently -n \"shared-types,frontend,backend\" -c \"yellow,cyan,green\" \"pnpm run shared-types:dev\" \"pnpm run frontend:dev\" \"pnpm run backend:dev\"",
+        "dev:setup": "pnpm run shared-types:build && pnpm run backend:build",
         "build": "pnpm --filter \"./packages/*\" build && pnpm --filter \"./apps/*\" build",
         "lint": "pnpm --parallel --filter \"./apps/*\" lint",
         "test": "pnpm --parallel --filter \"./apps/*\" test",
         "frontend:dev": "pnpm --filter frontend dev",
         "backend:dev": "pnpm --filter backend dev",
         "frontend:build": "pnpm --filter frontend build",
-        "backend:build": "pnpm --filter backend build"
+        "backend:build": "pnpm --filter backend build",
+        "shared-types:dev": "pnpm --filter @web-ecom/shared-types dev",
+        "shared-types:build": "pnpm --filter @web-ecom/shared-types build",
+        "dev:backend-full": "pnpm run dev:setup && concurrently -n \"shared-types,backend\" -c \"yellow,green\" \"pnpm run shared-types:dev\" \"pnpm run backend:dev\"",
+        "dev:frontend-only": "pnpm run shared-types:build && concurrently -n \"shared-types,frontend\" -c \"yellow,cyan\" \"pnpm run shared-types:dev\" \"pnpm run frontend:dev\"",
+        "clean": "pnpm --parallel --filter \"./apps/*\" clean && pnpm --filter @web-ecom/shared-types clean"
     },
     "devDependencies": {
         "typescript": "^5.7.3",

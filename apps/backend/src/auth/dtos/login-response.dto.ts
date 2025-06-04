@@ -1,9 +1,10 @@
-import { User } from '../entities/user.entity';
+import { ILoginResponse } from '@web-ecom/shared-types';
+import { UserProfileDto } from '@/auth/dtos/user-profile.dto';
 
-export class LoginResponseDto {
+export class LoginResponseDto implements ILoginResponse {
   accessToken: string;
 
   refreshToken: string;
 
-  user: User;
+  user: UserProfileDto;
 }

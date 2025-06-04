@@ -1,8 +1,8 @@
+import { BaseEntity } from '@/common/entities/base.entity';
+import { CartItem } from '@/cart/entities/cart-item.entity';
+import { Min, MinLength } from 'class-validator';
 import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Category } from './category.entity';
-import { CartItem } from '../../cart/entities/cart-item.entity';
-import { Min, MinLength } from 'class-validator';
-import { BaseEntity } from '../../common/entities/base.entity';
 
 @Entity('products')
 export class Product extends BaseEntity {

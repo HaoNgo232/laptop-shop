@@ -2,9 +2,9 @@ import { create } from "zustand";
 import { authService } from "@/services/authService";
 import type {
   User,
-  LoginUserDto,
-  RegisterUserDto,
-  UpdateProfileDto,
+  LoginUser,
+  RegisterUser,
+  UpdateProfile,
 } from "@/types/auth";
 import type { ApiError } from "@/types/api";
 import { useCartStore } from "@/stores/cartStore";
@@ -17,10 +17,10 @@ interface AuthState {
   error: string | null;
 
   // Actions
-  login: (credentials: LoginUserDto) => Promise<void>;
-  register: (userData: RegisterUserDto) => Promise<void>;
+  login: (credentials: LoginUser) => Promise<void>;
+  register: (userData: RegisterUser) => Promise<void>;
   logout: () => Promise<void>;
-  updateProfile: (data: UpdateProfileDto) => Promise<void>;
+  updateProfile: (data: UpdateProfile) => Promise<void>;
   initializeAuth: () => Promise<void>;
   clearError: () => void;
 }

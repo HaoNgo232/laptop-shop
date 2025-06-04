@@ -1,8 +1,8 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { User } from '../entities/user.entity';
-import { Repository } from 'typeorm';
-import { BcryptProvider } from './bcrypt.provider';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { BcryptProvider } from '@/auth/providers/bcrypt.provider';
+import { User } from '@/auth/entities/user.entity';
 
 @Injectable()
 export class ValidateUserProvider {
@@ -22,10 +22,7 @@ export class ValidateUserProvider {
     }
 
     // Kiểm tra mật khẩu
-    const isPasswordValid = await this.bcryptProvider.comparePassword(
-      password,
-      user.password_hash,
-    );
+    const isPasswordValid = await this.bcryptProvider.comparePassword(password, user.password_hash);
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Mật khẩu không đúng');

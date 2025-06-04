@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CreditCard, Smartphone, Truck } from 'lucide-react';
-import { PaymentMethodEnum } from '@/enums/order';
+import { PaymentMethodEnum } from '@web-ecom/shared-types/orders/enums';
 
 interface PaymentMethodOption {
     method: PaymentMethodEnum;

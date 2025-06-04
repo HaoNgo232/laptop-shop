@@ -1,11 +1,11 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { ConfigService } from '@nestjs/config';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../entities/user.entity';
-import { TokenBlacklistProvider } from '../providers/token-blacklist.provider';
+import { TokenBlacklistProvider } from '@/auth/providers/token-blacklist.provider';
+import { User } from '@/auth/entities/user.entity';
 import { Request } from 'express';
 
 @Injectable()
@@ -35,13 +35,10 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const authHeader = req.headers.authorization;
     if (authHeader && authHeader.startsWith('Bearer ')) {
       const token = authHeader.split(' ')[1];
-      const isBlacklisted =
-        await this.tokenBlacklistProvider.isBlacklisted(token);
+      const isBlacklisted = await this.tokenBlacklistProvider.isBlacklisted(token);
 
       if (isBlacklisted) {
-        throw new UnauthorizedException(
-          'Token đã hết hạn hoặc đã bị vô hiệu hóa',
-        );
+        throw new UnauthorizedException('Token đã hết hạn hoặc đã bị vô hiệu hóa');
       }
     }
 

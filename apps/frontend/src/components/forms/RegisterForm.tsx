@@ -1,16 +1,15 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Loader2 } from 'lucide-react';
-import { RegisterSchema, type RegisterFormData } from '@/lib/validationSchemas';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { RegisterUserSchema, type RegisterUser } from '@/types/auth';
 
 interface RegisterFormProps {
-    onSubmit: (userData: RegisterFormData) => Promise<void>;
+    onSubmit: (userData: RegisterUser) => Promise<void>;
     isLoading?: boolean;
     error?: string | null;
 }
@@ -21,8 +20,8 @@ export function RegisterForm({ onSubmit, isLoading = false, error }: RegisterFor
         handleSubmit,
         formState: { errors, isSubmitting },
         watch,
-    } = useForm<RegisterFormData>({
-        resolver: zodResolver(RegisterSchema),
+    } = useForm<RegisterUser>({
+        resolver: zodResolver(RegisterUserSchema),
         defaultValues: {
             email: '',
             username: '',
@@ -33,7 +32,7 @@ export function RegisterForm({ onSubmit, isLoading = false, error }: RegisterFor
 
     const password = watch('password');
 
-    const handleFormSubmit = async (data: RegisterFormData) => {
+    const handleFormSubmit = async (data: RegisterUser) => {
         try {
             await onSubmit(data);
         } catch (error) {

@@ -1,17 +1,17 @@
+import { LoginResponseDto } from '@/auth/dtos/login-response.dto';
+import { ResetPasswordDto } from '@/auth/dtos/reset-password.dto';
+import { RefreshTokenDto } from '@/auth/dtos/refresh-token.dto';
 import { Injectable } from '@nestjs/common';
-import { CreateUserProvider } from '../providers/create-user.provider';
-import { GenerateTokensProvider } from '../providers/generate-tokens.provider';
-import { ValidateUserProvider } from '../providers/validate-user.provider';
-import { ForgotPasswordProvider } from '../providers/forgot-password.provider';
-import { ResetPasswordProvider } from '../providers/reset-password.provider';
-import { RefreshTokenProvider } from '../providers/refresh-token.provider';
-import { TokenBlacklistProvider } from '../providers/token-blacklist.provider';
-import { RegisterUserDto } from '../dtos/register-user.dto';
-import { LoginUserDto } from '../dtos/login.dto';
-import { User } from '../entities/user.entity';
-import { RefreshTokenDto } from '../dtos/refresh-token.dto';
-import { LoginResponseDto } from '../dtos/login-response.dto';
-import { ResetPasswordDto } from '../dtos/reset-password.dto';
+import { CreateUserProvider } from '@/auth/providers/create-user.provider';
+import { GenerateTokensProvider } from '@/auth/providers/generate-tokens.provider';
+import { ValidateUserProvider } from '@/auth/providers/validate-user.provider';
+import { ForgotPasswordProvider } from '@/auth/providers/forgot-password.provider';
+import { ResetPasswordProvider } from '@/auth/providers/reset-password.provider';
+import { RefreshTokenProvider } from '@/auth/providers/refresh-token.provider';
+import { TokenBlacklistProvider } from '@/auth/providers/token-blacklist.provider';
+import { RegisterUserDto } from '@/auth/dtos/register-user.dto';
+import { LoginUserDto } from '@/auth/dtos/login.dto';
+import { User } from '@/auth/entities/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -63,9 +63,7 @@ export class AuthService {
    * @param refreshTokenDto Refresh token của người dùng.
    * @returns Access token và refresh token mới.
    */
-  async refreshToken(
-    refreshTokenDto: RefreshTokenDto,
-  ): Promise<LoginResponseDto> {
+  async refreshToken(refreshTokenDto: RefreshTokenDto): Promise<LoginResponseDto> {
     return this.refreshTokenProvider.refreshTokens(refreshTokenDto);
   }
 
@@ -74,9 +72,7 @@ export class AuthService {
     return user;
   }
 
-  async generateTokens(
-    user: User,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  async generateTokens(user: User): Promise<{ accessToken: string; refreshToken: string }> {
     const tokens = await this.generateTokensProvider.generateTokens(user);
     return tokens;
   }
@@ -99,10 +95,7 @@ export class AuthService {
     const formattedAccessToken = accessToken.replace('Bearer ', '');
 
     // Thêm access token vào blacklist
-    await this.tokenBlacklistProvider.addToBlacklist(
-      formattedAccessToken,
-      'access',
-    );
+    await this.tokenBlacklistProvider.addToBlacklist(formattedAccessToken, 'access');
 
     // Nếu có refresh token, thêm cả refresh token vào blacklist
     if (refreshToken) {

@@ -1,6 +1,6 @@
+import { OrderStatusEnum } from '@/orders/enums/order-status.enum';
 import { Type } from 'class-transformer';
 import { IsOptional, IsUUID, IsEnum, IsDateString, IsInt, Min } from 'class-validator';
-import { OrderStatusEnum } from '../enums/order-status.enum';
 
 export class AdminOrderQueryDto {
   @IsOptional()

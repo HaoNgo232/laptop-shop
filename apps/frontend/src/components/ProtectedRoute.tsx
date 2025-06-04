@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import type { UserRole } from '@/enums/auth';
+import { UserRole } from '@web-ecom/shared-types/auth/enums';
 import { useAuthStore } from '@/stores/authStore';
 
 interface ProtectedRouteProps {

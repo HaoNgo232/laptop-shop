@@ -1,24 +1,16 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Headers,
-  HttpCode,
-  HttpStatus,
-  Post,
-} from '@nestjs/common';
-import { AuthService } from '../services/auth.service';
-import { UserProfileDto } from '../dtos/user-profile.dto';
-import { AuthType } from '../enums/auth-type.enum';
-import { Auth } from '../decorators/auth.decorator';
-import { RegisterUserDto } from '../dtos/register-user.dto';
-import { LoginResponseDto } from '../dtos/login-response.dto';
-import { RefreshTokenDto } from '../dtos/refresh-token.dto';
-import { ForgotPasswordDto } from '../dtos/forgot-password.dto';
-import { ResetPasswordDto } from '../dtos/reset-password.dto';
-import { CurrentUser } from '../decorators/current-user.decorator';
-import { LoginUserDto } from '../dtos/login.dto';
-import { User } from '../entities/user.entity';
+import { Auth } from '@/auth/decorators/auth.decorator';
+import { CurrentUser } from '@/auth/decorators/current-user.decorator';
+import { ForgotPasswordDto } from '@/auth/dtos/forgot-password.dto';
+import { LoginResponseDto } from '@/auth/dtos/login-response.dto';
+import { LoginUserDto } from '@/auth/dtos/login.dto';
+import { RefreshTokenDto } from '@/auth/dtos/refresh-token.dto';
+import { RegisterUserDto } from '@/auth/dtos/register-user.dto';
+import { ResetPasswordDto } from '@/auth/dtos/reset-password.dto';
+import { UserProfileDto } from '@/auth/dtos/user-profile.dto';
+import { User } from '@/auth/entities/user.entity';
+import { AuthType } from '@/auth/enums/auth-type.enum';
+import { AuthService } from '@/auth/services/auth.service';
+import { Body, Controller, Get, Headers, HttpCode, HttpStatus, Post } from '@nestjs/common';
 
 @Controller('api/auth')
 export class AuthController {
@@ -27,9 +19,7 @@ export class AuthController {
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
   @Auth(AuthType.None)
-  async register(
-    @Body() registerUserDto: RegisterUserDto,
-  ): Promise<UserProfileDto> {
+  async register(@Body() registerUserDto: RegisterUserDto): Promise<UserProfileDto> {
     return this.authService.register(registerUserDto);
   }
 
@@ -52,18 +42,14 @@ export class AuthController {
 
   @Get('me')
   @HttpCode(HttpStatus.OK)
-  getProfile(
-    @CurrentUser() user: Omit<User, 'password'>,
-  ): Omit<User, 'password'> {
+  getProfile(@CurrentUser() user: Omit<User, 'password'>): Omit<User, 'password'> {
     return user;
   }
 
   @Post('refresh-token')
   @HttpCode(HttpStatus.OK)
   @Auth(AuthType.None)
-  async refreshToken(
-    @Body() refreshTokenDto: RefreshTokenDto,
-  ): Promise<LoginResponseDto> {
+  async refreshToken(@Body() refreshTokenDto: RefreshTokenDto): Promise<LoginResponseDto> {
     return this.authService.refreshToken(refreshTokenDto);
   }
 

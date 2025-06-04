@@ -1,14 +1,14 @@
-import { apiClient } from "./api";
 import type {
-  ProductDetail,
-  ProductQueryParams,
-  ProductListResponse,
   CategoryListResponse,
+  ProductDetail,
+  ProductListResponse,
+  QueryProduct,
 } from "@/types/product";
+import { apiClient } from "./api";
 
 class ProductService {
   // Lấy danh sách sản phẩm với filters
-  async getProducts(params?: ProductQueryParams): Promise<ProductListResponse> {
+  async getProducts(params?: QueryProduct): Promise<ProductListResponse> {
     try {
       const response = await apiClient.get<ProductListResponse>(
         "/api/products",
@@ -37,9 +37,8 @@ class ProductService {
   // Lấy danh sách categories
   async getCategories(): Promise<CategoryListResponse> {
     try {
-      const response = await apiClient.get<CategoryListResponse>(
-        "/api/categories",
-      );
+      const response =
+        await apiClient.get<CategoryListResponse>("/api/categories");
       return response;
     } catch (error) {
       console.error("Lỗi khi lấy danh sách loại sản phẩm:", error);
@@ -50,7 +49,7 @@ class ProductService {
   // Tìm kiếm sản phẩm
   async searchProducts(
     searchTerm: string,
-    params?: ProductQueryParams,
+    params?: QueryProduct,
   ): Promise<ProductListResponse> {
     try {
       const searchParams = {

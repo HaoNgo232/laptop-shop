@@ -1,7 +1,3 @@
-export interface JwtPayload {
-  sub: string;
-  email: string;
-  role: string;
-  iat?: number;
-  exp?: number;
-}
+import { IJwtPayload } from '@web-ecom/shared-types/auth/interfaces';
+
+export interface JwtPayload extends IJwtPayload {}

@@ -1,20 +1,3 @@
-// Auth enums
-export enum UserRole {
-  ADMIN = "admin",
-  USER = "user",
-}
-
-export enum AuthType {
-  Bearer = "Bearer",
-  None = "None",
-}
-
-// Product enums
-export enum SortOrder {
-  ASC = "ASC",
-  DESC = "DESC",
-}
-
 // Payment enums
 export enum PaymentStatus {
   PENDING = "pending",

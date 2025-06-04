@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { ICategory } from '@web-ecom/shared-types';
 
-export class CategoryDto {
+export class CategoryDto implements ICategory {
   @ApiProperty({
     description: 'ID của danh mục',
     example: 'e87b56c6-8b4a-4c7d-b7e3-2c0b94c1c2d1',
@@ -24,11 +25,11 @@ export class CategoryDto {
     description: 'Thời gian tạo',
     example: '2024-01-01T00:00:00.000Z',
   })
-  created_at: Date;
+  createdAt: Date;
 
   @ApiProperty({
     description: 'Thời gian cập nhật',
     example: '2024-01-01T00:00:00.000Z',
   })
-  updated_at: Date;
+  updatedAt: Date;
 }

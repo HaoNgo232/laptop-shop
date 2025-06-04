@@ -1,9 +1,10 @@
 import { Exclude, Expose } from 'class-transformer';
 import { IsEmail, IsEnum, IsString, IsUUID, IsDate, IsOptional } from 'class-validator';
-import { UserRole } from '../enums/user-role';
+import { IUserProfile } from '@web-ecom/shared-types';
+import { UserRole } from '@/auth/enums/user-role.enum';
 
-@Expose() // Chỉ hiển thị các trường được định nghĩa rõ ràng
-export class UserProfileDto {
+@Expose()
+export class UserProfileDto implements IUserProfile {
   @IsUUID()
   id: string;
 
@@ -26,15 +27,11 @@ export class UserProfileDto {
   role: UserRole;
 
   @IsDate()
-  created_at: Date;
+  createdAt: Date;
 
   @IsDate()
-  updated_at: Date;
+  updatedAt: Date;
 
   @Exclude()
   password_hash?: string;
-
-  constructor(partial: Partial<UserProfileDto>) {
-    Object.assign(this, partial);
-  }
 }

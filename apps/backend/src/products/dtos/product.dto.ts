@@ -1,4 +1,4 @@
-import { CategoryBriefDto } from './category-brief.dto';
+import { CategoryBriefDto } from '@/products/dtos/category-brief.dto';
 
 export class ProductDto {
   id: string;
@@ -15,7 +15,7 @@ export class ProductDto {
 
   category: CategoryBriefDto;
 
-  created_at: Date;
+  createdAt: Date;
 
-  updated_at: Date;
+  updatedAt: Date;
 }

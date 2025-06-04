@@ -9,14 +9,14 @@ import {
   HttpStatus,
   HttpCode,
 } from '@nestjs/common';
-import { CartService } from './cart.service';
-import { CartDto } from './dtos/cart.dto';
-import { AddCartItemDto } from './dtos/add-cart-item.dto';
-import { UpdateCartItemDto } from './dtos/update-cart-item.dto';
-import { Auth } from '../auth/decorators/auth.decorator';
-import { AuthType } from '../auth/enums/auth-type.enum';
-import { CurrentUser } from '../auth/decorators/current-user.decorator';
-import { UserRole } from '../auth/enums/user-role';
+import { Auth } from '@/auth/decorators/auth.decorator';
+import { AuthType } from '@/auth/enums/auth-type.enum';
+import { UserRole } from '@/auth/enums/user-role.enum';
+import { CartDto } from '@/cart/dtos/cart.dto';
+import { CartService } from '@/cart/cart.service';
+import { CurrentUser } from '@/auth/decorators/current-user.decorator';
+import { AddToCartDto } from '@/cart/dtos/add-to-cart.dto';
+import { UpdateCartItemDto } from '@/cart/dtos/update-cart-item.dto';
 
 @Controller('api/cart')
 @Auth(AuthType.Bearer, UserRole.USER, UserRole.ADMIN)
@@ -35,10 +35,7 @@ export class CartController {
    * Thêm sản phẩm vào giỏ hàng
    */
   @Post('items')
-  addItem(
-    @CurrentUser('sub') userId: string,
-    @Body() addItemDto: AddCartItemDto,
-  ): Promise<CartDto> {
+  addItem(@CurrentUser('sub') userId: string, @Body() addItemDto: AddToCartDto): Promise<CartDto> {
     return this.cartService.addItemToCart(userId, addItemDto.productId, addItemDto.quantity);
   }
 

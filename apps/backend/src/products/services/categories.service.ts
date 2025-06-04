@@ -1,16 +1,12 @@
-import {
-  Injectable,
-  NotFoundException,
-  ConflictException,
-} from '@nestjs/common';
+import { CategoryDetailDto } from '@/products/dtos/category-detail.dto';
+import { CategoryDto } from '@/products/dtos/category.dto';
+import { CreateCategoryDto } from '@/products/dtos/create-category.dto';
+import { UpdateCategoryDto } from '@/products/dtos/update-category.dto';
+import { Category } from '@/products/entities/category.entity';
+import { CategoryMapperProvider } from '@/products/providers/category-mapper.provider';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Category } from '../entities/category.entity';
-import { CreateCategoryDto } from '../dtos/create-category.dto';
-import { UpdateCategoryDto } from '../dtos/update-category.dto';
-import { CategoryDto } from '../dtos/category.dto';
-import { CategoryDetailDto } from '../dtos/category-detail.dto';
-import { CategoryMapperProvider } from '../providers/category-mapper.provider';
 
 @Injectable()
 export class CategoriesService {
@@ -22,7 +18,7 @@ export class CategoriesService {
 
   async findAll(): Promise<CategoryDto[]> {
     const categories = await this.categoryRepository.find({
-      order: { created_at: 'DESC' },
+      order: { createdAt: 'DESC' },
     });
 
     return this.categoryMapper.toCategoriesToDtos(categories);
@@ -42,10 +38,7 @@ export class CategoriesService {
     return this.categoryMapper.toCategoryDto(savedCategory);
   }
 
-  async update(
-    id: string,
-    updateCategoryDto: UpdateCategoryDto,
-  ): Promise<CategoryDto> {
+  async update(id: string, updateCategoryDto: UpdateCategoryDto): Promise<CategoryDto> {
     const category = await this.findCategoryByIdOrThrow(id);
 
     if (updateCategoryDto.name && updateCategoryDto.name !== category.name) {

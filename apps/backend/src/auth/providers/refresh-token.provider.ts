@@ -1,14 +1,14 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import jwtConfig from '../config/jwt.config';
-import { ConfigType } from '@nestjs/config';
-import { GenerateTokensProvider } from './generate-tokens.provider';
-import { RefreshTokenDto } from '../dtos/refresh-token.dto';
+import jwtConfig from '@/auth/config/jwt.config';
+import type { ConfigType } from '@nestjs/config';
+import { GenerateTokensProvider } from '@/auth/providers/generate-tokens.provider';
+import { RefreshTokenDto } from '@/auth/dtos/refresh-token.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../entities/user.entity';
-import { JwtPayload } from '../interfaces/jwt-payload.interface';
-import { LoginResponseDto } from '../dtos/login-response.dto';
+import { JwtPayload } from '@/auth/interfaces/jwt-payload.interface';
+import { LoginResponseDto } from '@/auth/dtos/login-response.dto';
+import { User } from '@/auth/entities/user.entity';
 
 @Injectable()
 export class RefreshTokenProvider {
@@ -24,17 +24,12 @@ export class RefreshTokenProvider {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  public async refreshTokens(
-    refreshTokenDto: RefreshTokenDto,
-  ): Promise<LoginResponseDto> {
+  public async refreshTokens(refreshTokenDto: RefreshTokenDto): Promise<LoginResponseDto> {
     try {
       // Xác thực refresh token
-      const payload = await this.jwtService.verifyAsync<JwtPayload>(
-        refreshTokenDto.refreshToken,
-        {
-          secret: this.jwtConfiguration.secret,
-        },
-      );
+      const payload = await this.jwtService.verifyAsync<JwtPayload>(refreshTokenDto.refreshToken, {
+        secret: this.jwtConfiguration.secret,
+      });
 
       // Lấy thông tin user từ database
       const user = await this.userRepository.findOne({

@@ -1,13 +1,13 @@
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
-import { BcryptProvider } from './bcrypt.provider';
-import { ResetPasswordDto } from '../dtos/reset-password.dto';
-import { ConfigType } from '@nestjs/config';
-import jwtConfig from '../config/jwt.config';
-import { ResetPasswordPayload } from '../interfaces/reset-password-payload.interface'; // Import ResetPasswordPayload
+import { BcryptProvider } from '@/auth/providers/bcrypt.provider';
+import { ResetPasswordDto } from '@/auth/dtos/reset-password.dto';
+import type { ConfigType } from '@nestjs/config';
+import jwtConfig from '@/auth/config/jwt.config';
+import { ResetPasswordPayload } from '@/auth/interfaces/reset-password-payload.interface'; // Import ResetPasswordPayload
+import { User } from '@/auth/entities/user.entity';
 
 @Injectable()
 export class ResetPasswordProvider {
@@ -22,21 +22,17 @@ export class ResetPasswordProvider {
 
   async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<void> {
     try {
-      // Xác thực token
-      const resetPayload =
-        await this.jwtService.verifyAsync<ResetPasswordPayload>( // Sử dụng ResetPasswordPayload
-          resetPasswordDto.token,
-          {
-            secret: this.jwtConfiguration.secret,
-          },
-        );
+      const resetPayload = await this.jwtService.verifyAsync<ResetPasswordPayload>(
+        resetPasswordDto.token,
+        {
+          secret: this.jwtConfiguration.secret,
+        },
+      );
 
-      // Kiểm tra loại token
       if (resetPayload.type !== 'password-reset') {
         throw new UnauthorizedException('Token không hợp lệ');
       }
 
-      // Tìm user
       const user = await this.userRepository.findOne({
         where: { id: resetPayload.sub },
       });
@@ -46,9 +42,7 @@ export class ResetPasswordProvider {
       }
 
       // Mã hóa mật khẩu mới
-      const hashedPassword = await this.bcryptProvider.hashPassword(
-        resetPasswordDto.newPassword,
-      );
+      const hashedPassword = await this.bcryptProvider.hashPassword(resetPasswordDto.newPassword);
 
       // Cập nhật mật khẩu
       user.password_hash = hashedPassword;

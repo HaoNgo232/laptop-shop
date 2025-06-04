@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { cartService } from "@/services/cartService";
-import type { Cart, AddToCartDto, UpdateCartItemDto } from "@/types/cart";
+import type { Cart, AddToCart, UpdateCartItem } from "@/types/cart";
 
 interface CartState {
   cart: Cart | null;
@@ -49,7 +49,7 @@ export const useCartStore = create<CartState>((set, get) => ({
   addToCart: async (productId, quantity) => {
     try {
       set({ error: null });
-      const request: AddToCartDto = { productId, quantity };
+      const request: AddToCart = { productId, quantity };
       const updatedCart = await cartService.addToCart(request);
       set({ cart: updatedCart });
     } catch (error: any) {
@@ -61,7 +61,7 @@ export const useCartStore = create<CartState>((set, get) => ({
   updateCartItem: async (productId, quantity) => {
     try {
       set({ error: null });
-      const request: UpdateCartItemDto = { productId, quantity };
+      const request: UpdateCartItem = { productId, quantity };
       const updatedCart = await cartService.updateCartItem(request);
       set({ cart: updatedCart });
     } catch (error: any) {

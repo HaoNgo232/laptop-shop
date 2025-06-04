@@ -3,7 +3,7 @@ import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Auth } from '@/auth/decorators/auth.decorator';
 import { AuthType } from '@/auth/enums/auth-type.enum';
 import { Body, Get, Param, ParseUUIDPipe, Query } from '@nestjs/common';
-import { UserRole } from '@/auth/enums/user-role';
+import { UserRole } from '@/auth/enums/user-role.enum';
 import { Controller, Patch } from '@nestjs/common';
 import { ApiBearerAuth } from '@nestjs/swagger';
 

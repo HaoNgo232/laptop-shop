@@ -1,15 +1,10 @@
-import {
-  Injectable,
-  NotFoundException,
-  BadRequestException,
-  ConflictException,
-} from '@nestjs/common';
+import { CartDto } from '@/cart/dtos/cart.dto';
+import { CartItem } from '@/cart/entities/cart-item.entity';
+import { Cart } from '@/cart/entities/cart.entity';
+import { Product } from '@/products/entities/product.entity';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Cart } from './entities/cart.entity';
-import { CartItem } from './entities/cart-item.entity';
-import { CartDto } from './dtos/cart.dto';
-import { Product } from '../products/entities/product.entity';
 
 @Injectable()
 export class CartService {
@@ -38,11 +33,7 @@ export class CartService {
   async getCartEntityByUserId(userId: string): Promise<Cart> {
     const cart = await this.cartRepository.findOne({
       where: { user: { id: userId } },
-      relations: [
-        'cart_items',
-        'cart_items.product',
-        'cart_items.product.category',
-      ],
+      relations: ['cart_items', 'cart_items.product', 'cart_items.product.category'],
     });
 
     if (!cart) {
@@ -56,11 +47,7 @@ export class CartService {
   /**
    * Thêm sản phẩm vào cart
    */
-  async addItemToCart(
-    userId: string,
-    productId: string,
-    quantity: number,
-  ): Promise<CartDto> {
+  async addItemToCart(userId: string, productId: string, quantity: number): Promise<CartDto> {
     // Kiểm tra sản phẩm có tồn tại không
     const product = await this.productRepository.findOne({
       where: { id: productId },
@@ -164,11 +151,7 @@ export class CartService {
   private async findOrCreateCart(userId: string): Promise<Cart> {
     let cart = await this.cartRepository.findOne({
       where: { user: { id: userId } },
-      relations: [
-        'cart_items',
-        'cart_items.product',
-        'cart_items.product.category',
-      ],
+      relations: ['cart_items', 'cart_items.product', 'cart_items.product.category'],
     });
 
     if (!cart) {
@@ -180,11 +163,7 @@ export class CartService {
       // Reload với relations
       const reloadedCart = await this.cartRepository.findOne({
         where: { id: cart.id },
-        relations: [
-          'cart_items',
-          'cart_items.product',
-          'cart_items.product.category',
-        ],
+        relations: ['cart_items', 'cart_items.product', 'cart_items.product.category'],
       });
 
       if (!reloadedCart) {
@@ -205,30 +184,25 @@ export class CartService {
       id: cart.id,
       items:
         cart.cart_items?.map((item) => ({
+          id: item.id,
           product: {
             id: item.product.id,
             name: item.product.name,
             price: item.product.price,
             image_url: item.product.image_url ?? '',
-            description: item.product.description,
             stock_quantity: item.product.stock_quantity,
             category: {
-              id: item.product.category?.id || '',
-              name: item.product.category?.name || '',
+              id: item.product.category.id,
+              name: item.product.category.name,
             },
-            createdAt: item.product.created_at.toISOString(),
-            updatedAt: item.product.updated_at.toISOString(),
           },
           quantity: item.quantity,
           price_at_addition: item.price_at_addition,
         })) || [],
-      total_items:
-        cart.cart_items?.reduce((acc, item) => acc + item.quantity, 0) || 0,
+      total_items: cart.cart_items?.reduce((acc, item) => acc + item.quantity, 0) || 0,
       total_price:
-        cart.cart_items?.reduce(
-          (acc, item) => acc + item.price_at_addition * item.quantity,
-          0,
-        ) || 0,
+        cart.cart_items?.reduce((acc, item) => acc + item.price_at_addition * item.quantity, 0) ||
+        0,
     };
   }
 }

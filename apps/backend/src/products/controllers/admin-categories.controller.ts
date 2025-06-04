@@ -1,11 +1,11 @@
+import { Auth } from '@/auth/decorators/auth.decorator';
+import { AuthType } from '@/auth/enums/auth-type.enum';
+import { UserRole } from '@/auth/enums/user-role.enum';
+import { CategoryDto } from '@/products/dtos/category.dto';
+import { CreateCategoryDto } from '@/products/dtos/create-category.dto';
+import { UpdateCategoryDto } from '@/products/dtos/update-category.dto';
+import { CategoriesService } from '@/products/services/categories.service';
 import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
-import { CategoriesService } from '../services/categories.service';
-import { CreateCategoryDto } from '../dtos/create-category.dto';
-import { UpdateCategoryDto } from '../dtos/update-category.dto';
-import { CategoryDto } from '../dtos/category.dto';
-import { AuthType } from '../../auth/enums/auth-type.enum';
-import { UserRole } from '../../auth/enums/user-role';
-import { Auth } from '../../auth/decorators/auth.decorator';
 
 @Controller('api/admin.categories')
 @Auth(AuthType.Bearer, UserRole.ADMIN)

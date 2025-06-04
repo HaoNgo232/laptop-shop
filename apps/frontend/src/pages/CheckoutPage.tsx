@@ -9,7 +9,7 @@ import { PaymentMethodSelection } from '@/components/checkout/PaymentMethodSelec
 import { OrderSummary } from '@/components/checkout/OrderSummary';
 import { SepayQrDisplay } from '@/components/checkout/SepayQrDisplay';
 import type { ShippingAddress } from '@/types/order';
-import { PaymentMethodEnum, PaymentStatusEnum } from '@/enums/order';
+import { PaymentMethodEnum, PaymentStatusEnum } from '@web-ecom/shared-types/orders/enums';
 import { useAuthStore } from '@/stores/authStore';
 import { useCartStore } from '@/stores/cartStore';
 import { useCheckoutStore } from '@/stores/checkoutStore';

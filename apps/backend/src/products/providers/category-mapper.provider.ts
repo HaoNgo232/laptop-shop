@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { plainToClass } from 'class-transformer';
-import { Category } from '../entities/category.entity';
-import { CategoryDto } from '../dtos/category.dto';
-import { CategoryDetailDto } from '../dtos/category-detail.dto';
-import { ProductDto } from '../dtos/product.dto';
+import { Category } from '@/products/entities/category.entity';
+import { CategoryDto } from '@/products/dtos/category.dto';
+import { CategoryDetailDto } from '@/products/dtos/category-detail.dto';
+import { ProductDto } from '@/products/dtos/product.dto';
 
 @Injectable()
 export class CategoryMapperProvider {
@@ -15,8 +15,8 @@ export class CategoryMapperProvider {
       id: category.id,
       name: category.name,
       description: category.description,
-      created_at: category.created_at,
-      updated_at: category.updated_at,
+      createdAt: category.createdAt,
+      updatedAt: category.updatedAt,
     };
   }
 
@@ -47,8 +47,8 @@ export class CategoryMapperProvider {
             id: category.id,
             name: category.name,
           },
-          created_at: product.created_at,
-          updated_at: product.updated_at,
+          createdAt: product.createdAt,
+          updatedAt: product.updatedAt,
         })) || [],
     };
   }

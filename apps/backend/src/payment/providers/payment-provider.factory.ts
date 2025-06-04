@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { PaymentMethodEnum } from '@/payment/enums/payment-method.enum';
 import { PaymentProvider } from '@/payment/interfaces/payment-provider.interfaces';
 import { SepayProvider } from './sepay.provider';
-import { PaymentMethodEnum } from '@/payment/enums/payment-method.enum';
 
 @Injectable()
 export class PaymentProviderFactory {

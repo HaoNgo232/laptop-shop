@@ -1,25 +1,23 @@
-import { AccessTokenGuard } from './auth/guards/access-token/access-token.guard';
-import { validationSchema } from './config/validation.schema';
-import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import 'dotenv/config';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { MailModule } from './mail/mail.module';
-import { ProductsModule } from './products/products.module';
-import appConfig from './config/app.config';
-import databaseConfig from './config/database.config';
-import jwtConfig from './auth/config/jwt.config';
-import { APP_GUARD, APP_FILTER } from '@nestjs/core';
-import { AuthenticationGuard } from './auth/guards/authentication/authentication.guard';
-import { JwtModule } from '@nestjs/jwt';
-import { CartModule } from './cart/cart.module';
-import { OrdersModule } from '@/orders/orders.module';
-// import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
-import { PaymentModule } from './payment/payment.module';
+import { AuthModule } from '@/auth/auth.module';
+import jwtConfig from '@/auth/config/jwt.config';
+import { CartModule } from '@/cart/cart.module';
+import appConfig from '@/config/app.config';
+import { MailModule } from '@/mail/mail.module';
+import databaseConfig from '@/config/database.config';
 import sepayConfig from '@/config/sepay.config';
+import { validationSchema } from '@/config/validation.schema';
+import { ProductsModule } from '@/products/products.module';
+import { OrdersModule } from '@/orders/orders.module';
+import { PaymentModule } from '@/payment/payment.module';
+import { AppController } from '@/app.controller';
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AppService } from '@/app.service';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthenticationGuard } from '@/auth/guards/authentication/authentication.guard';
+import { AccessTokenGuard } from '@/auth/guards/access-token/access-token.guard';
 
 @Module({
   imports: [

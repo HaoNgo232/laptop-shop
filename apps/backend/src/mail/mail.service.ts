@@ -1,7 +1,6 @@
-// filepath: /media/hao/Work/Documents/Apps/Web-Ecom/server/src/mail/mail.service.ts
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
-import { User } from '../auth/entities/user.entity';
+import { User } from '@/auth/entities/user.entity';
 
 @Injectable()
 export class MailService {

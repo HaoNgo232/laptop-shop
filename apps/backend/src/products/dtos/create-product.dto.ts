@@ -1,13 +1,7 @@
-import {
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-  IsUUID,
-  IsUrl,
-  Min,
-} from 'class-validator';
+import { ICreateProduct } from '@web-ecom/shared-types';
+import { IsNotEmpty, IsNumber, IsString, IsUrl, IsUUID, Min } from 'class-validator';
 
-export class CreateProductDto {
+export class CreateProductDto implements ICreateProduct {
   @IsString()
   @IsNotEmpty()
   name: string;

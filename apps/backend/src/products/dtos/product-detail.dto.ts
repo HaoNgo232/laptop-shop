@@ -1,4 +1,4 @@
-import { CategoryDto } from './category.dto';
+import { CategoryDto } from '@/products/dtos/category.dto';
 
 export class ProductDetailDto {
   id: string;
@@ -15,9 +15,9 @@ export class ProductDetailDto {
 
   category: CategoryDto;
 
-  created_at: Date;
+  createdAt: Date;
 
-  updated_at: Date;
+  updatedAt: Date;
 
   // @ApiProperty({
   //   description: 'Danh sách đánh giá sản phẩm',

@@ -2,13 +2,16 @@ import type {
   CreateOrderRequest,
   OrderDetail,
   QRCodeResponse,
+  ShippingAddress,
 } from "@/types/order";
-import { PaymentStatusEnum, PaymentMethodEnum } from "@/enums/order";
-import type { ShippingAddress } from "@/types/order";
 import { create } from "zustand";
 import { orderService } from "@/services/orderService";
 import { useCartStore } from "@/stores/cartStore";
 import type { ApiError } from "@/types/api";
+import {
+  PaymentMethodEnum,
+  PaymentStatusEnum,
+} from "@web-ecom/shared-types/orders/enums";
 
 interface CheckoutState {
   // State
@@ -59,7 +62,7 @@ export const useCheckoutStore = create<CheckoutState>((set, get) => ({
 
       const request: CreateOrderRequest = {
         shippingAddress: shippingAddress.fullAddress,
-        paymentMethod,
+        paymentMethod: paymentMethod,
         note: shippingAddress.note,
       };
 
@@ -104,7 +107,7 @@ export const useCheckoutStore = create<CheckoutState>((set, get) => ({
       try {
         const orderDetail = await orderService.checkPaymentStatus(orderId);
 
-        if (orderDetail.payment_status === "PAID") {
+        if (orderDetail.payment_status === PaymentStatusEnum.PAID) {
           set({
             paymentStatus: PaymentStatusEnum.PAID,
             createdOrder: orderDetail,
@@ -114,8 +117,8 @@ export const useCheckoutStore = create<CheckoutState>((set, get) => ({
           const cartStore = useCartStore.getState();
           await cartStore.clearCart();
         } else if (
-          orderDetail.payment_status === "FAILED" ||
-          orderDetail.payment_status === "CANCELLED"
+          orderDetail.payment_status === PaymentStatusEnum.FAILED ||
+          orderDetail.payment_status === PaymentStatusEnum.CANCELLED
         ) {
           set({ paymentStatus: PaymentStatusEnum.FAILED });
           get().stopPaymentPolling();
@@ -129,16 +132,19 @@ export const useCheckoutStore = create<CheckoutState>((set, get) => ({
     set({ pollingIntervalId: intervalId });
 
     // Auto stop sau 10 phút (timeout)
-    setTimeout(() => {
-      const currentStatus = get().paymentStatus;
-      if (currentStatus === PaymentStatusEnum.WAITING) {
-        get().stopPaymentPolling();
-        set({
-          paymentStatus: PaymentStatusEnum.FAILED,
-          error: "Thời gian chờ thanh toán đã hết. Vui lòng thử lại.",
-        });
-      }
-    }, 10 * 60 * 1000);
+    setTimeout(
+      () => {
+        const currentStatus = get().paymentStatus;
+        if (currentStatus === PaymentStatusEnum.WAITING) {
+          get().stopPaymentPolling();
+          set({
+            paymentStatus: PaymentStatusEnum.FAILED,
+            error: "Thời gian chờ thanh toán đã hết. Vui lòng thử lại.",
+          });
+        }
+      },
+      10 * 60 * 1000,
+    );
   },
 
   stopPaymentPolling: () => {

@@ -4,6 +4,7 @@
 /build
 /postman
 /plan
+tsconfig.build.tsbuildinfo
 
 # Logs
 logs

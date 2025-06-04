@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { User } from '../entities/user.entity';
-import { UserProfileDto } from '../dtos/user-profile.dto';
+import { UserProfileDto } from '@/auth/dtos/user-profile.dto';
+import { User } from '@/auth/entities/user.entity';
 
 @Injectable()
 export class UserMapperProvider {
@@ -8,16 +8,17 @@ export class UserMapperProvider {
    * Map User entity to UserProfileDto (without role - for user profile)
    */
   toUserProfileDto(user: User): UserProfileDto {
-    return {
-      id: user.id,
-      email: user.email,
-      username: user.username,
-      address: user.address,
-      phone_number: user.phone_number,
-      role: user.role,
-      created_at: user.created_at,
-      updated_at: user.updated_at,
-    };
+    const dto = new UserProfileDto();
+    dto.id = user.id;
+    dto.email = user.email;
+    dto.username = user.username;
+    dto.address = user.address;
+    dto.phone_number = user.phone_number;
+    dto.createdAt = user.createdAt;
+    dto.updatedAt = user.updatedAt;
+
+    dto.role = user.role;
+    return dto;
   }
 
   /**

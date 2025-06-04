@@ -1,6 +1,5 @@
+import { JwtPayload } from '@/auth/interfaces/jwt-payload.interface';
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-import { User } from '../entities/user.entity';
-import { JwtPayload } from '../interfaces/jwt-payload.interface';
 
 /**
  * Extracts the current user from the request object.

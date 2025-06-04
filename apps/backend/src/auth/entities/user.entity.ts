@@ -1,8 +1,8 @@
 import { Column, Entity, OneToOne } from 'typeorm';
-import { UserRole } from '../enums/user-role';
 import { IsEmail, IsString, MinLength } from 'class-validator';
-import { Cart } from '../../cart/entities/cart.entity';
-import { BaseEntity } from '../../common/entities/base.entity';
+import { Cart } from '@/cart/entities/cart.entity';
+import { BaseEntity } from '@/common/entities/base.entity';
+import { UserRole } from '@/auth/enums/user-role.enum';
 
 @Entity()
 export class User extends BaseEntity {

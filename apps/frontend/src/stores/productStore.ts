@@ -4,7 +4,7 @@ import type {
   Product,
   ProductDetail,
   Category,
-  QueryProductDto,
+  QueryProduct,
 } from "@/types/product";
 import type { ApiError, PaginationMeta } from "@/types/api";
 
@@ -18,13 +18,10 @@ interface ProductState {
   pagination: PaginationMeta | null;
 
   // Actions
-  fetchProducts: (params?: QueryProductDto) => Promise<void>;
+  fetchProducts: (params?: QueryProduct) => Promise<void>;
   fetchProductById: (id: string) => Promise<void>;
   fetchCategories: () => Promise<void>;
-  searchProducts: (
-    searchTerm: string,
-    params?: QueryProductDto,
-  ) => Promise<void>;
+  searchProducts: (searchTerm: string, params?: QueryProduct) => Promise<void>;
   clearError: () => void;
   clearSelectedProduct: () => void;
 }

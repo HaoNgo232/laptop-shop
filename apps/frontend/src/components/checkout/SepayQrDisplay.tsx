@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle, Clock, XCircle, Copy, RefreshCw } from 'lucide-react';
 import { formatCurrency } from '@/utils/currency';
-import { PaymentStatusEnum } from '@/enums/order';
+import { PaymentStatusEnum } from '@web-ecom/shared-types/orders/enums';
 import type { QRCodeResponse } from '@/types/order';
 
 interface SepayQrDisplayProps {

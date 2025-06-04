@@ -1,11 +1,11 @@
+import { AppModule } from '@/app.module';
+import { BcryptProvider } from '@/auth/providers/bcrypt.provider';
+import { Category } from '@/products/entities/category.entity';
+import { Product } from '@/products/entities/product.entity';
+import { User } from '@/auth/entities/user.entity';
+import { UserRole } from '@/auth/enums/user-role.enum';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from '../app.module';
 import { DataSource } from 'typeorm';
-import { Category } from '../products/entities/category.entity';
-import { Product } from '../products/entities/product.entity';
-import { User } from '../auth/entities/user.entity';
-import { BcryptProvider } from '../auth/providers/bcrypt.provider';
-import { UserRole } from '../auth/enums/user-role';
 
 async function seedData() {
   const app = await NestFactory.create(AppModule);

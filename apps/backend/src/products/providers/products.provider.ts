@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Product } from '../entities/product.entity';
-import { Category } from '../entities/category.entity';
-import { QueryProductDto, SortOrder } from '../dtos/query-product.dto';
-import { ProductDto } from '../dtos/product.dto';
-import { PaginatedResponse } from '../interfaces/paginated-response.interface';
-import { PaginationMeta } from '../interfaces/pagination-meta.interface';
-import { ProductMapperProvider } from './product-mapper.provider';
+import { Product } from '@/products/entities/product.entity';
+import { Category } from '@/products/entities/category.entity';
+import { QueryProductDto } from '@/products/dtos/query-product.dto';
+import { ProductDto } from '@/products/dtos/product.dto';
+import { PaginatedResponse } from '@/products/interfaces/paginated-response.interface';
+import { PaginationMeta } from '@/products/interfaces/pagination-meta.interface';
+import { ProductMapperProvider } from '@/products/providers/product-mapper.provider';
+import { SortOrder } from '@web-ecom/shared-types';
 
 @Injectable()
 export class ProductsProvider {
@@ -19,14 +20,12 @@ export class ProductsProvider {
     private readonly productMapper: ProductMapperProvider,
   ) {}
 
-  async findAllProducts(
-    queryDto: QueryProductDto,
-  ): Promise<PaginatedResponse<ProductDto>> {
+  async findAllProducts(queryDto: QueryProductDto): Promise<PaginatedResponse<ProductDto>> {
     // 1. Trích xuất tham số truy vấn
     const {
       page = 1,
       limit = 10,
-      sortBy = 'created_at',
+      sortBy = 'createdAt',
       sortOrder = SortOrder.DESC,
       search,
       price_min,

@@ -1,12 +1,12 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../entities/user.entity';
+import jwtConfig from '@/auth/config/jwt.config';
 import { JwtService } from '@nestjs/jwt';
-import { ConfigType } from '@nestjs/config';
-import jwtConfig from '../config/jwt.config';
-import { ResetPasswordPayload } from '../interfaces/reset-password-payload.interface';
+import type { ConfigType } from '@nestjs/config';
 import { MailerService } from '@nestjs-modules/mailer';
+import { ResetPasswordPayload } from '@/auth/interfaces/reset-password-payload.interface';
+import { User } from '@/auth/entities/user.entity';
 
 @Injectable()
 export class ForgotPasswordProvider {

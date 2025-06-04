@@ -1,17 +1,16 @@
-import { Category } from './../entities/category.entity';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between, Like } from 'typeorm';
-import { Product } from '../entities/product.entity';
-import { CreateProductDto } from '../dtos/create-product.dto';
-import { UpdateProductDto } from '../dtos/update-product.dto';
-import { QueryProductDto, SortOrder } from '../dtos/query-product.dto';
-import { ProductDto } from '../dtos/product.dto';
-import { ProductDetailDto } from '../dtos/product-detail.dto';
-import { PaginatedResponse } from '../interfaces/paginated-response.interface';
-import { PaginationMeta } from '../interfaces/pagination-meta.interface';
-import { ProductsProvider } from '../providers/products.provider';
-import { ProductMapperProvider } from '../providers/product-mapper.provider';
+import { Repository } from 'typeorm';
+import { Category } from '@/products/entities/category.entity';
+import { Product } from '@/products/entities/product.entity';
+import { ProductMapperProvider } from '@/products/providers/product-mapper.provider';
+import { ProductsProvider } from '@/products/providers/products.provider';
+import { QueryProductDto } from '@/products/dtos/query-product.dto';
+import { PaginatedResponse } from '@/products/interfaces/paginated-response.interface';
+import { ProductDto } from '@/products/dtos/product.dto';
+import { ProductDetailDto } from '@/products/dtos/product-detail.dto';
+import { CreateProductDto } from '@/products/dtos/create-product.dto';
+import { UpdateProductDto } from '@/products/dtos/update-product.dto';
 
 @Injectable()
 export class ProductsService {
@@ -25,9 +24,7 @@ export class ProductsService {
     private readonly productMapper: ProductMapperProvider,
   ) {}
 
-  async findAll(
-    queryDto: QueryProductDto,
-  ): Promise<PaginatedResponse<ProductDto>> {
+  async findAll(queryDto: QueryProductDto): Promise<PaginatedResponse<ProductDto>> {
     return this.productsProvider.findAllProducts(queryDto);
   }
 
@@ -68,10 +65,7 @@ export class ProductsService {
     return result;
   }
 
-  async update(
-    id: string,
-    updateProductDto: UpdateProductDto,
-  ): Promise<Product> {
+  async update(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
     // 1. Tìm sản phẩm theo ID
     const product = await this.productRepository.findOne({
       where: { id },

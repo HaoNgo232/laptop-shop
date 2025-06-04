@@ -1,8 +1,10 @@
-import React from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import React, { useState } from 'react';
+import { useValidation } from '@/hooks/useValidation';
+import {
+    LoginUserSchema,
+    type LoginUser,
+} from '@/types/auth';
 import { Loader2 } from 'lucide-react';
-import { LoginSchema, type LoginFormData } from '@/lib/validationSchemas';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,34 +12,33 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface LoginFormProps {
-    onSubmit: (credentials: LoginFormData) => Promise<void>;
-    isLoading?: boolean;
+    onSubmit: (data: LoginUser) => void;
+    loading?: boolean;
     error?: string | null;
 }
 
-export function LoginForm({ onSubmit, isLoading = false, error }: LoginFormProps) {
-    const {
-        register,
-        handleSubmit,
-        formState: { errors, isSubmitting },
-    } = useForm<LoginFormData>({
-        resolver: zodResolver(LoginSchema),
-        defaultValues: {
-            email: '',
-            password: '',
-        },
+export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, loading = false, error }) => {
+    const [formData, setFormData] = useState<Partial<LoginUser>>({
+        email: '',
+        password: '',
     });
 
-    const handleFormSubmit = async (data: LoginFormData) => {
-        try {
-            await onSubmit(data);
-        } catch (error) {
-            // Error handled by parent component
-            console.error('Form submission error:', error);
-        }
+    const { validate, errors, clearErrors } = useValidation(LoginUserSchema);
+
+    const handleInputChange = (field: keyof LoginUser, value: string) => {
+        setFormData((prev: Partial<LoginUser>) => ({ ...prev, [field]: value }));
+
     };
 
-    const loading = isLoading || isSubmitting;
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        clearErrors();
+
+        // Validate toàn bộ form
+        if (validate(formData)) {
+            onSubmit(formData as LoginUser);
+        }
+    };
 
     return (
         <Card className="w-full max-w-md mx-auto">
@@ -48,7 +49,7 @@ export function LoginForm({ onSubmit, isLoading = false, error }: LoginFormProps
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <form onSubmit={handleSubmit(handleFormSubmit)} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-4">
                     {/* Error Alert */}
                     {error && (
                         <Alert variant="destructive">
@@ -63,12 +64,13 @@ export function LoginForm({ onSubmit, isLoading = false, error }: LoginFormProps
                             id="email"
                             type="email"
                             placeholder="example@email.com"
+                            value={formData.email || ''}
+                            onChange={(e) => handleInputChange('email', e.target.value)}
+                            className={`${errors.email ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                             disabled={loading}
-                            {...register('email')}
-                            className={errors.email ? 'border-destructive focus-visible:ring-destructive' : ''}
                         />
                         {errors.email && (
-                            <p className="text-sm text-destructive">{errors.email.message}</p>
+                            <p className="text-sm text-destructive">{errors.email}</p>
                         )}
                     </div>
 
@@ -79,12 +81,13 @@ export function LoginForm({ onSubmit, isLoading = false, error }: LoginFormProps
                             id="password"
                             type="password"
                             placeholder="Nhập mật khẩu"
+                            value={formData.password || ''}
+                            onChange={(e) => handleInputChange('password', e.target.value)}
+                            className={`${errors.password ? 'border-destructive focus-visible:ring-destructive' : ''}`}
                             disabled={loading}
-                            {...register('password')}
-                            className={errors.password ? 'border-destructive focus-visible:ring-destructive' : ''}
                         />
                         {errors.password && (
-                            <p className="text-sm text-destructive">{errors.password.message}</p>
+                            <p className="text-sm text-destructive">{errors.password}</p>
                         )}
                     </div>
 
@@ -117,4 +120,4 @@ export function LoginForm({ onSubmit, isLoading = false, error }: LoginFormProps
             </CardContent>
         </Card>
     );
-} 
+}; 

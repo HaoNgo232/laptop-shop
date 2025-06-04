@@ -1,8 +1,9 @@
-import { Type } from 'class-transformer';
+import { CartItemDto } from '@/cart/dtos/cart-item.dto';
+import { ICart } from '@web-ecom/shared-types';
 import { IsArray, IsNumber, IsUUID, ValidateNested } from 'class-validator';
-import { CartItemDto } from './cart-item.dto';
+import { Type } from 'class-transformer';
 
-export class CartDto {
+export class CartDto implements ICart {
   @IsUUID()
   id: string;
 

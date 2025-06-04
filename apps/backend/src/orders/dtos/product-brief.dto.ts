@@ -1,6 +1,17 @@
-import { IsString, IsNumber, IsOptional, IsUrl, IsNotEmpty, Min } from 'class-validator';
+import { CategoryBriefDto } from '@/products/dtos/category-brief.dto';
+import { IProductBrief } from '@web-ecom/shared-types';
+import { Type } from 'class-transformer';
+import {
+  IsString,
+  IsNumber,
+  IsOptional,
+  IsUrl,
+  IsNotEmpty,
+  Min,
+  ValidateNested,
+} from 'class-validator';
 
-export class ProductBriefDto {
+export class ProductBriefDto implements IProductBrief {
   @IsString()
   @IsNotEmpty()
   id: string;
@@ -17,4 +28,8 @@ export class ProductBriefDto {
   @IsString()
   @IsUrl()
   image_url?: string;
+
+  @ValidateNested()
+  @Type(() => CategoryBriefDto)
+  category: CategoryBriefDto;
 }

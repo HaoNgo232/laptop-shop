@@ -1,8 +1,8 @@
 import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
-import { CartItem } from './cart-item.entity';
-import { User } from '../../auth/entities/user.entity';
+import { CartItem } from '@/cart/entities/cart-item.entity';
 import { Type } from 'class-transformer';
-import { BaseEntity } from '../../common/entities/base.entity';
+import { BaseEntity } from '@/common/entities/base.entity';
+import { User } from '@/auth/entities/user.entity';
 
 @Entity()
 export class Cart extends BaseEntity {

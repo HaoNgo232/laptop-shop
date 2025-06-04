@@ -6,13 +6,17 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryColumn,
+  PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Cart } from './cart.entity';
-import { Product } from '../../products/entities/product.entity';
+import { Cart } from '@/cart/entities/cart.entity';
+import { Product } from '@/products/entities/product.entity';
 
 @Entity('cart_items')
 @Check('quantity > 0')
 export class CartItem {
+  @PrimaryGeneratedColumn('uuid')
+  id: string;
+
   @PrimaryColumn({ type: 'uuid' })
   cart_id: string;
 

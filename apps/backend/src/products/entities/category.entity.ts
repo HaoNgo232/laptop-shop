@@ -1,7 +1,7 @@
 import { Entity, Column, OneToMany } from 'typeorm';
 import { Type } from 'class-transformer';
+import { BaseEntity } from '@/common/entities/base.entity';
 import { Product } from './product.entity';
-import { BaseEntity } from '../../common/entities/base.entity';
 
 @Entity('categories')
 export class Category extends BaseEntity {

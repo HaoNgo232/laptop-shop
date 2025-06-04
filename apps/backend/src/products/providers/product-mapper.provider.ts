@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { Product } from '../entities/product.entity';
-import { Category } from '../entities/category.entity';
-import { ProductDto } from '../dtos/product.dto';
-import { ProductDetailDto } from '../dtos/product-detail.dto';
-import { CategoryDto } from '../dtos/category.dto';
+import { Product } from '@/products/entities/product.entity';
+import { Category } from '@/products/entities/category.entity';
+import { ProductDto } from '@/products/dtos/product.dto';
+import { ProductDetailDto } from '@/products/dtos/product-detail.dto';
+import { CategoryDto } from '@/products/dtos/category.dto';
 
 @Injectable()
 export class ProductMapperProvider {
@@ -22,8 +22,8 @@ export class ProductMapperProvider {
         id: product.category.id,
         name: product.category.name,
       },
-      created_at: product.created_at,
-      updated_at: product.updated_at,
+      createdAt: product.createdAt,
+      updatedAt: product.updatedAt,
     };
   }
 
@@ -46,8 +46,8 @@ export class ProductMapperProvider {
       stock_quantity: product.stock_quantity,
       image_url: product.image_url,
       category: this.mapCategoryToDto(product.category),
-      created_at: product.created_at,
-      updated_at: product.updated_at,
+      createdAt: product.createdAt,
+      updatedAt: product.updatedAt,
     };
   }
 
@@ -59,8 +59,8 @@ export class ProductMapperProvider {
       id: category.id,
       name: category.name,
       description: category.description,
-      created_at: category.created_at,
-      updated_at: category.updated_at,
+      createdAt: category.createdAt,
+      updatedAt: category.updatedAt,
     };
   }
 }

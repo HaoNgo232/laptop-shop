@@ -1,5 +1,5 @@
+import { ProductDto } from '@/products/dtos/product.dto';
 import { ApiProperty } from '@nestjs/swagger';
-import { ProductDto } from './product.dto';
 
 export class CategoryDetailDto {
   @ApiProperty({

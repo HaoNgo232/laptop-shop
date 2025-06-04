@@ -1,9 +1,9 @@
+import { Auth } from '@/auth/decorators/auth.decorator';
+import { AuthType } from '@/auth/enums/auth-type.enum';
+import { CategoryDetailDto } from '@/products/dtos/category-detail.dto';
+import { CategoryDto } from '@/products/dtos/category.dto';
+import { CategoriesService } from '@/products/services/categories.service';
 import { Controller, Get, Param } from '@nestjs/common';
-import { CategoriesService } from '../services/categories.service';
-import { CategoryDto } from '../dtos/category.dto';
-import { CategoryDetailDto } from '../dtos/category-detail.dto';
-import { Auth } from '../../auth/decorators/auth.decorator';
-import { AuthType } from '../../auth/enums/auth-type.enum';
 
 @Auth(AuthType.None)
 @Controller('api/categories')

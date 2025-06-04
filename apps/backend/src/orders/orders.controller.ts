@@ -1,25 +1,19 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Param,
-  Body,
-  Query,
-  ParseUUIDPipe,
-  Delete,
-} from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
+import { Body, Delete, Get, Param, ParseUUIDPipe, Query } from '@nestjs/common';
+import { ApiResponse } from '@nestjs/swagger';
+import { ApiOperation } from '@nestjs/swagger';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { Auth } from '@/auth/decorators/auth.decorator';
-import { CurrentUser } from '@/auth/decorators/current-user.decorator';
+import { ApiTags } from '@nestjs/swagger';
 import { AuthType } from '@/auth/enums/auth-type.enum';
-import { UserRole } from '@/auth/enums/user-role';
-import { OrdersService } from './orders.service';
-import { CreateOrderDto } from './dtos/create-order.dto';
-import { OrderDto } from './dtos/order.dto';
-import { OrderDetailDto } from './dtos/order-detail.dto';
-import { PaginationQueryDto } from './dtos/pagination-query.dto';
+import { UserRole } from '@/auth/enums/user-role.enum';
+import { Controller, Post } from '@nestjs/common';
+import { OrdersService } from '@/orders/orders.service';
+import { CurrentUser } from '@/auth/decorators/current-user.decorator';
+import { CreateOrderDto } from '@/orders/dtos/create-order.dto';
+import { OrderDto } from '@/orders/dtos/order.dto';
+import { PaginationQueryDto } from '@/orders/dtos/pagination-query.dto';
 import { PaginatedResponse } from '@/products/interfaces/paginated-response.interface';
+import { OrderDetailDto } from '@/orders/dtos/order-detail.dto';
 import { QRCodeResponse } from '@/payment/interfaces/payment-provider.interfaces';
 
 @ApiTags('Orders')

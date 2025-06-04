@@ -1,27 +1,30 @@
-import { AccessTokenGuard } from './guards/access-token/access-token.guard';
-import { forwardRef, Module } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { TokenBlacklist } from '@/auth/entities/token-blacklist.entity';
+import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { JwtStrategy } from './strategies/jwt.strategy';
-import { TokenBlacklistProvider } from './providers/token-blacklist.provider';
-import { BcryptProvider } from './providers/bcrypt.provider';
-import { TokenBlacklist } from './entities/token-blacklist.entity'; // Tạo nếu chưa có
-import { CreateUserProvider } from './providers/create-user.provider';
-import { GenerateTokensProvider } from './providers/generate-tokens.provider';
-import { ValidateUserProvider } from './providers/validate-user.provider';
-import { ForgotPasswordProvider } from './providers/forgot-password.provider';
-import { ResetPasswordProvider } from './providers/reset-password.provider';
-import { RefreshTokenProvider } from './providers/refresh-token.provider';
-import { User } from './entities/user.entity';
-import { AuthenticationGuard } from './guards/authentication/authentication.guard';
-import { HashingProvider } from './providers/hashing.provider';
-import { UsersController } from './controllers/users.controller';
-import { AuthController } from './controllers/auth.controller';
-import { AuthService } from './services/auth.service';
-import { UsersService } from './services/users.service';
-import { RolesGuard } from './guards/authentication/roles.guard';
-import { CartModule } from '../cart/cart.module';
+import { User } from '@/auth/entities/user.entity';
+import { forwardRef } from '@nestjs/common';
+import { AuthController } from '@/auth/controllers/auth.controller';
+import { AccessTokenGuard } from '@/auth/guards/access-token/access-token.guard';
+import { UsersController } from '@/auth/controllers/users.controller';
+import { Module } from '@nestjs/common';
+import { CartModule } from '@/cart/cart.module';
+import { AuthService } from '@/auth/services/auth.service';
+import { HashingProvider } from '@/auth/providers/hashing.provider';
+import { UsersService } from '@/auth/services/users.service';
+import { BcryptProvider } from '@/auth/providers/bcrypt.provider';
+import { JwtStrategy } from '@/auth/strategies/jwt.strategy';
+import { TokenBlacklistProvider } from '@/auth/providers/token-blacklist.provider';
+import { CreateUserProvider } from '@/auth/providers/create-user.provider';
+import { AuthenticationGuard } from '@/auth/guards/authentication/authentication.guard';
+import { GenerateTokensProvider } from '@/auth/providers/generate-tokens.provider';
+import { RolesGuard } from '@/auth/guards/authentication/roles.guard';
+import { RefreshTokenProvider } from '@/auth/providers/refresh-token.provider';
+import { ValidateUserProvider } from '@/auth/providers/validate-user.provider';
+import { ForgotPasswordProvider } from '@/auth/providers/forgot-password.provider';
+import { ResetPasswordProvider } from '@/auth/providers/reset-password.provider';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([TokenBlacklist, User]),

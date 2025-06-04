@@ -1,6 +1,6 @@
 import { applyDecorators, SetMetadata, UseGuards } from '@nestjs/common';
 import { AuthType } from '../enums/auth-type.enum';
-import { UserRole } from '../enums/user-role';
+import { UserRole } from '../enums/user-role.enum';
 import { AUTH_TYPE_KEY } from '../constants/auth.constants';
 import { RolesGuard, ROLES_KEY } from '../guards/authentication/roles.guard';
 import { AuthenticationGuard } from '../guards/authentication/authentication.guard';

@@ -1,11 +1,11 @@
-import { Body, Controller, Delete, Param, Post, Put, UseGuards } from '@nestjs/common';
-import { ProductsService } from '../services/products.service';
-import { CreateProductDto } from '../dtos/create-product.dto';
-import { UpdateProductDto } from '../dtos/update-product.dto';
-import { ProductDto } from '../dtos/product.dto';
-import { AuthType } from '../../auth/enums/auth-type.enum';
-import { UserRole } from '../../auth/enums/user-role';
-import { Auth } from '../../auth/decorators/auth.decorator';
+import { Auth } from '@/auth/decorators/auth.decorator';
+import { AuthType } from '@/auth/enums/auth-type.enum';
+import { UserRole } from '@/auth/enums/user-role.enum';
+import { CreateProductDto } from '@/products/dtos/create-product.dto';
+import { ProductDto } from '@/products/dtos/product.dto';
+import { UpdateProductDto } from '@/products/dtos/update-product.dto';
+import { ProductsService } from '@/products/services/products.service';
+import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
 
 @Controller('api/admin.products')
 @Auth(AuthType.Bearer, UserRole.ADMIN)
