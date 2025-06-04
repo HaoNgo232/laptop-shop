@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString, Matches, MinLength } from 'class-validator';
-import { IChangePassword } from '@web-ecom/shared-types';
+import { IChangePassword } from '@web-ecom/shared-types/auth/interfaces';
 
 export class ChangePasswordDto implements IChangePassword {
   @IsString()

@@ -8,7 +8,7 @@ import { ProductDto } from '@/products/dtos/product.dto';
 import { PaginatedResponse } from '@/products/interfaces/paginated-response.interface';
 import { PaginationMeta } from '@/products/interfaces/pagination-meta.interface';
 import { ProductMapperProvider } from '@/products/providers/product-mapper.provider';
-import { SortOrder } from '@web-ecom/shared-types';
+import { SortOrder } from '@web-ecom/shared-types/products/enums';
 
 @Injectable()
 export class ProductsProvider {
