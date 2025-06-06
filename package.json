@@ -14,6 +14,7 @@
         "dev": "pnpm run dev:setup && concurrently -n \"shared-types,frontend,backend\" -c \"yellow,cyan,green\" \"pnpm run shared-types:dev\" \"pnpm run frontend:dev\" \"pnpm run backend:dev\"",
         "dev:setup": "pnpm run shared-types:build && pnpm run backend:build",
         "build": "pnpm --filter \"./packages/*\" build && pnpm --filter \"./apps/*\" build",
+        "start": "pnpm --filter \"./apps/*\" start",
         "lint": "pnpm --parallel --filter \"./apps/*\" lint",
         "test": "pnpm --parallel --filter \"./apps/*\" test",
         "frontend:dev": "pnpm --filter frontend dev",

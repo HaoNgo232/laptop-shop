@@ -18,9 +18,14 @@ import { AuthType } from '@/auth/enums/auth-type.enum';
 import { OrdersService } from '@/orders/orders.service';
 import { PaymentStatusEnum } from '@/orders/enums/payment-status.enum';
 import { CreatePaymentDto } from '@/payment/dtos/create-payment.dto';
+import { QRCodeResponse } from '@/payment/interfaces/payment-provider.interfaces';
+import {
+  FailedWebhookResponse,
+  SuccessWebhookResponse,
+} from '@/payment/interfaces/webhook-response.interfaces';
 
 @ApiTags('Payment')
-@Controller('payment')
+@Controller('/api/payment')
 export class PaymentController {
   private readonly logger = new Logger(PaymentController.name);
 
@@ -33,7 +38,7 @@ export class PaymentController {
   @Auth(AuthType.Bearer)
   @ApiOperation({ summary: 'Tạo thanh toán mới' })
   @ApiResponse({ status: 201, description: 'Tạo thanh toán thành công' })
-  async createPayment(@Body() createPaymentDto: CreatePaymentDto) {
+  async createPayment(@Body() createPaymentDto: CreatePaymentDto): Promise<QRCodeResponse> {
     try {
       return await this.paymentService.generateQRCode(
         createPaymentDto.orderId,
@@ -58,7 +63,7 @@ export class PaymentController {
   async handleSepayWebhook(
     @Body() payload: SepayWebhookDto,
     @Headers('x-sepay-signature') signature?: string,
-  ) {
+  ): Promise<SuccessWebhookResponse | FailedWebhookResponse> {
     try {
       this.logger.log(`Received SePay webhook for transaction: ${payload.id}`);
 
@@ -107,7 +112,7 @@ export class PaymentController {
   @Get('methods')
   @Auth(AuthType.None)
   @ApiOperation({ summary: 'Lấy danh sách phương thức thanh toán' })
-  async getPaymentMethods() {
+  async getPaymentMethods(): Promise<{ methods: PaymentMethodEnum[] }> {
     return {
       methods: this.paymentService.getAvailablePaymentMethods(),
     };
@@ -124,7 +129,7 @@ export class PaymentController {
       fromMethod: PaymentMethodEnum;
       toMethod: PaymentMethodEnum;
     },
-  ) {
+  ): Promise<QRCodeResponse> {
     try {
       return await this.paymentService.switchPaymentMethod(
         orderId,

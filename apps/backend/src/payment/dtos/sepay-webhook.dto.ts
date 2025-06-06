@@ -1,9 +1,11 @@
-import { IsString, IsNumber, IsOptional, IsDateString, IsNotEmpty, Min } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsString, IsNumber, IsOptional, IsDateString, IsNotEmpty, IsIn } from 'class-validator';
 
 export class SepayWebhookDto {
-  @IsString()
+  @IsNumber()
+  @Type(() => Number)
   @IsNotEmpty()
-  id: string;
+  id: number;
 
   @IsString()
   @IsNotEmpty()
@@ -11,37 +13,44 @@ export class SepayWebhookDto {
 
   @IsDateString()
   @IsNotEmpty()
-  transaction_date: string;
+  transactionDate: string;
 
   @IsString()
   @IsNotEmpty()
-  account_number: string;
+  accountNumber: string;
 
   @IsOptional()
   @IsString()
-  sub_account?: string;
-
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @Min(0)
-  amount_in: number;
-
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @Min(0)
-  amount_out: number;
-
-  @IsNumber({ maxDecimalPlaces: 2 })
-  @Min(0)
-  accumulated: number;
+  subAccount?: string;
 
   @IsString()
   @IsNotEmpty()
-  code: string;
+  @IsIn(['in', 'out'])
+  transferType: 'in' | 'out';
+
+  @IsNumber()
+  @Type(() => Number)
+  @IsNotEmpty()
+  transferAmount: number;
+
+  @IsNumber()
+  @Type(() => Number)
+  @IsNotEmpty()
+  accumulated: number;
+
+  @IsOptional()
+  @IsString()
+  code?: string; // This is the order ID parsed by SePay
 
   @IsString()
   @IsNotEmpty()
   content: string;
 
+  @IsOptional()
   @IsString()
-  @IsNotEmpty()
-  bank_brand_name: string;
+  referenceCode?: string;
+
+  @IsOptional()
+  @IsString()
+  description?: string;
 }

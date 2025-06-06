@@ -32,7 +32,7 @@ export class PaymentService {
       const qrRequest: QRGenerationRequest = {
         orderId,
         amount,
-        content: `Thanh toan don hang`,
+        content: `Thanh toan cho don hang ${orderId}`,
         ...additionalInfo,
       };
 

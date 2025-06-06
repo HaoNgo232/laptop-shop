@@ -66,7 +66,7 @@ export function CartSummary({ cart, onClearCart }: CartSummaryProps) {
                     {/* Nút thanh toán */}
                     <Button
                         onClick={handleCheckout}
-                        className="w-full"
+                        className="w-full "
                         size="lg"
                         disabled={cart.items.length === 0}
                     >
@@ -87,7 +87,7 @@ export function CartSummary({ cart, onClearCart }: CartSummaryProps) {
                         <Button
                             variant="destructive"
                             onClick={onClearCart}
-                            className="w-full"
+                            className="w-full primary hover:text-amber-300"
                             size="sm"
                         >
                             Xóa toàn bộ giỏ hàng

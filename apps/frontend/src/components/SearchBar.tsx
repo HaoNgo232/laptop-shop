@@ -38,7 +38,7 @@ export function SearchBar({ onSearch, placeholder = "Tìm kiếm sản phẩm...
                     placeholder={placeholder}
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    onKeyPress={handleKeyPress}
+                    onKeyDown={handleKeyPress}
                     className="pl-10 pr-10"
                 />
                 {searchTerm && (

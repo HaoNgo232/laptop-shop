@@ -5,10 +5,10 @@ import {
   QRGenerationRequest,
   QRCodeResponse,
   TransactionResult,
-  WebhookPayload,
 } from '@/payment/interfaces/payment-provider.interfaces';
 import * as crypto from 'crypto';
 import axios from 'axios';
+import { SepayWebhookDto } from '@/payment/dtos/sepay-webhook.dto';
 
 @Injectable()
 export class SepayProvider implements PaymentProvider {
@@ -23,8 +23,8 @@ export class SepayProvider implements PaymentProvider {
       const bankCode = this.configService.get('SEPAY_BANK_CODE');
       const accountName = this.configService.get('SEPAY_ACCOUNT_NAME');
 
-      // Format content với order ID để dễ tracking
-      const content = `ORDER${orderInfo.orderId} ${orderInfo.content}`.substring(0, 100);
+      // Format content với order ID để dễ tracking theo format của Sepay: DH{orderId}
+      const content = `DH${orderInfo.orderId}`;
 
       if (!bankAccount) {
         throw new Error('Bank account là bắt buộc nhưng chưa được cấu hình');
@@ -61,14 +61,14 @@ export class SepayProvider implements PaymentProvider {
     }
   }
 
-  verifyWebhook(payload: WebhookPayload, signature?: string): boolean {
+  verifyWebhook(payload: SepayWebhookDto, signature?: string): boolean {
     try {
-      // Verify webhook signature if provided
+      // Sepay không đề cập đến signature HMAC trong docs, nhưng nếu có thì vẫn check
       if (signature) {
         const secret = this.configService.get('SEPAY_WEBHOOK_SECRET');
         if (!secret) {
           this.logger.warn('SEPAY_WEBHOOK_SECRET chưa được cấu hình, bỏ qua xác minh chữ ký');
-          return true;
+          return true; // Bỏ qua nếu không có secret
         }
 
         const expectedSignature = crypto
@@ -80,22 +80,13 @@ export class SepayProvider implements PaymentProvider {
           this.logger.error('Invalid webhook signature');
           return false;
         }
+        this.logger.log('Webhook signature verified successfully.');
       }
 
-      // Verify basic payload structure
-      const requiredFields = ['id', 'gateway', 'amount_in', 'content'];
-      for (const field of requiredFields) {
-        if (!payload[field]) {
-          this.logger.error(`Missing required field: ${field}`);
-          return false;
-        }
-      }
-
-      // Verify gateway type
-      if (payload.gateway !== 'SEPAY') {
-        this.logger.error(`Invalid gateway: ${payload.gateway}`);
-        return false;
-      }
+      // Validation cơ bản đã được thực hiện bởi DTO (class-validator)
+      // Chỉ cần kiểm tra logic nghiệp vụ ở đây nếu cần.
+      // Ví dụ: kiểm tra xem gateway có phải từ một nguồn đáng tin cậy hay không.
+      // Hiện tại, DTO đã đủ.
 
       return true;
     } catch (error) {
@@ -104,40 +95,48 @@ export class SepayProvider implements PaymentProvider {
     }
   }
 
-  async processTransaction(transaction: WebhookPayload): Promise<TransactionResult> {
+  async processTransaction(transaction: SepayWebhookDto): Promise<TransactionResult> {
     try {
-      // Extract order ID from content
-      const orderMatch = transaction.content.match(/ORDER(\w+)/);
-      if (!orderMatch) {
-        throw new Error('Invalid transaction content format - ORDER ID not found');
+      // Ưu tiên sử dụng trường `code` mà SePay đã bóc tách sẵn.
+      // Nếu không có, thử bóc tách từ `content`.
+      let orderId: string;
+      if (transaction.code) {
+        orderId = transaction.code.replace(/^DH/, '');
+        this.logger.log(`Extracted orderId from 'code': ${orderId}`);
+      } else {
+        const orderMatch = transaction.content.match(/DH(\w+)/);
+        if (!orderMatch || !orderMatch[1]) {
+          throw new Error('Invalid transaction content format - DH{orderId} not found');
+        }
+        orderId = orderMatch[1];
+        this.logger.log(`Extracted orderId from 'content': ${orderId}`);
       }
 
-      const orderId = orderMatch[1];
-      const amount = transaction.amount_in;
+      const amount = transaction.transferAmount;
 
       // Determine transaction status
       let status: 'success' | 'failed' | 'pending' = 'pending';
-      let message = 'Transaction processing';
+      let message = 'Transaction is being processed.';
 
-      if (amount > 0) {
+      if (transaction.transferType === 'in' && amount > 0) {
         status = 'success';
-        message = 'Payment completed successfully';
-      } else if (transaction.amount_out > 0) {
+        message = 'Payment completed successfully.';
+      } else {
         status = 'failed';
-        message = 'Outgoing transaction detected';
+        message = 'Transaction was not an incoming payment.';
       }
 
       return {
-        transactionId: transaction.id,
+        transactionId: transaction.id.toString(),
         orderId,
         amount,
         status,
         message,
         metadata: {
-          bankCode: transaction.bank_brand_name,
-          transactionCode: transaction.code,
-          transactionDate: transaction.transaction_date,
-          accountNumber: transaction.account_number,
+          bankCode: transaction.gateway,
+          transactionCode: transaction.referenceCode,
+          transactionDate: transaction.transactionDate,
+          accountNumber: transaction.accountNumber,
           provider: this.name,
         },
       };
