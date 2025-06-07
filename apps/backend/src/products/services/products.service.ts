@@ -45,13 +45,11 @@ export class ProductsService {
   async create(createProductDto: CreateProductDto): Promise<Product> {
     // 1. Kiểm tra category tồn tại
     const category = await this.categoryRepository.findOne({
-      where: { id: createProductDto.category_id },
+      where: { id: createProductDto.categoryId },
     });
 
     if (!category) {
-      throw new NotFoundException(
-        `Không tìm thấy danh mục với ID: ${createProductDto.category_id}`,
-      );
+      throw new NotFoundException(`Không tìm thấy danh mục với ID: ${createProductDto.categoryId}`);
     }
 
     // 2. Tạo đối tượng sản phẩm mới
@@ -76,14 +74,14 @@ export class ProductsService {
     }
 
     // 3. Nếu có category_id, kiểm tra category tồn tại
-    if (updateProductDto.category_id) {
+    if (updateProductDto.categoryId) {
       const category = await this.categoryRepository.findOne({
-        where: { id: updateProductDto.category_id },
+        where: { id: updateProductDto.categoryId },
       });
 
       if (!category) {
         throw new NotFoundException(
-          `Không tìm thấy danh mục với ID: ${updateProductDto.category_id}`,
+          `Không tìm thấy danh mục với ID: ${updateProductDto.categoryId}`,
         );
       }
     }

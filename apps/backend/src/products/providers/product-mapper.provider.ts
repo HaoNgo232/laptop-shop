@@ -16,7 +16,7 @@ export class ProductMapperProvider {
       name: product.name,
       description: product.description,
       price: product.price,
-      imageUrl: product.imageUrl,
+      imageUrl: product.imageUrl ?? '',
       stockQuantity: product.stockQuantity,
       category: {
         id: product.category.id,

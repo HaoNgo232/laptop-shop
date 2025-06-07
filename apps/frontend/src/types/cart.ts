@@ -32,11 +32,11 @@ const ProductSchema: z.ZodType<IProduct> = z.object({
   name: z.string(),
   description: z.string(),
   price: z.number().positive(),
-  stock_quantity: z.number().int().min(0),
-  image_url: z.string().url(),
+  stockQuantity: z.number().int().min(0),
+  imageUrl: z.string().url(),
   category: CategoryBriefSchema,
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
 });
 
 // Zod Validation Schemas
@@ -44,14 +44,14 @@ const CartItemSchema: z.ZodType<ICartItem> = z.object({
   id: z.string().uuid(),
   product: ProductSchema,
   quantity: z.number().int().positive("Số lượng phải lớn hơn 0"),
-  price_at_addition: z.number().positive(),
+  priceAtAddition: z.number().positive(),
 });
 
 const CartSchema: z.ZodType<ICart> = z.object({
   id: z.string().uuid(),
   items: z.array(CartItemSchema),
-  total_items: z.number().int().min(0),
-  total_price: z.number().min(0),
+  totalItems: z.number().int().min(0),
+  totalPrice: z.number().min(0),
 });
 
 const AddToCartSchema: z.ZodType<IAddToCart> = z.object({

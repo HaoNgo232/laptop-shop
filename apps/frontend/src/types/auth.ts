@@ -34,7 +34,7 @@ const UserSchema: z.ZodType<IUser> = z.object({
     .min(3, "Tên người dùng phải có ít nhất 3 ký tự")
     .max(20, "Tên người dùng không được vượt quá 20 ký tự"),
   address: z.string().optional(),
-  phone_number: z.string().optional(),
+  phoneNumber: z.string().optional(),
   role: z.nativeEnum(UserRole),
   createdAt: z.date(),
   updatedAt: z.date(),
@@ -68,7 +68,7 @@ const UpdateProfileSchema: z.ZodType<IUpdateProfile> = z.object({
     .max(20, "Tên người dùng không được vượt quá 20 ký tự")
     .optional(),
   address: z.string().optional(),
-  phone_number: z.string().optional(),
+  phoneNumber: z.string().optional(),
 });
 
 const RefreshTokenSchema: z.ZodType<IRefreshToken> = z.object({

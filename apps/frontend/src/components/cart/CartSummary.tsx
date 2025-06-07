@@ -40,12 +40,12 @@ export function CartSummary({ cart, onClearCart }: CartSummaryProps) {
                 <div className="space-y-3">
                     <div className="flex justify-between text-sm">
                         <span>Số lượng sản phẩm:</span>
-                        <span className="font-medium">{cart.total_items} sản phẩm</span>
+                        <span className="font-medium">{cart.totalItems} sản phẩm</span>
                     </div>
 
                     <div className="flex justify-between text-sm">
                         <span>Tạm tính:</span>
-                        <span className="font-medium">{formatPrice(cart.total_price)}</span>
+                        <span className="font-medium">{formatPrice(cart.totalPrice)}</span>
                     </div>
 
                     <div className="flex justify-between text-sm">
@@ -57,7 +57,7 @@ export function CartSummary({ cart, onClearCart }: CartSummaryProps) {
 
                     <div className="flex justify-between text-lg font-bold">
                         <span>Tổng cộng:</span>
-                        <span className="text-primary">{formatPrice(cart.total_price)}</span>
+                        <span className="text-primary">{formatPrice(cart.totalPrice)}</span>
                     </div>
                 </div>
 

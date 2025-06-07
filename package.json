@@ -12,23 +12,31 @@
     },
     "scripts": {
         "dev": "pnpm run dev:setup && concurrently -n \"shared-types,frontend,backend\" -c \"yellow,cyan,green\" \"pnpm run shared-types:dev\" \"pnpm run frontend:dev\" \"pnpm run backend:dev\"",
-        "dev:setup": "pnpm run shared-types:build && pnpm run backend:build",
-        "build": "pnpm --filter \"./packages/*\" build && pnpm --filter \"./apps/*\" build",
-        "start": "pnpm --filter \"./apps/*\" start",
-        "lint": "pnpm --parallel --filter \"./apps/*\" lint",
-        "test": "pnpm --parallel --filter \"./apps/*\" test",
+        "dev:setup": "pnpm run shared-types:verify && pnpm run backend:build",
         "frontend:dev": "pnpm --filter frontend dev",
         "backend:dev": "pnpm --filter backend dev",
         "frontend:build": "pnpm --filter frontend build",
         "backend:build": "pnpm --filter backend build",
+        "dev:backend-full": "pnpm run dev:setup && concurrently -n \"shared-types,backend\" -c \"yellow,green\" \"pnpm run shared-types:dev\" \"pnpm run backend:dev\"",
+        "dev:frontend-only": "pnpm run shared-types:verify && concurrently -n \"shared-types,frontend\" -c \"yellow,cyan\" \"pnpm run shared-types:dev\" \"pnpm run frontend:dev\"",
+        "build": "pnpm run shared-types:verify && pnpm --filter \"./apps/*\" build",
+        "build:safe": "pnpm run shared-types:verify && pnpm --filter \"./apps/*\" build",
+        "start": "concurrently -n \"BACKEND,FRONTEND\" -c \"green,cyan\" \"pnpm --filter backend start:prod\" \"pnpm --filter frontend preview\"",
+        "lint": "pnpm --parallel --filter \"./apps/*\" lint",
+        "test": "pnpm --parallel --filter \"./apps/*\" test",
+        "clean": "pnpm --parallel --filter \"./apps/*\" clean && pnpm --filter @web-ecom/shared-types clean",
         "shared-types:dev": "pnpm --filter @web-ecom/shared-types dev",
         "shared-types:build": "pnpm --filter @web-ecom/shared-types build",
-        "dev:backend-full": "pnpm run dev:setup && concurrently -n \"shared-types,backend\" -c \"yellow,green\" \"pnpm run shared-types:dev\" \"pnpm run backend:dev\"",
-        "dev:frontend-only": "pnpm run shared-types:build && concurrently -n \"shared-types,frontend\" -c \"yellow,cyan\" \"pnpm run shared-types:dev\" \"pnpm run frontend:dev\"",
-        "clean": "pnpm --parallel --filter \"./apps/*\" clean && pnpm --filter @web-ecom/shared-types clean"
+        "shared-types:verify": "pnpm --filter @web-ecom/shared-types verify",
+        "type-check": "pnpm --parallel --filter \"./apps/*\" type-check && pnpm --filter @web-ecom/shared-types type-check",
+        "lint:check": "pnpm --parallel --filter \"./apps/*\" lint",
+        "ci:install": "pnpm install --frozen-lockfile",
+        "ci:build": "pnpm run shared-types:verify && pnpm --filter \"./apps/*\" build",
+        "ci:test": "pnpm run shared-types:verify && pnpm --parallel --filter \"./apps/*\" test"
     },
     "devDependencies": {
-        "typescript": "^5.7.3",
-        "prettier": "^3.4.2"
+        "concurrently": "^9.1.2",
+        "prettier": "^3.4.2",
+        "typescript": "^5.7.3"
     }
 }

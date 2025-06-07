@@ -1,6 +1,7 @@
 import { CategoryBriefDto } from '@/products/dtos/category-brief.dto';
+import { IProduct } from '@web-ecom/shared-types/products/interfaces.cjs';
 
-export class ProductDto {
+export class ProductDto implements IProduct {
   id: string;
 
   name: string;
@@ -9,7 +10,7 @@ export class ProductDto {
 
   price: number;
 
-  imageUrl?: string;
+  imageUrl: string;
 
   stockQuantity: number;
 

@@ -5,8 +5,8 @@ import type { Cart, AddToCart, UpdateCartItem } from "@/types/cart";
 // Helper function để tính toán cart summary
 const _calculateCartSummary = (cart: Cart | null) => {
   return {
-    totalItems: cart?.total_items || 0,
-    totalPrice: cart?.total_price || 0,
+    totalItems: cart?.totalItems || 0,
+    totalPrice: cart?.totalPrice || 0,
   };
 };
 

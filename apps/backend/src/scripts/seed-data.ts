@@ -16,30 +16,41 @@ async function seedData() {
     // Tạo categories chuyên về công nghệ
     const categoryRepo = dataSource.getRepository(Category);
 
-    const laptops = await categoryRepo.save({
-      name: 'Laptop',
-      description: 'Laptop văn phòng, gaming, workstation cho mọi nhu cầu',
-    });
+    const findOrCreateCategory = async (name: string, description: string) => {
+      let category = await categoryRepo.findOneBy({ name });
+      if (!category) {
+        category = await categoryRepo.save({
+          name,
+          description,
+        });
+      }
+      return category;
+    };
 
-    const accessories = await categoryRepo.save({
-      name: 'Phụ kiện',
-      description: 'Chuột, bàn phím, tai nghe, webcam và các phụ kiện khác',
-    });
+    const laptops = await findOrCreateCategory(
+      'Laptop',
+      'Laptop văn phòng, gaming, workstation cho mọi nhu cầu',
+    );
 
-    const components = await categoryRepo.save({
-      name: 'Linh kiện',
-      description: 'RAM, SSD, ổ cứng, card đồ họa và linh kiện nâng cấp',
-    });
+    const accessories = await findOrCreateCategory(
+      'Phụ kiện',
+      'Chuột, bàn phím, tai nghe, webcam và các phụ kiện khác',
+    );
 
-    const monitors = await categoryRepo.save({
-      name: 'Màn hình',
-      description: 'Màn hình máy tính, gaming monitor, màn hình chuyên dụng',
-    });
+    const components = await findOrCreateCategory(
+      'Linh kiện',
+      'RAM, SSD, ổ cứng, card đồ họa và linh kiện nâng cấp',
+    );
 
-    const gadgets = await categoryRepo.save({
-      name: 'Thiết bị di động',
-      description: 'Tablet, smartphone, smartwatch và thiết bị thông minh',
-    });
+    const monitors = await findOrCreateCategory(
+      'Màn hình',
+      'Màn hình máy tính, gaming monitor, màn hình chuyên dụng',
+    );
+
+    const gadgets = await findOrCreateCategory(
+      'Thiết bị di động',
+      'Tablet, smartphone, smartwatch và thiết bị thông minh',
+    );
 
     // Tạo products chuyên về công nghệ
     const productRepo = dataSource.getRepository(Product);
@@ -53,7 +64,7 @@ async function seedData() {
         price: 52990000,
         stockQuantity: 15,
         imageUrl: 'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500',
-        category_id: laptops.id,
+        category: laptops,
       },
       {
         name: 'Dell XPS 13 Plus',
@@ -62,7 +73,7 @@ async function seedData() {
         price: 42990000,
         stockQuantity: 20,
         imageUrl: 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=500',
-        category_id: laptops.id,
+        category: laptops,
       },
       {
         name: 'ASUS ROG Strix G15',
@@ -71,7 +82,7 @@ async function seedData() {
         price: 28990000,
         stockQuantity: 25,
         imageUrl: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?w=500',
-        category_id: laptops.id,
+        category: laptops,
       },
       {
         name: 'ThinkPad X1 Carbon Gen 11',
@@ -80,7 +91,7 @@ async function seedData() {
         price: 48990000,
         stockQuantity: 12,
         imageUrl: 'https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=500',
-        category_id: laptops.id,
+        category: laptops,
       },
       {
         name: 'HP Pavilion 15',
@@ -89,7 +100,7 @@ async function seedData() {
         price: 16990000,
         stockQuantity: 40,
         imageUrl: 'https://images.unsplash.com/photo-1484788984921-03950022c9ef?w=500',
-        category_id: laptops.id,
+        category: laptops,
       },
 
       // PHỤ KIỆN
@@ -100,7 +111,7 @@ async function seedData() {
         price: 2490000,
         stockQuantity: 50,
         imageUrl: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=500',
-        category_id: accessories.id,
+        category: accessories,
       },
       {
         name: 'Keychron K8 Pro',
@@ -109,7 +120,7 @@ async function seedData() {
         price: 3590000,
         stockQuantity: 30,
         imageUrl: 'https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=500',
-        category_id: accessories.id,
+        category: accessories,
       },
       {
         name: 'Sony WH-1000XM5',
@@ -118,7 +129,7 @@ async function seedData() {
         price: 8990000,
         stockQuantity: 25,
         imageUrl: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500',
-        category_id: accessories.id,
+        category: accessories,
       },
       {
         name: 'Logitech C920s Pro HD',
@@ -127,7 +138,7 @@ async function seedData() {
         price: 1890000,
         stockQuantity: 60,
         imageUrl: 'https://images.unsplash.com/photo-1587825140708-dfaf72ae4b04?w=500',
-        category_id: accessories.id,
+        category: accessories,
       },
 
       // LINH KIỆN
@@ -138,7 +149,7 @@ async function seedData() {
         price: 2890000,
         stockQuantity: 35,
         imageUrl: 'https://images.unsplash.com/photo-1591238371519-95f9dbfe7bb6?w=500',
-        category_id: components.id,
+        category: components,
       },
       {
         name: 'Samsung 980 PRO 2TB',
@@ -147,7 +158,7 @@ async function seedData() {
         price: 4490000,
         stockQuantity: 40,
         imageUrl: 'https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=500',
-        category_id: components.id,
+        category: components,
       },
       {
         name: 'Seagate BarraCuda 4TB',
@@ -156,7 +167,7 @@ async function seedData() {
         price: 2290000,
         stockQuantity: 45,
         imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=500',
-        category_id: components.id,
+        category: components,
       },
 
       // MÀN HÌNH
@@ -167,16 +178,16 @@ async function seedData() {
         price: 8490000,
         stockQuantity: 20,
         imageUrl: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=500',
-        category_id: monitors.id,
+        category: monitors,
       },
       {
         name: 'Dell U2723QE',
         description:
           'Màn hình chuyên nghiệp 27" 4K IPS, 100% sRGB, 95% DCI-P3, USB-C 90W, KVM switch. Dành cho content creators.',
-        price: 12990000,
+        price: 2001,
         stockQuantity: 15,
         imageUrl: 'https://images.unsplash.com/photo-1551739440-5dd934d3a94a?w=500',
-        category_id: monitors.id,
+        category: monitors,
       },
 
       // THIẾT BỊ DI ĐỘNG
@@ -184,28 +195,28 @@ async function seedData() {
         name: 'iPad Pro 12.9" M2',
         description:
           'Tablet cao cấp chip M2, 128GB WiFi, màn hình Liquid Retina XDR 12.9", hỗ trợ Apple Pencil 2. Thay thế laptop.',
-        price: 26990000,
+        price: 2002,
         stockQuantity: 18,
         imageUrl: 'https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=500',
-        category_id: gadgets.id,
+        category: gadgets,
       },
       {
         name: 'Samsung Galaxy Tab S9+',
         description:
           'Android tablet Snapdragon 8 Gen 2, 12.4" Dynamic AMOLED 2X, S Pen trong hộp, chống nước IP68.',
-        price: 22990000,
+        price: 2003,
         stockQuantity: 22,
         imageUrl: 'https://images.unsplash.com/photo-1561154464-82e9adf32764?w=500',
-        category_id: gadgets.id,
+        category: gadgets,
       },
       {
         name: 'Apple Watch Series 9',
         description:
           'Smartwatch chip S9 SiP, màn hình Always-On Retina 45mm, GPS + Cellular, theo dõi sức khỏe toàn diện.',
-        price: 10990000,
+        price: 2000,
         stockQuantity: 30,
         imageUrl: 'https://images.unsplash.com/photo-1434493789847-2f02dc6ca35d?w=500',
-        category_id: gadgets.id,
+        category: gadgets,
       },
     ];
 

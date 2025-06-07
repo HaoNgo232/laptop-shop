@@ -60,7 +60,7 @@ export function ProductCard({ product }: ProductCardProps) {
             {/* Hình ảnh sản phẩm */}
             <div className="aspect-square overflow-hidden rounded-t-xl">
                 <img
-                    src={product.image_url}
+                    src={product.imageUrl}
                     alt={product.name}
                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                     loading="lazy"
@@ -86,7 +86,7 @@ export function ProductCard({ product }: ProductCardProps) {
                         {formatPrice(product.price)}
                     </span>
                     <span className="text-sm text-gray-500">
-                        Còn {product.stock_quantity} sản phẩm
+                        Còn {product.stockQuantity} sản phẩm
                     </span>
                 </div>
 
@@ -103,12 +103,12 @@ export function ProductCard({ product }: ProductCardProps) {
                     <Button
                         size="sm"
                         onClick={handleAddToCart}
-                        disabled={product.stock_quantity === 0 || isAddingToCart}
+                        disabled={product.stockQuantity === 0 || isAddingToCart}
                         className="flex-1"
                     >
                         {isAddingToCart
                             ? 'Đang thêm...'
-                            : product.stock_quantity === 0
+                            : product.stockQuantity === 0
                                 ? 'Hết hàng'
                                 : 'Thêm vào giỏ'
                         }

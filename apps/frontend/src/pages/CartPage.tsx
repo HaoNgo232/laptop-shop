@@ -128,7 +128,7 @@ export function CartPage() {
                             <div className="lg:col-span-2 space-y-4">
                                 <div className="flex justify-between items-center">
                                     <h2 className="text-lg font-semibold">
-                                        Sản phẩm ({cart.total_items} sản phẩm)
+                                        Sản phẩm ({cart.totalItems} sản phẩm)
                                     </h2>
                                 </div>
 

@@ -22,7 +22,7 @@ export function CartItemComponent({ item, onUpdateQuantity, onRemoveItem }: Cart
     };
 
     // Tính total cho item này
-    const itemTotal = item.quantity * item.price_at_addition;
+    const itemTotal = item.quantity * item.priceAtAddition;
 
     // Tăng số lượng
     const handleIncrease = async () => {
@@ -69,7 +69,7 @@ export function CartItemComponent({ item, onUpdateQuantity, onRemoveItem }: Cart
                     {/* Hình ảnh sản phẩm */}
                     <div className="flex-shrink-0">
                         <img
-                            src={item.product.image_url}
+                            src={item.product.imageUrl}
                             alt={item.product.name}
                             className="w-16 h-16 object-cover rounded-md"
                         />
@@ -84,7 +84,7 @@ export function CartItemComponent({ item, onUpdateQuantity, onRemoveItem }: Cart
                             {item.product.category.name}
                         </p>
                         <p className="text-sm text-gray-600 mt-1">
-                            {formatPrice(item.price_at_addition)} / sản phẩm
+                            {formatPrice(item.priceAtAddition)} / sản phẩm
                         </p>
                     </div>
 

@@ -24,7 +24,7 @@
     "test:e2e": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json",
     "test:cart-e2e": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json --testNamePattern=\"Cart E2E Tests\"",
     "test:cart-e2e:watch": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json --testNamePattern=\"Cart E2E Tests\" --watch",
-    "seed": "ts-node src/scripts/seed-data.ts"
+    "seed": "ts-node -r tsconfig-paths/register --project tsconfig.json src/scripts/seed-data.ts"
   },
   "dependencies": {
     "@web-ecom/shared-types": "workspace:*",

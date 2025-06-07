@@ -13,7 +13,7 @@ export class User extends BaseEntity {
   @Column()
   passwordHash: string;
 
-  @Column({ unique: true, length: 20, nullable: true })
+  @Column({ unique: true, length: 20, nullable: false })
   @IsString({ message: 'Tên người dùng không hợp lệ' })
   @MinLength(6, { message: 'Tên người dùng phải có ít nhất 6 ký tự' })
   username?: string;

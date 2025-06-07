@@ -5,14 +5,14 @@ export interface ICartItem {
   id: string;
   product: IProductBrief;
   quantity: number;
-  price_at_addition: number;
+  priceAtAddition: number;
 }
 
 export interface ICart {
   id: string;
   items: ICartItem[];
-  total_items: number;
-  total_price: number;
+  totalItems: number;
+  totalPrice: number;
 }
 
 // Cart DTOs

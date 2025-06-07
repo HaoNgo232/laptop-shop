@@ -36,7 +36,7 @@ export function ProductDetailPage() {
     // Handle quantity change
     const handleQuantityChange = (change: number) => {
         const newQuantity = quantity + change;
-        if (newQuantity >= 1 && newQuantity <= (product?.stock_quantity || 1)) {
+        if (newQuantity >= 1 && newQuantity <= (product?.stockQuantity || 1)) {
             setQuantity(newQuantity);
         }
     };
@@ -178,7 +178,7 @@ export function ProductDetailPage() {
                         {/* Product Image */}
                         <div className="aspect-square">
                             <img
-                                src={product.image_url || '/placeholder-product.jpg'}
+                                src={product.imageUrl || '/placeholder-product.jpg'}
                                 alt={product.name}
                                 className="w-full h-full object-cover rounded-lg shadow-sm"
                                 onError={(e) => {
@@ -216,8 +216,8 @@ export function ProductDetailPage() {
                                     <span className="text-3xl font-bold text-primary">
                                         {formatCurrency(product.price)}
                                     </span>
-                                    <Badge variant={product.stock_quantity > 0 ? "default" : "destructive"}>
-                                        {product.stock_quantity > 0 ? `Còn ${product.stock_quantity} sản phẩm` : 'Hết hàng'}
+                                    <Badge variant={product.stockQuantity > 0 ? "default" : "destructive"}>
+                                        {product.stockQuantity > 0 ? `Còn ${product.stockQuantity} sản phẩm` : 'Hết hàng'}
                                     </Badge>
                                 </div>
                             </div>
@@ -231,7 +231,7 @@ export function ProductDetailPage() {
                             </div>
 
                             {/* Quantity and Add to Cart */}
-                            {product.stock_quantity > 0 && (
+                            {product.stockQuantity > 0 && (
                                 <div className="border-t pt-6 space-y-4">
                                     <div className="flex items-center space-x-4">
                                         <span className="text-sm font-medium text-gray-900">Số lượng:</span>
@@ -250,14 +250,14 @@ export function ProductDetailPage() {
                                                 variant="ghost"
                                                 size="sm"
                                                 onClick={() => handleQuantityChange(1)}
-                                                disabled={quantity >= product.stock_quantity}
+                                                disabled={quantity >= product.stockQuantity}
                                                 className="h-10 w-10 p-0"
                                             >
                                                 <Plus className="h-4 w-4" />
                                             </Button>
                                         </div>
                                         <span className="text-sm text-gray-600">
-                                            (Tối đa {product.stock_quantity} sản phẩm)
+                                            (Tối đa {product.stockQuantity} sản phẩm)
                                         </span>
                                     </div>
 
@@ -356,7 +356,7 @@ export function ProductDetailPage() {
                                     <div className="flex justify-between">
                                         <span className="text-gray-600">Tình trạng:</span>
                                         <span className="font-medium">
-                                            {product.stock_quantity > 0 ? 'Còn hàng' : 'Hết hàng'}
+                                            {product.stockQuantity > 0 ? 'Còn hàng' : 'Hết hàng'}
                                         </span>
                                     </div>
                                 </div>

@@ -25,70 +25,55 @@ export function ProductsPage() {
     const [currentCategory, setCurrentCategory] = useState<string>('all');
     const [sortBy, setSortBy] = useState('createdAt');
     const [sortOrder, setSortOrder] = useState<SortOrder>(SortOrder.DESC);
+    const [searchTerm, setSearchTerm] = useState('');
 
-    // Load data khi component mount
     useEffect(() => {
         fetchCategories();
 
-        // Check URL params for category filter
         const categoryParam = searchParams.get('category');
-        if (categoryParam) {
-            setCurrentCategory(categoryParam);
+        const urlSearchQuery = searchParams.get('query');
+
+        const effectiveCategoryId = categoryParam || (currentCategory === 'all' ? undefined : currentCategory);
+        const effectiveSearchTerm = urlSearchQuery || searchTerm;
+
+        if (effectiveSearchTerm) {
+            searchProducts(effectiveSearchTerm, {
+                categoryId: effectiveCategoryId,
+                sortBy,
+                sortOrder
+            });
+        } else {
             fetchProducts({
-                category_id: categoryParam,
+                categoryId: effectiveCategoryId,
                 sortBy,
                 sortOrder
             });
-        } else {
-            fetchProducts();
         }
-    }, [searchParams]);
+    }, [
+        searchParams,
+        currentCategory,
+        sortBy,
+        sortOrder,
+        searchTerm,
+        fetchCategories,
+        fetchProducts,
+        searchProducts
+    ]);
 
-    // Handle search
-    const handleSearch = async (searchTerm: string) => {
-        if (searchTerm.trim()) {
-            await searchProducts(searchTerm, {
-                category_id: currentCategory === 'all' ? undefined : currentCategory,
-                sortBy,
-                sortOrder
-            });
-        } else {
-            await fetchProducts({
-                category_id: currentCategory === 'all' ? undefined : currentCategory,
-                sortBy,
-                sortOrder
-            });
-        }
+    const handleSearch = (term: string) => {
+        setSearchTerm(term);
     };
 
-    // Handle category filter
-    const handleCategoryChange = async (categoryId: string) => {
+    const handleCategoryChange = (categoryId: string) => {
         setCurrentCategory(categoryId);
-        await fetchProducts({
-            category_id: categoryId === 'all' ? undefined : categoryId,
-            sortBy,
-            sortOrder
-        });
     };
 
-    // Handle sort change
-    const handleSortChange = async (newSortBy: string) => {
+    const handleSortChange = (newSortBy: string) => {
         setSortBy(newSortBy);
-        await fetchProducts({
-            category_id: currentCategory === 'all' ? undefined : currentCategory,
-            sortBy: newSortBy,
-            sortOrder
-        });
     };
 
-    // Handle sort order change
-    const handleSortOrderChange = async (newSortOrder: SortOrder) => {
+    const handleSortOrderChange = (newSortOrder: SortOrder) => {
         setSortOrder(newSortOrder);
-        await fetchProducts({
-            category_id: currentCategory === 'all' ? undefined : currentCategory,
-            sortBy,
-            sortOrder: newSortOrder
-        });
     };
 
     return (

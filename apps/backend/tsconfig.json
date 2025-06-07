@@ -27,8 +27,7 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": false,
-    "allowImportingTsExtensions": false,
-    "types": ["jest", "node"]
+    "allowImportingTsExtensions": false
   },
   "include": ["src/**/*", "test/**/*"],
   "exclude": ["node_modules", "dist"]

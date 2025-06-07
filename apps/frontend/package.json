@@ -6,17 +6,16 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "start": "vite preview",
     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@web-ecom/shared-types": "workspace:*",
     "@hookform/resolvers": "^5.0.1",
     "@radix-ui/react-select": "^2.2.5",
     "@radix-ui/react-slot": "^1.2.3",
-    "@tailwindcss/vite": "^4.1.7",
+    "@tailwindcss/vite": "^4.1.8",
     "@tanstack/react-query": "^5.77.0",
+    "@web-ecom/shared-types": "workspace:*",
     "axios": "^1.9.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -38,6 +37,7 @@
     "@types/react-router-dom": "^5.3.3",
     "@vitejs/plugin-react": "^4.4.1",
     "eslint": "^9.25.0",
+    "eslint-plugin-no-relative-import-paths": "^1.6.1",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.19",
     "globals": "^16.0.0",

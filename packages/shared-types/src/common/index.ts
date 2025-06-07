@@ -1,1 +1,2 @@
-// export * from "./interfaces";
+// Export interfaces
+export * from "./interfaces";

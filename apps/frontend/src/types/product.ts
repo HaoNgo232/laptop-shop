@@ -47,11 +47,11 @@ const ProductSchema: z.ZodType<IProduct> = z.object({
   name: z.string().min(1, "Tên sản phẩm là bắt buộc"),
   description: z.string(),
   price: z.number().positive("Giá sản phẩm phải lớn hơn 0"),
-  stock_quantity: z.number().int().min(0, "Số lượng tồn kho không được âm"),
-  image_url: z.string().url("URL hình ảnh không hợp lệ"),
+  stockQuantity: z.number().int().min(0, "Số lượng tồn kho không được âm"),
+  imageUrl: z.string().url("URL hình ảnh không hợp lệ"),
   category: CategoryBriefSchema,
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
 });
 
 const ProductDetailSchema: z.ZodType<IProductDetail> = z.object({
@@ -59,11 +59,11 @@ const ProductDetailSchema: z.ZodType<IProductDetail> = z.object({
   name: z.string().min(1, "Tên sản phẩm là bắt buộc"),
   description: z.string(),
   price: z.number().positive("Giá sản phẩm phải lớn hơn 0"),
-  stock_quantity: z.number().int().min(0, "Số lượng tồn kho không được âm"),
-  image_url: z.string().url("URL hình ảnh không hợp lệ"),
+  stockQuantity: z.number().int().min(0, "Số lượng tồn kho không được âm"),
+  imageUrl: z.string().url("URL hình ảnh không hợp lệ"),
   category: CategorySchema,
-  createdAt: z.string(),
-  updatedAt: z.string(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
 });
 
 const CreateProductDtoSchema: z.ZodType<ICreateProduct> = z.object({
@@ -73,9 +73,9 @@ const CreateProductDtoSchema: z.ZodType<ICreateProduct> = z.object({
     .max(255, "Tên sản phẩm quá dài"),
   description: z.string().min(1, "Mô tả sản phẩm là bắt buộc"),
   price: z.number().positive("Giá sản phẩm phải lớn hơn 0"),
-  stock_quantity: z.number().int().min(0, "Số lượng tồn kho không được âm"),
-  image_url: z.string().url("URL hình ảnh không hợp lệ"),
-  category_id: z.string().uuid("Category ID không hợp lệ"),
+  stockQuantity: z.number().int().min(0, "Số lượng tồn kho không được âm"),
+  imageUrl: z.string().url("URL hình ảnh không hợp lệ"),
+  categoryId: z.string().uuid("Category ID không hợp lệ"),
 });
 
 const UpdateProductDtoSchema: z.ZodType<IUpdateProduct> = z.object({
@@ -86,13 +86,13 @@ const UpdateProductDtoSchema: z.ZodType<IUpdateProduct> = z.object({
     .optional(),
   description: z.string().min(1, "Mô tả sản phẩm là bắt buộc").optional(),
   price: z.number().positive("Giá sản phẩm phải lớn hơn 0").optional(),
-  stock_quantity: z
+  stockQuantity: z
     .number()
     .int()
     .min(0, "Số lượng tồn kho không được âm")
     .optional(),
-  image_url: z.string().url("URL hình ảnh không hợp lệ").optional(),
-  category_id: z.string().uuid("Category ID không hợp lệ").optional(),
+  imageUrl: z.string().url("URL hình ảnh không hợp lệ").optional(),
+  categoryId: z.string().uuid("Category ID không hợp lệ").optional(),
   active: z.boolean().optional(),
 });
 
@@ -117,10 +117,10 @@ const UpdateCategoryDtoSchema: z.ZodType<IUpdateCategory> = z.object({
 const QueryProductDtoSchema: z.ZodType<IQueryProduct> = z.object({
   page: z.number().int().positive().optional(),
   limit: z.number().int().positive().max(100).optional(),
-  category_id: z.string().uuid().optional(),
+  categoryId: z.string().uuid().optional(),
   sortBy: z.string().optional(),
   sortOrder: z.nativeEnum(SortOrder).optional(),
-  price_min: z.number().min(0).optional(),
-  price_max: z.number().min(0).optional(),
+  priceMin: z.number().min(0).optional(),
+  priceMax: z.number().min(0).optional(),
   search: z.string().optional(),
 });

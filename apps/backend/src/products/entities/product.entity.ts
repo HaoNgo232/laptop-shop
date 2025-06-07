@@ -3,6 +3,7 @@ import { CartItem } from '@/cart/entities/cart-item.entity';
 import { Min, MinLength } from 'class-validator';
 import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Category } from './category.entity';
+import { OrderItem } from '@/orders/entities/order-item.entity';
 
 @Entity('products')
 export class Product extends BaseEntity {
@@ -20,8 +21,8 @@ export class Product extends BaseEntity {
   @Column('int')
   stockQuantity: number;
 
-  @Column({ nullable: true })
-  imageUrl?: string;
+  @Column({ nullable: false })
+  imageUrl: string;
 
   @Column()
   categoryId: string;
@@ -37,8 +38,8 @@ export class Product extends BaseEntity {
   // @OneToMany(() => Review, review => review.product)
   // reviews: Review[];
 
-  // @OneToMany(() => OrderItem, orderItem => orderItem.product)
-  // order_items: OrderItem[];
+  @OneToMany(() => OrderItem, (orderItem) => orderItem.product)
+  orderItems: OrderItem[];
 
   // @OneToMany(() => StockMovement, stockMovement => stockMovement.product)
   // stock_movements: StockMovement[];

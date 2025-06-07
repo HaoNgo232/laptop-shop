@@ -107,7 +107,7 @@ export const useCheckoutStore = create<CheckoutState>((set, get) => ({
       try {
         const orderDetail = await orderService.checkPaymentStatus(orderId);
 
-        if (orderDetail.payment_status === PaymentStatusEnum.PAID) {
+        if (orderDetail.paymentStatus === PaymentStatusEnum.PAID) {
           set({
             paymentStatus: PaymentStatusEnum.PAID,
             createdOrder: orderDetail,
@@ -117,8 +117,8 @@ export const useCheckoutStore = create<CheckoutState>((set, get) => ({
           const cartStore = useCartStore.getState();
           await cartStore.clearCart();
         } else if (
-          orderDetail.payment_status === PaymentStatusEnum.FAILED ||
-          orderDetail.payment_status === PaymentStatusEnum.CANCELLED
+          orderDetail.paymentStatus === PaymentStatusEnum.FAILED ||
+          orderDetail.paymentStatus === PaymentStatusEnum.CANCELLED
         ) {
           set({ paymentStatus: PaymentStatusEnum.FAILED });
           get().stopPaymentPolling();

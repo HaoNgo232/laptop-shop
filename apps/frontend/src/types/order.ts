@@ -34,33 +34,33 @@ const OrderItemSchema: z.ZodType<IOrderItem> = z.object({
     id: z.string().uuid(),
     name: z.string(),
     price: z.number().positive(),
-    image_url: z.string().url().optional(),
+    imageUrl: z.string().url().optional(),
   }),
   quantity: z.number().int().positive("Số lượng phải lớn hơn 0"),
-  price_at_purchase: z.number().positive(),
+  priceAtPurchase: z.number().positive(),
 });
 
 const OrderSchema: z.ZodType<IOrder> = z.object({
   id: z.string().uuid(),
-  order_date: z.date(),
+  orderDate: z.date(),
   status: z.nativeEnum(OrderStatusEnum),
-  total_amount: z.number().positive("Tổng tiền phải lớn hơn 0"),
+  totalAmount: z.number().positive("Tổng tiền phải lớn hơn 0"),
 });
 
 const OrderDetailSchema: z.ZodType<IOrderDetail> = z.object({
   id: z.string().uuid(),
-  order_date: z.date(),
+  orderDate: z.date(),
   status: z.nativeEnum(OrderStatusEnum),
-  total_amount: z.number().positive("Tổng tiền phải lớn hơn 0"),
+  totalAmount: z.number().positive("Tổng tiền phải lớn hơn 0"),
   user: z.object({
     id: z.string().uuid(),
     email: z.string().email(),
     username: z.string().optional(),
-    phone_number: z.string().optional(),
+    phoneNumber: z.string().optional(),
   }),
-  shipping_address: z.string().min(1, "Địa chỉ giao hàng là bắt buộc"),
-  payment_method: z.nativeEnum(PaymentMethodEnum),
-  payment_status: z.nativeEnum(PaymentStatusEnum),
+  shippingAddress: z.string().min(1, "Địa chỉ giao hàng là bắt buộc"),
+  paymentMethod: z.nativeEnum(PaymentMethodEnum),
+  paymentStatus: z.nativeEnum(PaymentStatusEnum),
   note: z.string().optional(),
   items: z.array(OrderItemSchema).min(1, "Đơn hàng phải có ít nhất 1 sản phẩm"),
 });

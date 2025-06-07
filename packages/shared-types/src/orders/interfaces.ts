@@ -7,17 +7,17 @@ export interface IOrderItem {
     id: string;
     name: string;
     price: number;
-    image_url?: string;
+    imageUrl?: string;
   };
   quantity: number;
-  price_at_purchase: number;
+  priceAtPurchase: number;
 }
 
 export interface IOrder {
   id: string;
-  order_date: Date;
+  orderDate: Date;
   status: OrderStatusEnum;
-  total_amount: number;
+  totalAmount: number;
 }
 
 export interface IOrderDetail extends IOrder {
@@ -25,11 +25,11 @@ export interface IOrderDetail extends IOrder {
     id: string;
     email: string;
     username?: string;
-    phone_number?: string;
+    phoneNumber?: string;
   };
-  shipping_address: string;
-  payment_method: PaymentMethodEnum;
-  payment_status: PaymentStatusEnum;
+  shippingAddress: string;
+  paymentMethod: PaymentMethodEnum;
+  paymentStatus: PaymentStatusEnum;
   note?: string;
   items: IOrderItem[];
 }

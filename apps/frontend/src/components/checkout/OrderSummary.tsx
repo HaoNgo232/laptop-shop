@@ -23,7 +23,7 @@ export function OrderSummary({ className }: OrderSummaryProps) {
 
     const shippingFee = 0;
     const tax = 0;
-    const finalTotal = cart.total_price + shippingFee + tax;
+    const finalTotal = cart.totalPrice + shippingFee + tax;
 
     return (
         <Card className={className}>
@@ -39,7 +39,7 @@ export function OrderSummary({ className }: OrderSummaryProps) {
                     {cart.items.map((item) => (
                         <div key={item.product.id} className="flex items-center space-x-3">
                             <img
-                                src={item.product.image_url}
+                                src={item.product.imageUrl}
                                 alt={item.product.name}
                                 className="w-12 h-12 object-cover rounded-md"
                             />
@@ -56,7 +56,7 @@ export function OrderSummary({ className }: OrderSummaryProps) {
                                     x{item.quantity}
                                 </Badge>
                                 <p className="text-sm font-medium">
-                                    {formatCurrency(item.price_at_addition * item.quantity)}
+                                    {formatCurrency(item.priceAtAddition * item.quantity)}
                                 </p>
                             </div>
                         </div>
@@ -68,8 +68,8 @@ export function OrderSummary({ className }: OrderSummaryProps) {
                 {/* Summary */}
                 <div className="space-y-2">
                     <div className="flex justify-between text-sm">
-                        <span>Tạm tính ({cart.total_items} sản phẩm):</span>
-                        <span>{formatCurrency(cart.total_price)}</span>
+                        <span>Tạm tính ({cart.totalItems} sản phẩm):</span>
+                        <span>{formatCurrency(cart.totalPrice)}</span>
                     </div>
                     <div className="flex justify-between text-sm">
                         <span>Phí vận chuyển:</span>
@@ -95,4 +95,4 @@ export function OrderSummary({ className }: OrderSummaryProps) {
             </CardContent>
         </Card>
     );
-} 
+}   

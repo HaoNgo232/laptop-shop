@@ -104,7 +104,7 @@ export class PaymentController {
       return {
         success: false,
         message: 'Webhook processing failed',
-        error: error.message,
+        error: error instanceof Error ? error.message : 'Unknown error',
       };
     }
   }

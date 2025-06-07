@@ -25,18 +25,18 @@ export interface IProduct {
   name: string;
   description: string;
   price: number;
-  stock_quantity: number;
-  image_url: string;
+  stockQuantity: number;
+  imageUrl: string;
   category: ICategoryBrief;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface IProductBrief {
   id: string;
   name: string;
   price: number;
-  image_url?: string;
+  imageUrl?: string;
   category: ICategoryBrief;
 }
 
@@ -49,9 +49,9 @@ export interface ICreateProduct {
   name: string;
   description: string;
   price: number;
-  stock_quantity: number;
-  image_url: string;
-  category_id: string;
+  stockQuantity: number;
+  imageUrl: string;
+  categoryId: string;
 }
 
 export interface IUpdateProduct extends Partial<ICreateProduct> {
@@ -72,11 +72,11 @@ export interface IUpdateCategory extends Partial<ICreateCategory> {
 export interface IQueryProduct {
   page?: number;
   limit?: number;
-  category_id?: string;
+  categoryId?: string;
   sortBy?: string;
   sortOrder?: SortOrder;
-  price_min?: number;
-  price_max?: number;
+  priceMin?: number;
+  priceMax?: number;
   search?: string;
 }
 

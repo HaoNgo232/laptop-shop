@@ -17,157 +17,35 @@
                 "default": "./dist/cjs/index.cjs"
             }
         },
-        "./common": {
+        "./*": {
             "import": {
-                "types": "./dist/esm/common/index.d.ts",
-                "default": "./dist/esm/common/index.js"
+                "types": "./dist/esm/*.d.ts",
+                "default": "./dist/esm/*.js"
             },
             "require": {
-                "types": "./dist/cjs/common/index.d.cts",
-                "default": "./dist/cjs/common/index.cjs"
-            }
-        },
-        "./auth": {
-            "import": {
-                "types": "./dist/esm/auth/index.d.ts",
-                "default": "./dist/esm/auth/index.js"
-            },
-            "require": {
-                "types": "./dist/cjs/auth/index.d.cts",
-                "default": "./dist/cjs/auth/index.cjs"
-            }
-        },
-        "./auth/interfaces": {
-            "import": {
-                "types": "./dist/esm/auth/interfaces.d.ts"
-            },
-            "require": {
-                "types": "./dist/cjs/auth/interfaces.d.cts"
-            }
-        },
-        "./auth/enums": {
-            "import": {
-                "types": "./dist/esm/auth/enums.d.ts",
-                "default": "./dist/esm/auth/enums.js"
-            },
-            "require": {
-                "types": "./dist/cjs/auth/enums.d.cts",
-                "default": "./dist/cjs/auth/enums.cjs"
-            }
-        },
-        "./cart": {
-            "import": {
-                "types": "./dist/esm/cart/index.d.ts",
-                "default": "./dist/esm/cart/index.js"
-            },
-            "require": {
-                "types": "./dist/cjs/cart/index.d.cts",
-                "default": "./dist/cjs/cart/index.cjs"
-            }
-        },
-        "./cart/interfaces": {
-            "import": {
-                "types": "./dist/esm/cart/interfaces.d.ts"
-            },
-            "require": {
-                "types": "./dist/cjs/cart/interfaces.d.cts"
-            }
-        },
-        "./orders": {
-            "import": {
-                "types": "./dist/esm/orders/index.d.ts",
-                "default": "./dist/esm/orders/index.js"
-            },
-            "require": {
-                "types": "./dist/cjs/orders/index.d.cts",
-                "default": "./dist/cjs/orders/index.cjs"
-            }
-        },
-        "./orders/interfaces": {
-            "import": {
-                "types": "./dist/esm/orders/interfaces.d.ts"
-            },
-            "require": {
-                "types": "./dist/cjs/orders/interfaces.d.cts"
-            }
-        },
-        "./orders/enums": {
-            "import": {
-                "types": "./dist/esm/orders/enums.d.ts",
-                "default": "./dist/esm/orders/enums.js"
-            },
-            "require": {
-                "types": "./dist/cjs/orders/enums.d.cts",
-                "default": "./dist/cjs/orders/enums.cjs"
-            }
-        },
-        "./payment": {
-            "import": {
-                "types": "./dist/esm/payment/index.d.ts",
-                "default": "./dist/esm/payment/index.js"
-            },
-            "require": {
-                "types": "./dist/cjs/payment/index.d.cts",
-                "default": "./dist/cjs/payment/index.cjs"
-            }
-        },
-        "./payment/interfaces": {
-            "import": {
-                "types": "./dist/esm/payment/interfaces.d.ts"
-            },
-            "require": {
-                "types": "./dist/cjs/payment/interfaces.d.cts"
-            }
-        },
-        "./payment/enums": {
-            "import": {
-                "types": "./dist/esm/payment/enums.d.ts",
-                "default": "./dist/esm/payment/enums.js"
-            },
-            "require": {
-                "types": "./dist/cjs/payment/enums.d.cts",
-                "default": "./dist/cjs/payment/enums.cjs"
-            }
-        },
-        "./products": {
-            "import": {
-                "types": "./dist/esm/products/index.d.ts",
-                "default": "./dist/esm/products/index.js"
-            },
-            "require": {
-                "types": "./dist/cjs/products/index.d.cts",
-                "default": "./dist/cjs/products/index.cjs"
-            }
-        },
-        "./products/interfaces": {
-            "import": {
-                "types": "./dist/esm/products/interfaces.d.ts"
-            },
-            "require": {
-                "types": "./dist/cjs/products/interfaces.d.cts"
-            }
-        },
-        "./products/enums": {
-            "import": {
-                "types": "./dist/esm/products/enums.d.ts",
-                "default": "./dist/esm/products/enums.js"
-            },
-            "require": {
-                "types": "./dist/cjs/products/enums.d.cts",
-                "default": "./dist/cjs/products/enums.cjs"
+                "types": "./dist/cjs/*.d.cts",
+                "default": "./dist/cjs/*.cjs"
             }
         },
         "./package.json": "./package.json"
     },
     "scripts": {
-        "build": "pnpm run clean && tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json && pnpm run rename-cjs",
-        "rename-cjs": "find ./dist/cjs -depth -name '*.js' -exec bash -c 'mv \"$1\" \"${1%.js}.cjs\"' _ {} \\; && find ./dist/cjs -depth -name '*.js.map' -exec bash -c 'mv \"$1\" \"${1%.js.map}.cjs.map\"' _ {} \\; && find ./dist/cjs -depth -name '*.d.ts' -exec bash -c 'mv \"$1\" \"${1%.d.ts}.d.cts\"' _ {} \\; && find ./dist/cjs -depth -name '*.d.ts.map' -exec bash -c 'mv \"$1\" \"${1%.d.ts.map}.d.cts.map\"' _ {} \\;",
+        "build": "pnpm run build:safe",
+        "build:safe": "pnpm run clean && pnpm run build:esm && pnpm run build:cjs && pnpm run postprocess:cjs",
+        "build:esm": "tsc -p tsconfig.esm.json",
+        "build:cjs": "tsc -p tsconfig.cjs.json",
+        "postprocess:cjs": "pnpm run rename:cjs && pnpm run fix-imports",
+        "rename:cjs": "find ./dist/cjs -depth -name '*.js' -exec bash -c 'mv \"$1\" \"${1%.js}.cjs\"' _ {} \\; && find ./dist/cjs -depth -name '*.js.map' -exec bash -c 'mv \"$1\" \"${1%.js.map}.cjs.map\"' _ {} \\; && find ./dist/cjs -depth -name '*.d.ts' -exec bash -c 'mv \"$1\" \"${1%.d.ts}.d.cts\"' _ {} \\; && find ./dist/cjs -depth -name '*.d.ts.map' -exec bash -c 'mv \"$1\" \"${1%.d.ts.map}.d.cts.map\"' _ {} \\;",
+        "fix-imports": "node fix-cjs-imports.cjs",
         "build:dev": "tsc --watch",
         "dev": "tsc --watch",
         "lint": "eslint src/**/*.ts",
         "type-check": "tsc --noEmit",
-        "prepublishOnly": "npm run build",
-        "clean": "rm -rf dist"
+        "prepublishOnly": "pnpm run build",
+        "clean": "rm -rf dist",
+        "verify": "pnpm run type-check && pnpm run build && echo '✅ Shared-types verification passed!'",
+        "watch": "concurrently \"tsc -p tsconfig.esm.json --watch\" \"tsc -p tsconfig.cjs.json --watch\"",
+        "check:exports": "node -e \"console.log('📦 Checking exports...'); const pkg = require('./package.json'); console.log('✅ Exports config:', Object.keys(pkg.exports));\""
     },
     "files": [
         "dist",
