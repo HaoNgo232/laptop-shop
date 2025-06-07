@@ -8,21 +8,20 @@ import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-v
 import { PaymentMethodEnum } from '@/payment/enums/payment-method.enum';
 
 @Entity('orders')
-@Index(['user_id'])
-@Index(['order_date'])
+@Index(['userId'])
+@Index(['orderDate'])
 @Index(['status'])
 export class Order extends BaseEntity {
-  @Column({ name: 'user_id' })
+  @Column()
   @IsNotEmpty()
   @IsString()
-  user_id: string;
+  userId: string;
 
   @Column({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
-    name: 'order_date',
   })
-  order_date: Date;
+  orderDate: Date;
 
   @Column({
     type: 'enum',
@@ -35,37 +34,35 @@ export class Order extends BaseEntity {
   @Column({ type: 'decimal', precision: 12, scale: 2 })
   @IsNumber({ maxDecimalPlaces: 2 })
   @Min(0)
-  total_amount: number;
+  totalAmount: number;
 
   @Column('text')
   @IsNotEmpty()
   @IsString()
-  shipping_address: string;
+  shippingAddress: string;
 
   @Column({
     type: 'enum',
     enum: PaymentMethodEnum,
     default: PaymentMethodEnum.SEPAY_QR,
-    name: 'payment_method',
   })
   @IsEnum(PaymentMethodEnum)
-  payment_method: PaymentMethodEnum;
+  paymentMethod: PaymentMethodEnum;
 
-  @Column('text', { nullable: true, name: 'transaction_id' })
+  @Column('text', { nullable: true })
   @IsOptional()
   @IsString()
-  transaction_id?: string;
+  transactionId?: string;
 
   @Column({
     type: 'enum',
     enum: PaymentStatusEnum,
     default: PaymentStatusEnum.PENDING,
-    name: 'payment_status',
   })
   @IsEnum(PaymentStatusEnum)
-  payment_status: PaymentStatusEnum;
+  paymentStatus: PaymentStatusEnum;
 
-  @Column('text', { nullable: true, name: 'note' })
+  @Column('text', { nullable: true })
   @IsOptional()
   @IsString()
   note?: string;

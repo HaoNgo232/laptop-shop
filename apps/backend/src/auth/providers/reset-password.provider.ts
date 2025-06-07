@@ -45,7 +45,7 @@ export class ResetPasswordProvider {
       const hashedPassword = await this.bcryptProvider.hashPassword(resetPasswordDto.newPassword);
 
       // Cập nhật mật khẩu
-      user.password_hash = hashedPassword;
+      user.passwordHash = hashedPassword;
       await this.userRepository.save(user);
     } catch (error) {
       if (error) {

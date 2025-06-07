@@ -47,17 +47,17 @@ export class CreateUserProvider {
       // Tạo user mới
       const newUser: User = this.userRepository.create({
         ...registerUserDto,
-        password_hash: hashedPassword,
+        passwordHash: hashedPassword,
       });
       await this.userRepository.save(newUser);
       // Tạo giỏ hàng cho user
       await this.cartService.getCartEntityByUserId(newUser.id);
 
-      // try {
-      //   await this.mailService.sendUserWelcomeEmail(newUser);
-      // } catch (error) {
-      //   throw new RequestTimeoutException(error);
-      // }
+      try {
+        await this.mailService.sendUserWelcomeEmail(newUser);
+      } catch (error) {
+        throw new RequestTimeoutException(error);
+      }
 
       return newUser;
     } catch (error) {

@@ -1,7 +1,6 @@
 import { OrderItemDto } from '@/orders/dtos/order-item.dto';
 import { OrderDto } from '@/orders/dtos/order.dto';
 import { UserBriefDto } from '@/orders/dtos/user-brief.dto';
-import { OrderStatusEnum } from '@/orders/enums/order-status.enum';
 
 import { IsNotEmpty, IsString, IsEnum, IsOptional, ValidateNested, IsArray } from 'class-validator';
 import { Type } from 'class-transformer';
@@ -14,14 +13,14 @@ export class OrderDetailDto extends OrderDto {
 
   @IsNotEmpty()
   @IsString()
-  shipping_address: string;
+  shippingAddress: string;
 
   @IsNotEmpty()
   @IsString()
-  payment_method: string;
+  paymentMethod: string;
 
   @IsEnum(PaymentStatusEnum)
-  payment_status: PaymentStatusEnum;
+  paymentStatus: PaymentStatusEnum;
 
   @IsOptional()
   @IsString()

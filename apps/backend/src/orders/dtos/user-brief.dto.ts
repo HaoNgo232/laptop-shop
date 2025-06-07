@@ -15,5 +15,5 @@ export class UserBriefDto {
 
   @IsOptional()
   @IsString()
-  phone_number?: string;
+  phoneNumber?: string;
 }

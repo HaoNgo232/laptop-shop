@@ -15,5 +15,5 @@ export class OrderItemDto {
 
   @IsNumber()
   @IsPositive()
-  price_at_purchase: number;
+  priceAtPurchase: number;
 }

@@ -9,9 +9,9 @@ export class ProductDetailDto {
 
   price: number;
 
-  stock_quantity: number;
+  stockQuantity: number;
 
-  image_url?: string;
+  imageUrl?: string;
 
   category: CategoryDto;
 

@@ -42,7 +42,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       }
     }
 
-    // Tìm user theo id (sub) từ payload
+    // Tìm user theo id (sub) từ payloads
     const user = await this.userRepository.findOne({
       where: { id: payload.sub },
     });
@@ -51,7 +51,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     }
 
     // Loại bỏ password trước khi trả về
-    const { password_hash, ...result } = user;
+    const { passwordHash, ...result } = user;
     return result;
   }
 }

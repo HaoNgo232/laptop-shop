@@ -18,13 +18,13 @@ export class Product extends BaseEntity {
   price: number;
 
   @Column('int')
-  stock_quantity: number;
+  stockQuantity: number;
 
   @Column({ nullable: true })
-  image_url?: string;
+  imageUrl?: string;
 
-  @Column({ name: 'category_id' })
-  category_id: string;
+  @Column()
+  categoryId: string;
 
   // Relationships
   @ManyToOne(() => Category, (category) => category.products)
@@ -32,7 +32,7 @@ export class Product extends BaseEntity {
   category: Category;
 
   @OneToMany(() => CartItem, (cartItem) => cartItem.product)
-  cart_items: CartItem[];
+  cartItems: CartItem[];
 
   // @OneToMany(() => Review, review => review.product)
   // reviews: Review[];

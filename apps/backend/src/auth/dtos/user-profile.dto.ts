@@ -21,7 +21,7 @@ export class UserProfileDto implements IUserProfile {
 
   @IsOptional()
   @IsString({ message: 'Số điện thoại không hợp lệ' })
-  phone_number?: string;
+  phoneNumber?: string;
 
   @IsEnum(UserRole)
   role: UserRole;
@@ -33,5 +33,5 @@ export class UserProfileDto implements IUserProfile {
   updatedAt: Date;
 
   @Exclude()
-  password_hash?: string;
+  passwordHash?: string;
 }

@@ -3,7 +3,6 @@ import { plainToClass } from 'class-transformer';
 import { Category } from '@/products/entities/category.entity';
 import { CategoryDto } from '@/products/dtos/category.dto';
 import { CategoryDetailDto } from '@/products/dtos/category-detail.dto';
-import { ProductDto } from '@/products/dtos/product.dto';
 
 @Injectable()
 export class CategoryMapperProvider {
@@ -41,8 +40,8 @@ export class CategoryMapperProvider {
           name: product.name,
           description: product.description,
           price: product.price,
-          image_url: product.image_url,
-          stock_quantity: product.stock_quantity,
+          imageUrl: product.imageUrl,
+          stockQuantity: product.stockQuantity,
           category: {
             id: category.id,
             name: category.name,

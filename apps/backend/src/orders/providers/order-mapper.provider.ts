@@ -11,9 +11,9 @@ export class OrderMapperProvider {
   toOrderDto(order: Order): OrderDto {
     return {
       id: order.id,
-      order_date: order.order_date,
+      orderDate: order.orderDate,
       status: order.status,
-      total_amount: order.total_amount,
+      totalAmount: order.totalAmount,
     };
   }
 
@@ -25,38 +25,37 @@ export class OrderMapperProvider {
   }
 
   /**
-   * Map Order antity sang OrderDetailDto với tất cả ralationships
+   * Map Order antity sang OrderDetailDto với tất cả ralationships
    */
   toOrderDetailDto(order: Order): OrderDetailDto {
     return {
       id: order.id,
       user: {
-        id: order.user_id,
+        id: order.userId,
         email: order.user.email,
         username: order.user.username,
-        phone_number: order.user.phone_number,
+        phoneNumber: order.user.phoneNumber,
       },
-      shipping_address: order.shipping_address,
-      payment_method: order.payment_method,
-      payment_status: order.payment_status,
+      shippingAddress: order.shippingAddress,
+      paymentMethod: order.paymentMethod,
+      paymentStatus: order.paymentStatus,
       items: order.items.map((item) => ({
-        product_id: item.product_id,
-        quantity: item.quantity,
-        price_at_purchase: item.price_at_purchase,
         product: {
           id: item.product.id,
           name: item.product.name,
           price: Number(item.product.price),
-          image_url: item.product.image_url || '',
+          imageUrl: item.product.imageUrl ?? '',
           category: {
             id: item.product.category.id,
             name: item.product.category.name,
           },
         },
+        quantity: item.quantity,
+        priceAtPurchase: Number(item.priceAtPurchase),
       })),
-      order_date: order.order_date,
+      orderDate: order.orderDate,
       status: order.status,
-      total_amount: Number(order.total_amount),
+      totalAmount: Number(order.totalAmount),
     };
   }
 
@@ -66,9 +65,9 @@ export class OrderMapperProvider {
   mapOrderToDto(order: Order): OrderDto {
     return {
       id: order.id,
-      order_date: order.order_date,
+      orderDate: order.orderDate,
       status: order.status,
-      total_amount: Number(order.total_amount),
+      totalAmount: Number(order.totalAmount),
     };
   }
 
@@ -83,12 +82,12 @@ export class OrderMapperProvider {
         username: order.user.username,
         email: order.user.email,
       },
-      order_date: order.order_date,
+      orderDate: order.orderDate,
       status: order.status,
-      payment_status: order.payment_status,
-      total_amount: Number(order.total_amount),
-      shipping_address: order.shipping_address,
-      payment_method: order.payment_method,
+      paymentStatus: order.paymentStatus,
+      totalAmount: Number(order.totalAmount),
+      shippingAddress: order.shippingAddress,
+      paymentMethod: order.paymentMethod,
       note: order.note,
       items:
         order.items?.map((item) => ({
@@ -96,14 +95,14 @@ export class OrderMapperProvider {
             id: item.product.id,
             name: item.product.name,
             price: Number(item.product.price),
-            image_url: item.product.image_url || '',
+            imageUrl: item.product.imageUrl ?? '',
             category: {
               id: item.product.category.id,
               name: item.product.category.name,
             },
           },
           quantity: item.quantity,
-          price_at_purchase: Number(item.price_at_purchase),
+          priceAtPurchase: Number(item.priceAtPurchase),
         })) || [],
     };
   }

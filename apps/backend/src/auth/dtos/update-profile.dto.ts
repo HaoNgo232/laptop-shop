@@ -9,7 +9,7 @@ export class UpdateUserProfileDto extends PartialType(
     'role',
     'createdAt',
     'updatedAt',
-    'password_hash',
+    'passwordHash',
   ] as const),
 ) {
   @IsOptional()
@@ -26,5 +26,5 @@ export class UpdateUserProfileDto extends PartialType(
 
   @IsOptional()
   @IsString()
-  phone_number?: string;
+  phoneNumber?: string;
 }

@@ -1,5 +1,4 @@
-import { IsNumber, IsUUID } from 'class-validator';
-import { ValidateNested } from 'class-validator';
+import { IsNumber, IsUUID, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ICartItem } from '@web-ecom/shared-types';
 import { ProductBriefDto } from '@/orders/dtos/product-brief.dto';
@@ -16,5 +15,5 @@ export class CartItemDto implements ICartItem {
   quantity: number;
 
   @IsNumber()
-  price_at_addition: number;
+  priceAtAddition: number;
 }

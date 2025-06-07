@@ -6,6 +6,7 @@ import { MailModule } from '@/mail/mail.module';
 import databaseConfig from '@/config/database.config';
 import sepayConfig from '@/config/sepay.config';
 import { validationSchema } from '@/config/validation.schema';
+import { SnakeCaseNamingStrategy } from '@/config/snake-case-naming.strategy';
 import { ProductsModule } from '@/products/products.module';
 import { OrdersModule } from '@/orders/orders.module';
 import { PaymentModule } from '@/payment/payment.module';
@@ -42,6 +43,7 @@ import { AccessTokenGuard } from '@/auth/guards/access-token/access-token.guard'
         autoLoadEntities: true,
         synchronize: configService.get('database.synchronize'),
         logging: configService.get('database.logging'),
+        namingStrategy: new SnakeCaseNamingStrategy(),
       }),
     }),
     AuthModule,

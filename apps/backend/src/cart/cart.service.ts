@@ -33,7 +33,7 @@ export class CartService {
   async getCartEntityByUserId(userId: string): Promise<Cart> {
     const cart = await this.cartRepository.findOne({
       where: { user: { id: userId } },
-      relations: ['cart_items', 'cart_items.product', 'cart_items.product.category'],
+      relations: ['cartItems', 'cartItems.product', 'cartItems.product.category'],
     });
 
     if (!cart) {
@@ -62,7 +62,7 @@ export class CartService {
 
     // Kiểm tra xem sản phẩm đã có trong cart chưa
     const existingCartItem = await this.cartItemRepository.findOne({
-      where: { cart_id: cart.id, product_id: productId },
+      where: { cartId: cart.id, productId: productId },
     });
 
     if (existingCartItem) {
@@ -72,10 +72,10 @@ export class CartService {
     } else {
       // Nếu chưa có, tạo mới
       const cartItem = this.cartItemRepository.create({
-        cart_id: cart.id,
-        product_id: productId,
+        cartId: cart.id,
+        productId: productId,
         quantity: quantity,
-        price_at_addition: product.price, // Lưu giá tại thời điểm thêm vào cart
+        priceAtAddition: product.price, // Lưu giá tại thời điểm thêm vào cart
       });
       await this.cartItemRepository.save(cartItem);
     }
@@ -96,7 +96,7 @@ export class CartService {
     const cart = await this.getCartEntityByUserId(userId);
 
     const cartItem = await this.cartItemRepository.findOne({
-      where: { cart_id: cart.id, product_id: productId },
+      where: { cartId: cart.id, productId: productId },
     });
 
     if (!cartItem) {
@@ -121,7 +121,7 @@ export class CartService {
     const cart = await this.getCartEntityByUserId(userId);
 
     const cartItem = await this.cartItemRepository.findOne({
-      where: { cart_id: cart.id, product_id: productId },
+      where: { cartId: cart.id, productId: productId },
     });
 
     if (!cartItem) {
@@ -141,7 +141,7 @@ export class CartService {
     const cart = await this.getCartEntityByUserId(userId);
 
     await this.cartItemRepository.delete({
-      cart_id: cart.id,
+      cartId: cart.id,
     });
   }
 
@@ -151,7 +151,7 @@ export class CartService {
   private async findOrCreateCart(userId: string): Promise<Cart> {
     let cart = await this.cartRepository.findOne({
       where: { user: { id: userId } },
-      relations: ['cart_items', 'cart_items.product', 'cart_items.product.category'],
+      relations: ['cartItems', 'cartItems.product', 'cartItems.product.category'],
     });
 
     if (!cart) {
@@ -163,7 +163,7 @@ export class CartService {
       // Reload với relations
       const reloadedCart = await this.cartRepository.findOne({
         where: { id: cart.id },
-        relations: ['cart_items', 'cart_items.product', 'cart_items.product.category'],
+        relations: ['cartItems', 'cartItems.product', 'cartItems.product.category'],
       });
 
       if (!reloadedCart) {
@@ -183,26 +183,24 @@ export class CartService {
     return {
       id: cart.id,
       items:
-        cart.cart_items?.map((item) => ({
-          id: item.product_id,
+        cart.cartItems?.map((item) => ({
+          id: item.productId,
           product: {
             id: item.product.id,
             name: item.product.name,
             price: item.product.price,
-            image_url: item.product.image_url ?? '',
-            stock_quantity: item.product.stock_quantity,
+            imageUrl: item.product.imageUrl ?? '',
             category: {
               id: item.product.category.id,
               name: item.product.category.name,
             },
           },
           quantity: item.quantity,
-          price_at_addition: item.price_at_addition,
+          priceAtAddition: item.priceAtAddition,
         })) || [],
-      total_items: cart.cart_items?.reduce((acc, item) => acc + item.quantity, 0) || 0,
-      total_price:
-        cart.cart_items?.reduce((acc, item) => acc + item.price_at_addition * item.quantity, 0) ||
-        0,
+      totalItems: cart.cartItems?.reduce((acc, item) => acc + item.quantity, 0) || 0,
+      totalPrice:
+        cart.cartItems?.reduce((acc, item) => acc + item.priceAtAddition * item.quantity, 0) || 0,
     };
   }
 }

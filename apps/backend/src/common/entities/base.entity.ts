@@ -4,9 +4,9 @@ export abstract class BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @CreateDateColumn({ name: 'createdAt' })
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updatedAt' })
+  @UpdateDateColumn()
   updatedAt: Date;
 }

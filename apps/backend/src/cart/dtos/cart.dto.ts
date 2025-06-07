@@ -13,8 +13,8 @@ export class CartDto implements ICart {
   items: CartItemDto[];
 
   @IsNumber()
-  total_items: number;
+  totalItems: number;
 
   @IsNumber()
-  total_price: number;
+  totalPrice: number;
 }

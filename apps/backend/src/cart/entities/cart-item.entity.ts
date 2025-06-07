@@ -18,10 +18,10 @@ export class CartItem {
   id: string;
 
   @PrimaryColumn({ type: 'uuid' })
-  cart_id: string;
+  cartId: string;
 
   @PrimaryColumn({ type: 'uuid' })
-  product_id: string;
+  productId: string;
 
   @Column({ type: 'int' })
   quantity: number;
@@ -32,19 +32,19 @@ export class CartItem {
     scale: 2,
     comment: 'Giá sản phẩm tại thời điểm thêm vào giỏ hàng',
   })
-  price_at_addition: number;
+  priceAtAddition: number;
 
   @CreateDateColumn()
-  added_at: Date;
+  addedAt: Date;
 
   // Relationships
-  @ManyToOne(() => Cart, (cart) => cart.cart_items, {
+  @ManyToOne(() => Cart, (cart) => cart.cartItems, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'cart_id' })
   cart: Cart;
 
-  @ManyToOne(() => Product, (product) => product.cart_items)
+  @ManyToOne(() => Product, (product) => product.cartItems)
   @JoinColumn({ name: 'product_id' })
   product: Product;
 }

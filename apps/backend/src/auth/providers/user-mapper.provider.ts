@@ -13,7 +13,7 @@ export class UserMapperProvider {
     dto.email = user.email;
     dto.username = user.username;
     dto.address = user.address;
-    dto.phone_number = user.phone_number;
+    dto.phoneNumber = user.phoneNumber;
     dto.createdAt = user.createdAt;
     dto.updatedAt = user.updatedAt;
 

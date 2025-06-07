@@ -1,9 +1,7 @@
 import { ConfigService } from '@nestjs/config';
 import { DataSource } from 'typeorm';
 
-export async function dropDatabase(
-  configService: ConfigService,
-): Promise<void> {
+export async function dropDatabase(configService: ConfigService): Promise<void> {
   const AppDataSource = new DataSource({
     type: 'postgres',
     host: configService.get('database.host'),

@@ -31,9 +31,51 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-argument': 'warn',
       '@typescript-eslint/no-unsafe-call': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
-      'no-relative-import-paths/no-relative-import-paths': [
-        'warn',
-        { allowSameFolder: true, rootDir: 'src', prefix: '@' },
+      // Naming Convention Rules
+      '@typescript-eslint/naming-convention': [
+        'error',
+        // Variables, functions, parameters should be camelCase
+        {
+          selector: 'variable',
+          format: ['camelCase', 'PascalCase', 'UPPER_CASE'],
+        },
+        {
+          selector: 'function',
+          format: ['camelCase'],
+        },
+        {
+          selector: 'parameter',
+          format: ['camelCase'],
+        },
+        // Class names should be PascalCase
+        {
+          selector: 'class',
+          format: ['PascalCase'],
+        },
+        // Interface names should be PascalCase
+        {
+          selector: 'interface',
+          format: ['PascalCase'],
+        },
+        // Type names should be PascalCase
+        {
+          selector: 'typeLike',
+          format: ['PascalCase'],
+        },
+        // Enum members should be UPPER_CASE
+        {
+          selector: 'enumMember',
+          format: ['UPPER_CASE'],
+        },
+        // Class methods and properties should be camelCase
+        {
+          selector: 'classMethod',
+          format: ['camelCase'],
+        },
+        {
+          selector: 'classProperty',
+          format: ['camelCase'],
+        },
       ],
     },
   },

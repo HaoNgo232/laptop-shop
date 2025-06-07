@@ -29,7 +29,7 @@ export class ChangePasswordProvider {
     // Kiểm tra mật khẩu hiện tại
     const isPasswordValid = await this.bcryptProvider.comparePassword(
       changePasswordDto.currentPassword,
-      user.password_hash,
+      user.passwordHash,
     );
 
     if (!isPasswordValid) {
@@ -40,7 +40,7 @@ export class ChangePasswordProvider {
     const hashedNewPassword = await this.bcryptProvider.hashPassword(changePasswordDto.newPassword);
 
     // Cập nhật mật khẩu
-    user.password_hash = hashedNewPassword;
+    user.passwordHash = hashedNewPassword;
     await this.userRepository.save(user);
     return { message: 'Mật khẩu đã được thay đổi thành công' };
   }

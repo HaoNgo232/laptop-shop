@@ -15,12 +15,12 @@ export class CreateProductDto implements ICreateProduct {
 
   @IsNumber()
   @Min(0)
-  stock_quantity: number;
+  stockQuantity: number;
 
   @IsUrl()
-  image_url: string;
+  imageUrl: string;
 
   @IsUUID()
   @IsNotEmpty()
-  category_id: string;
+  categoryId: string;
 }

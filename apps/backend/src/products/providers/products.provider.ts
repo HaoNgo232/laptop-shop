@@ -28,9 +28,9 @@ export class ProductsProvider {
       sortBy = 'createdAt',
       sortOrder = SortOrder.DESC,
       search,
-      price_min,
-      price_max,
-      category_id,
+      priceMin,
+      priceMax,
+      categoryId,
     } = queryDto;
 
     // 2. Xây dựng query với điều kiện lọc
@@ -43,17 +43,17 @@ export class ProductsProvider {
       queryBuilder.andWhere('product.name LIKE :name', { name: `%${search}%` });
     }
 
-    if (price_min !== undefined) {
-      queryBuilder.andWhere('product.price >= :price_min', { price_min });
+    if (priceMin !== undefined) {
+      queryBuilder.andWhere('product.price >= :priceMin', { priceMin });
     }
 
-    if (price_max !== undefined) {
-      queryBuilder.andWhere('product.price <= :price_max', { price_max });
+    if (priceMax !== undefined) {
+      queryBuilder.andWhere('product.price <= :priceMax', { priceMax });
     }
 
-    if (category_id) {
-      queryBuilder.andWhere('product.category_id = :category_id', {
-        category_id,
+    if (categoryId) {
+      queryBuilder.andWhere('product.categoryId = :categoryId', {
+        categoryId,
       });
     }
 
@@ -65,10 +65,10 @@ export class ProductsProvider {
     queryBuilder.orderBy(`product.${sortBy}`, sortOrder);
 
     // 5. Thực thi truy vấn
-    const [products_list, total] = await queryBuilder.getManyAndCount();
+    const [productsList, total] = await queryBuilder.getManyAndCount();
 
     // 6. Map dữ liệu sang DTO sử dụng mapper
-    const data = this.productMapper.toProductDtos(products_list);
+    const data = this.productMapper.toProductDtos(productsList);
 
     // 7. Tạo metadata phân trang
     const meta: PaginationMeta = {

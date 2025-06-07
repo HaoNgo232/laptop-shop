@@ -1,8 +1,4 @@
-import {
-  ClassSerializerInterceptor,
-  INestApplication,
-  ValidationPipe,
-} from '@nestjs/common';
+import { ClassSerializerInterceptor, INestApplication, ValidationPipe } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';

@@ -45,7 +45,7 @@ export class OrdersProvider {
    */
   async findUserOrderById(userId: string, orderId: string): Promise<Order> {
     const order = await this.orderRepository.findOne({
-      where: { id: orderId, user_id: userId },
+      where: { id: orderId, userId: userId },
       relations: ['items', 'items.product', 'items.product.category', 'user'],
     });
 

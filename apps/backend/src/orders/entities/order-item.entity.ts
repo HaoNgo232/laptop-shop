@@ -5,15 +5,15 @@ import { IsNotEmpty, IsNumber, IsString, Min } from 'class-validator';
 
 @Entity('order_items')
 export class OrderItem {
-  @PrimaryColumn({ name: 'order_id' })
+  @PrimaryColumn()
   @IsNotEmpty()
   @IsString()
-  order_id: string;
+  orderId: string;
 
-  @PrimaryColumn({ name: 'product_id' })
+  @PrimaryColumn()
   @IsNotEmpty()
   @IsString()
-  product_id: string;
+  productId: string;
 
   @Column('int')
   @IsNumber()
@@ -23,7 +23,7 @@ export class OrderItem {
   @Column('decimal', { precision: 10, scale: 2 })
   @IsNumber({ maxDecimalPlaces: 2 })
   @Min(0, { message: 'Giá phải lớn hơn hoặc bằng 0' })
-  price_at_purchase: number;
+  priceAtPurchase: number;
 
   // Relationships
   @ManyToOne(() => Order, (order) => order.items, { onDelete: 'CASCADE' })

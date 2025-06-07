@@ -48,18 +48,13 @@ export class GlobalExceptionFilter implements ExceptionFilter {
         exception instanceof Error ? exception.stack : exception,
       );
     } else {
-      this.logger.warn(
-        `${errorResponse.method} ${errorResponse.path} - ${messageStr}`,
-      );
+      this.logger.warn(`${errorResponse.method} ${errorResponse.path} - ${messageStr}`);
     }
 
     response.status(errorResponse.statusCode).json(errorResponse);
   }
 
-  private buildErrorResponse(
-    exception: unknown,
-    request: Request,
-  ): ErrorResponse {
+  private buildErrorResponse(exception: unknown, request: Request): ErrorResponse {
     const timestamp = new Date().toISOString();
     const path = request.url;
     const method = request.method;

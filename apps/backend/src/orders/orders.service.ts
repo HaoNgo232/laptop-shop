@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { DataSource, Repository } from 'typeorm';
 import { CartService } from '@/cart/cart.service';
 import { Order } from '@/orders/entities/order.entity';
@@ -47,15 +48,15 @@ export class OrdersService {
     // 1. Lấy cart items của user
     const cart = await this.cartService.getCartEntityByUserId(userId);
 
-    if (!cart.cart_items || cart.cart_items.length === 0) {
+    if (!cart.cartItems || cart.cartItems.length === 0) {
       throw new BadRequestException('Giỏ hàng trống, không thể tạo đơn hàng');
     }
 
     // 2. Kiểm tra stock và tính tổng tiền
     let totalAmount = 0;
-    const orderItems: Pick<OrderItem, 'product_id' | 'quantity' | 'price_at_purchase'>[] = [];
+    const orderItems: Pick<OrderItem, 'productId' | 'quantity' | 'priceAtPurchase'>[] = [];
 
-    for (const cartItem of cart.cart_items) {
+    for (const cartItem of cart.cartItems) {
       // Validate quantity TRƯỚC
       if (cartItem.quantity <= 0) {
         throw new BadRequestException(
@@ -64,16 +65,16 @@ export class OrdersService {
       }
 
       const product = await this.productRepository.findOne({
-        where: { id: cartItem.product_id },
+        where: { id: cartItem.productId },
       });
 
       if (!product) {
-        throw new BadRequestException(`Sản phẩm với ID ${cartItem.product_id} không tồn tại`);
+        throw new BadRequestException(`Sản phẩm với ID ${cartItem.productId} không tồn tại`);
       }
 
-      if (product.stock_quantity < cartItem.quantity) {
+      if (product.stockQuantity < cartItem.quantity) {
         throw new BadRequestException(
-          `Sản phẩm "${product.name}" không đủ hàng. Còn lại: ${product.stock_quantity}, yêu cầu: ${cartItem.quantity}`,
+          `Sản phẩm "${product.name}" không đủ hàng. Còn lại: ${product.stockQuantity}, yêu cầu: ${cartItem.quantity}`,
         );
       }
 
@@ -86,9 +87,9 @@ export class OrdersService {
       totalAmount += itemTotal;
 
       orderItems.push({
-        product_id: product.id,
+        productId: product.id,
         quantity: cartItem.quantity,
-        price_at_purchase: product.price,
+        priceAtPurchase: product.price,
       });
     }
 
@@ -97,13 +98,13 @@ export class OrdersService {
       const order = await this.dataSource.transaction(async (manager) => {
         // Tạo order
         const order = manager.create(Order, {
-          user_id: userId,
-          total_amount: totalAmount,
-          shipping_address: createOrderDto.shippingAddress,
-          payment_method: createOrderDto.paymentMethod,
+          userId: userId,
+          totalAmount: totalAmount,
+          shippingAddress: createOrderDto.shippingAddress,
+          paymentMethod: createOrderDto.paymentMethod,
           note: createOrderDto.note,
           status: OrderStatusEnum.PENDING,
-          payment_status: PaymentStatusEnum.PENDING,
+          paymentStatus: PaymentStatusEnum.PENDING,
         });
 
         const savedOrder = await manager.save(order);
@@ -117,12 +118,7 @@ export class OrdersService {
           await manager.save(orderItem);
 
           // Cập nhật stock
-          await manager.decrement(
-            Product,
-            { id: item.product_id },
-            'stock_quantity',
-            item.quantity,
-          );
+          await manager.decrement(Product, { id: item.productId }, 'stockQuantity', item.quantity);
         }
 
         // Xóa giỏ hàng
@@ -138,7 +134,7 @@ export class OrdersService {
         try {
           qrCode = await this.paymentService.generateQRCode(
             order.id,
-            Number(order.total_amount),
+            Number(order.totalAmount),
             PaymentMethodEnum.SEPAY_QR,
           );
           this.logger.log(`QR code generated successfully for order ${order.id}`);
@@ -184,8 +180,8 @@ export class OrdersService {
   ): Promise<PaginatedResponse<OrderDto>> {
     const { data, total } = await this.ordersProvider.findUserOrders(userId, query);
 
-    const page = query.page || 1;
-    const limit = query.limit || 10;
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 10;
 
     return {
       data: data.map((order) => this.orderMapperProvider.mapOrderToDto(order)),
@@ -210,7 +206,7 @@ export class OrdersService {
 
       // Hoàn trả stock
       for (const item of order.items) {
-        await manager.increment(Product, { id: item.product_id }, 'stock_quantity', item.quantity);
+        await manager.increment(Product, { id: item.productId }, 'stockQuantity', item.quantity);
       }
 
       return this.orderMapperProvider.mapOrderToDto(order);
@@ -223,8 +219,8 @@ export class OrdersService {
   async getAllOrders(query: AdminOrderQueryDto): Promise<PaginatedResponse<OrderDto>> {
     const { data, total } = await this.ordersProvider.findAllOrders(query);
 
-    const page = query.page || 1;
-    const limit = query.limit || 10;
+    const page = query.page ?? 1;
+    const limit = query.limit ?? 10;
 
     return {
       data: data.map((order) => this.orderMapperProvider.mapOrderToDto(order)),
@@ -268,22 +264,22 @@ export class OrdersService {
       }
 
       // Chỉ cập nhật nếu đang PENDING
-      if (order.payment_status !== PaymentStatusEnum.PENDING) {
+      if (order.paymentStatus !== PaymentStatusEnum.PENDING) {
         this.logger.warn(
           `Attempted to update payment status for order ${orderId} ` +
-            `but current status is ${order.payment_status}`,
+            `but current status is ${order.paymentStatus}`,
         );
         return order;
       }
 
       // Kiểm tra duplicate transaction
-      if (order.transaction_id && order.transaction_id === transactionId) {
+      if (order.transactionId && order.transactionId === transactionId) {
         this.logger.warn(`Duplicate transaction ${transactionId} for order ${orderId}`);
         return order;
       }
 
-      order.payment_status = paymentStatus;
-      order.transaction_id = transactionId;
+      order.paymentStatus = paymentStatus;
+      order.transactionId = transactionId;
 
       // Nếu thanh toán thành công, chuyển order status
       if (paymentStatus === PaymentStatusEnum.PAID) {
@@ -301,8 +297,8 @@ export class OrdersService {
           for (const item of orderWithItems.items) {
             await manager.increment(
               Product,
-              { id: item.product_id },
-              'stock_quantity',
+              { id: item.productId },
+              'stockQuantity',
               item.quantity,
             );
           }

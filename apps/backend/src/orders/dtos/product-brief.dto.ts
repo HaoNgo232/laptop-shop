@@ -27,7 +27,7 @@ export class ProductBriefDto implements IProductBrief {
   @IsOptional()
   @IsString()
   @IsUrl()
-  image_url?: string;
+  imageUrl?: string;
 
   @ValidateNested()
   @Type(() => CategoryBriefDto)

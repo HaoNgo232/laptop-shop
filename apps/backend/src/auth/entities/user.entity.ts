@@ -11,7 +11,7 @@ export class User extends BaseEntity {
   email: string;
 
   @Column()
-  password_hash: string;
+  passwordHash: string;
 
   @Column({ unique: true, length: 20, nullable: true })
   @IsString({ message: 'Tên người dùng không hợp lệ' })
@@ -24,7 +24,7 @@ export class User extends BaseEntity {
 
   @Column({ nullable: true })
   @IsString({ message: 'Số điện thoại không hợp lệ' })
-  phone_number?: string;
+  phoneNumber?: string;
 
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
   role: UserRole;

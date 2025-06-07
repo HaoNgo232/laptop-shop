@@ -22,7 +22,7 @@ export class ValidateUserProvider {
     }
 
     // Kiểm tra mật khẩu
-    const isPasswordValid = await this.bcryptProvider.comparePassword(password, user.password_hash);
+    const isPasswordValid = await this.bcryptProvider.comparePassword(password, user.passwordHash);
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Mật khẩu không đúng');

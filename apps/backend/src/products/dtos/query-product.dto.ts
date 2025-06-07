@@ -18,7 +18,7 @@ export class QueryProductDto implements IQueryProduct {
 
   @IsOptional()
   @IsUUID()
-  category_id?: string;
+  categoryId?: string;
 
   @IsOptional()
   @IsString()
@@ -32,13 +32,13 @@ export class QueryProductDto implements IQueryProduct {
   @Type(() => Number)
   @IsInt()
   @Min(0)
-  price_min?: number;
+  priceMin?: number;
 
   @IsOptional()
   @Type(() => Number)
   @IsInt()
   @Min(0)
-  price_max?: number;
+  priceMax?: number;
 
   @IsOptional()
   @IsString()

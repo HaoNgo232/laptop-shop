@@ -7,7 +7,7 @@ import { User } from '@/auth/entities/user.entity';
 @Entity()
 export class Cart extends BaseEntity {
   @Column({ type: 'uuid', unique: true })
-  user_id: string;
+  userId: string;
 
   // Relationships
   @OneToOne(() => User, (user) => user.cart)
@@ -20,5 +20,5 @@ export class Cart extends BaseEntity {
     eager: false,
   })
   @Type(() => CartItem)
-  cart_items: CartItem[];
+  cartItems: CartItem[];
 }
