@@ -1,4 +1,7 @@
-import type { PaginatedResponse } from "../common/interfaces";
+import type {
+  PaginatedResponse,
+  PaginatedResponseWithMessage,
+} from "../common/interfaces";
 import { OrderStatusEnum, PaymentStatusEnum, PaymentMethodEnum } from "./enums";
 
 // Order interfaces
@@ -74,3 +77,5 @@ export interface ICheckoutState {
 
 // Response types
 export type IOrderListResponse = PaginatedResponse<IOrder>;
+export type IOrderListResponseWithMessage =
+  PaginatedResponseWithMessage<IOrder>;

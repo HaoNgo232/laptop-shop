@@ -112,7 +112,7 @@ export class PaymentController {
   @Get('methods')
   @Auth(AuthType.None)
   @ApiOperation({ summary: 'Lấy danh sách phương thức thanh toán' })
-  async getPaymentMethods(): Promise<{ methods: PaymentMethodEnum[] }> {
+  getPaymentMethods(): { methods: PaymentMethodEnum[] } {
     return {
       methods: this.paymentService.getAvailablePaymentMethods(),
     };

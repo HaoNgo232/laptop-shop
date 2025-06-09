@@ -13,6 +13,7 @@ import type {
   IShippingAddress,
   ICheckoutState,
   IOrderListResponse,
+  IOrderListResponseWithMessage,
 } from "@web-ecom/shared-types/orders/interfaces";
 import { z } from "zod";
 
@@ -27,6 +28,8 @@ export type CheckoutState = z.infer<typeof CheckoutStateSchema>;
 
 // Response types
 export interface OrderListResponse extends IOrderListResponse {}
+export interface OrderListResponseWithMessage
+  extends IOrderListResponseWithMessage {}
 
 // Zod Validation Schemas
 const OrderItemSchema: z.ZodType<IOrderItem> = z.object({

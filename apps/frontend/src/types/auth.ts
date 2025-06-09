@@ -32,7 +32,8 @@ const UserSchema: z.ZodType<IUser> = z.object({
   username: z
     .string()
     .min(3, "Tên người dùng phải có ít nhất 3 ký tự")
-    .max(20, "Tên người dùng không được vượt quá 20 ký tự"),
+    .max(20, "Tên người dùng không được vượt quá 20 ký tự")
+    .optional(),
   address: z.string().optional(),
   phoneNumber: z.string().optional(),
   role: z.nativeEnum(UserRole),
@@ -121,5 +122,14 @@ const JwtPayloadSchema: z.ZodType<IJwtPayload> = z.object({
   exp: z.number().optional(),
 });
 
-// Export schemas
-export { LoginUserSchema, RegisterUserSchema };
+export {
+  LoginUserSchema,
+  RegisterUserSchema,
+  UpdateProfileSchema,
+  RefreshTokenSchema,
+  ForgotPasswordSchema,
+  ResetPasswordSchema,
+  ChangePasswordSchema,
+  JwtPayloadSchema,
+  UserSchema,
+};

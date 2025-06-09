@@ -91,13 +91,10 @@ export class AuthService {
    * @param refreshToken Refresh token cần đưa vào blacklist
    */
   async logout(accessToken: string, refreshToken?: string): Promise<void> {
-    // Bỏ "Bearer " từ đầu nếu tồn tại
     const formattedAccessToken = accessToken.replace('Bearer ', '');
 
-    // Thêm access token vào blacklist
     await this.tokenBlacklistProvider.addToBlacklist(formattedAccessToken, 'access');
 
-    // Nếu có refresh token, thêm cả refresh token vào blacklist
     if (refreshToken) {
       await this.tokenBlacklistProvider.addToBlacklist(refreshToken, 'refresh');
     }

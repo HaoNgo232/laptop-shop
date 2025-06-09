@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import {
   ExceptionFilter,
   Catch,
@@ -102,7 +103,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
       if (response.message) {
         return Array.isArray(response.message)
           ? (response.message as string[])
-          : String(response.message);
+          : (response.message as string);
       }
     }
 

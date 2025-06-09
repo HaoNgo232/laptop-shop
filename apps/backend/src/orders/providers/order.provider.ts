@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException, Logger } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { AdminOrderQueryDto } from '@/orders/dtos/admin-order-query.dto';
 import { PaginationQueryDto } from '@/orders/dtos/pagination-query.dto';
@@ -9,6 +9,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class OrdersProvider {
+  private readonly logger = new Logger(OrdersProvider.name);
+
   constructor(
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
@@ -23,21 +25,52 @@ export class OrdersProvider {
     userId: string,
     query: PaginationQueryDto,
   ): Promise<{ data: Order[]; total: number }> {
+    // Validate input
+    if (!userId?.trim()) {
+      throw new BadRequestException('User ID không hợp lệ');
+    }
+
     const { page = 1, limit = 10 } = query;
+
+    // Validate pagination params
+    if (page < 1) {
+      throw new BadRequestException('Số trang phải lớn hơn 0');
+    }
+
+    if (limit < 1 || limit > 100) {
+      throw new BadRequestException('Số item mỗi trang phải từ 1-100');
+    }
+
     const skip = (page - 1) * limit;
 
-    const queryBuilder = this.orderRepository
-      .createQueryBuilder('order')
-      .leftJoinAndSelect('order.items', 'items')
-      .leftJoinAndSelect('items.product', 'product')
-      .where('order.user_id = :userId', { userId })
-      .orderBy('order.order_date', 'DESC')
-      .skip(skip)
-      .take(limit);
+    try {
+      const queryBuilder = this.orderRepository
+        .createQueryBuilder('order')
+        .leftJoinAndSelect('order.items', 'items')
+        .leftJoinAndSelect('items.product', 'product')
+        .where('order.userId = :userId', { userId })
+        .orderBy('order.orderDate', 'DESC')
+        .skip(skip)
+        .take(limit);
 
-    const [data, total] = await queryBuilder.getManyAndCount();
+      const [data, total] = await queryBuilder.getManyAndCount();
 
-    return { data, total };
+      // Đảm bảo data luôn là array
+      const safeData = Array.isArray(data) ? data : [];
+
+      this.logger.debug(
+        `🔍 Query executed for user ${userId}: found ${total} orders, returned ${safeData.length} items`,
+      );
+
+      return {
+        data: safeData,
+        total: total || 0,
+      };
+    } catch (error) {
+      this.logger.error(`❌ Database error while fetching orders for user ${userId}:`, error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      throw new BadRequestException(`Lỗi truy vấn cơ sở dữ liệu: ${errorMessage}`);
+    }
   }
 
   /**

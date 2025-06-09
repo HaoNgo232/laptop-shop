@@ -6,7 +6,7 @@ export interface IUser {
   email: string;
   username?: string;
   address?: string;
-  phone_number?: string;
+  phoneNumber?: string;
   role: UserRole;
   createdAt: Date;
   updatedAt: Date;
@@ -27,7 +27,7 @@ export interface IRegisterUser {
 export interface IUpdateProfile {
   username?: string;
   address?: string;
-  phone_number?: string;
+  phoneNumber?: string;
 }
 
 export interface IRefreshToken {
@@ -71,4 +71,4 @@ export interface IJwtPayload {
   exp?: number;
 }
 
-export type IUserProfile = Omit<IUser, "password_hash">;
+export type IUserProfile = Omit<IUser, "passwordHash">;

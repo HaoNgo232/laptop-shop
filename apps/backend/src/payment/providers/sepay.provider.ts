@@ -17,17 +17,21 @@ export class SepayProvider implements PaymentProvider {
 
   constructor(private readonly configService: ConfigService) {}
 
-  async generateQRCode(orderInfo: QRGenerationRequest): Promise<QRCodeResponse> {
+  generateQRCode(orderInfo: QRGenerationRequest): Promise<QRCodeResponse> {
     try {
       const bankAccount = orderInfo.bankAccount ?? this.configService.get('SEPAY_BANK_ACCOUNT');
-      const bankCode = this.configService.get('SEPAY_BANK_CODE');
-      const accountName = this.configService.get('SEPAY_ACCOUNT_NAME');
+      const bankCode = this.configService.get<string>('SEPAY_BANK_CODE');
+      const accountName = this.configService.get<string>('SEPAY_ACCOUNT_NAME');
 
       // Format content với order ID để dễ tracking theo format của Sepay: DH{orderId}
       const content = `DH${orderInfo.orderId}`;
 
       if (!bankAccount) {
         throw new Error('Bank account là bắt buộc nhưng chưa được cấu hình');
+      }
+
+      if (!bankCode) {
+        throw new Error('Bank code là bắt buộc nhưng chưa được cấu hình');
       }
 
       // Tạo QR URL theo format SePay
@@ -42,7 +46,7 @@ export class SepayProvider implements PaymentProvider {
       const expireTime = new Date();
       expireTime.setMinutes(expireTime.getMinutes() + (orderInfo.expireMinutes || 15));
 
-      return {
+      return Promise.resolve({
         qrUrl,
         qrString: content,
         amount: orderInfo.amount,
@@ -54,10 +58,10 @@ export class SepayProvider implements PaymentProvider {
           accountName,
           provider: this.name,
         },
-      };
+      });
     } catch (error) {
       this.logger.error(`Error generating QR code for order ${orderInfo.orderId}:`, error);
-      throw new Error(`Failed to generate SePay QR code: ${error.message}`);
+      return Promise.reject(new Error(`Failed to generate SePay QR code: ${error}`));
     }
   }
 
@@ -65,7 +69,7 @@ export class SepayProvider implements PaymentProvider {
     try {
       // Sepay không đề cập đến signature HMAC trong docs, nhưng nếu có thì vẫn check
       if (signature) {
-        const secret = this.configService.get('SEPAY_WEBHOOK_SECRET');
+        const secret = this.configService.get<string>('SEPAY_WEBHOOK_SECRET');
         if (!secret) {
           this.logger.warn('SEPAY_WEBHOOK_SECRET chưa được cấu hình, bỏ qua xác minh chữ ký');
           return true; // Bỏ qua nếu không có secret
@@ -97,19 +101,61 @@ export class SepayProvider implements PaymentProvider {
 
   async processTransaction(transaction: SepayWebhookDto): Promise<TransactionResult> {
     try {
+      this.logger.log(`Processing transaction:`, {
+        id: transaction.id,
+        code: transaction.code,
+        content: transaction.content,
+        transferType: transaction.transferType,
+        transferAmount: transaction.transferAmount,
+      });
+
       // Ưu tiên sử dụng trường `code` mà SePay đã bóc tách sẵn.
       // Nếu không có, thử bóc tách từ `content`.
       let orderId: string;
+
       if (transaction.code) {
-        orderId = transaction.code.replace(/^DH/, '');
+        // SePay có thể chỉ trả về partial code, cần check format
+        if (transaction.code.startsWith('DH')) {
+          orderId = transaction.code.replace(/^DH/, '');
+        } else {
+          orderId = transaction.code;
+        }
         this.logger.log(`Extracted orderId from 'code': ${orderId}`);
       } else {
-        const orderMatch = transaction.content.match(/DH(\w+)/);
+        // Fallback: extract từ content với regex cho UUID (có thể có prefix như IBFT)
+        // Format: "IBFT DHdf2019b9d47c40de95f1fa8cfe16f138" hoặc "DHdf2019b9-d47c-40de-95f1-fa8cfe16f138"
+        const orderMatch = transaction.content.match(/DH([a-f0-9-]{32,36})/i);
         if (!orderMatch || !orderMatch[1]) {
-          throw new Error('Invalid transaction content format - DH{orderId} not found');
+          throw new Error(
+            `Invalid transaction content format - DH{UUID} not found in: ${transaction.content}`,
+          );
         }
-        orderId = orderMatch[1];
+
+        let extractedId = orderMatch[1];
+
+        // Nếu UUID không có dấu - thì thêm vào
+        if (extractedId.length === 32 && !extractedId.includes('-')) {
+          // Convert từ "df2019b9d47c40de95f1fa8cfe16f138" thành "df2019b9-d47c-40de-95f1-fa8cfe16f138"
+          extractedId = [
+            extractedId.slice(0, 8),
+            extractedId.slice(8, 12),
+            extractedId.slice(12, 16),
+            extractedId.slice(16, 20),
+            extractedId.slice(20, 32),
+          ].join('-');
+          this.logger.log(`Formatted UUID: ${extractedId}`);
+        }
+
+        orderId = extractedId;
         this.logger.log(`Extracted orderId from 'content': ${orderId}`);
+      }
+
+      // Validate UUID format
+      const uuidRegex =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+      if (!uuidRegex.test(orderId)) {
+        this.logger.error(`Invalid UUID format: ${orderId}`);
+        throw new Error(`OrderId is not a valid UUID: ${orderId}`);
       }
 
       const amount = transaction.transferAmount;
@@ -126,8 +172,10 @@ export class SepayProvider implements PaymentProvider {
         message = 'Transaction was not an incoming payment.';
       }
 
-      return {
-        transactionId: transaction.id.toString(),
+      this.logger.log(`Transaction processed successfully: orderId=${orderId}, status=${status}`);
+
+      return Promise.resolve({
+        transactionId: transaction.id,
         orderId,
         amount,
         status,
@@ -139,10 +187,10 @@ export class SepayProvider implements PaymentProvider {
           accountNumber: transaction.accountNumber,
           provider: this.name,
         },
-      };
+      });
     } catch (error) {
       this.logger.error('Error processing transaction:', error);
-      throw new Error(`Failed to process SePay transaction: ${error.message}`);
+      return Promise.reject(new Error(`Failed to process SePay transaction: ${error}`));
     }
   }
 
@@ -173,10 +221,13 @@ export class SepayProvider implements PaymentProvider {
   }
 
   // Utility method for API calls to SePay
-  async getTransactionHistory(limit: number = 20): Promise<any[]> {
+  async getTransactionHistory(limit: number = 20): Promise<TransactionResult[]> {
     try {
-      const apiKey = this.configService.get('SEPAY_API_KEY');
-      const baseUrl = this.configService.get('SEPAY_API_BASE_URL', 'https://my.sepay.vn/userapi');
+      const apiKey = this.configService.get<string>('SEPAY_API_KEY');
+      const baseUrl = this.configService.get<string>(
+        'SEPAY_API_BASE_URL',
+        'https://my.sepay.vn/userapi',
+      );
 
       if (!apiKey) {
         throw new Error('SEPAY_API_KEY not configured');
@@ -210,10 +261,13 @@ export class SepayProvider implements PaymentProvider {
     }
   }
 
-  async getBankAccounts(): Promise<any[]> {
+  async getBankAccounts(): Promise<TransactionResult[]> {
     try {
-      const apiKey = this.configService.get('SEPAY_API_KEY');
-      const baseUrl = this.configService.get('SEPAY_API_BASE_URL', 'https://my.sepay.vn/userapi');
+      const apiKey = this.configService.get<string>('SEPAY_API_KEY');
+      const baseUrl = this.configService.get<string>(
+        'SEPAY_API_BASE_URL',
+        'https://my.sepay.vn/userapi',
+      );
 
       if (!apiKey) {
         throw new Error('SEPAY_API_KEY not configured');

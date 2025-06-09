@@ -2,10 +2,9 @@ import { Type } from 'class-transformer';
 import { IsString, IsNumber, IsOptional, IsDateString, IsNotEmpty, IsIn } from 'class-validator';
 
 export class SepayWebhookDto {
-  @IsNumber()
-  @Type(() => Number)
+  @IsString()
   @IsNotEmpty()
-  id: number;
+  id: string;
 
   @IsString()
   @IsNotEmpty()

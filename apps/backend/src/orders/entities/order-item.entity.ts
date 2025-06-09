@@ -5,12 +5,12 @@ import { IsNotEmpty, IsNumber, IsString, Min } from 'class-validator';
 
 @Entity('order_items')
 export class OrderItem {
-  @PrimaryColumn()
+  @PrimaryColumn({ name: 'order_id' })
   @IsNotEmpty()
   @IsString()
   orderId: string;
 
-  @PrimaryColumn()
+  @PrimaryColumn({ name: 'product_id' })
   @IsNotEmpty()
   @IsString()
   productId: string;

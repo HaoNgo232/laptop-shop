@@ -21,6 +21,7 @@ import { OrderMapperProvider } from '@/orders/providers/order-mapper.provider';
 import { PaymentService } from '@/payment/payment.service';
 import { PaymentMethodEnum } from '@/payment/enums/payment-method.enum';
 import { QRCodeResponse } from '@/payment/interfaces/payment-provider.interfaces';
+import { CartItem } from '@/cart/entities/cart-item.entity';
 
 @Injectable()
 export class OrdersService {
@@ -45,25 +46,58 @@ export class OrdersService {
     userId: string,
     createOrderDto: CreateOrderDto,
   ): Promise<{ order: OrderDto; qrCode?: QRCodeResponse }> {
-    // 1. Lấy cart items của user
+    // 1. Lấy và validate cart
+    const cart = await this.validateAndGetCart(userId);
+
+    // 2. Validate stock và tính tổng tiền
+    const { orderItems, totalAmount } = await this.validateStockAndCalculateTotal(cart.cartItems);
+
+    // 3. Tạo đơn hàng trong transaction
+    const order = await this.createOrderTransaction(
+      userId,
+      createOrderDto,
+      orderItems,
+      totalAmount,
+    );
+
+    // 4. Tạo QR code nếu cần
+    const qrCode = await this.generateQRCodeIfNeeded(order, createOrderDto.paymentMethod);
+
+    return {
+      order: this.orderMapperProvider.mapOrderToDto(order),
+      qrCode,
+    };
+  }
+
+  /**
+   * Validate và lấy cart của user
+   */
+  private async validateAndGetCart(userId: string) {
     const cart = await this.cartService.getCartEntityByUserId(userId);
 
     if (!cart.cartItems || cart.cartItems.length === 0) {
       throw new BadRequestException('Giỏ hàng trống, không thể tạo đơn hàng');
     }
 
-    // 2. Kiểm tra stock và tính tổng tiền
+    return cart;
+  }
+
+  /**
+   * Validate stock và tính tổng tiền
+   */
+  private async validateStockAndCalculateTotal(cartItems: CartItem[]) {
     let totalAmount = 0;
     const orderItems: Pick<OrderItem, 'productId' | 'quantity' | 'priceAtPurchase'>[] = [];
 
-    for (const cartItem of cart.cartItems) {
-      // Validate quantity TRƯỚC
+    for (const cartItem of cartItems) {
+      // Validate quantity
       if (cartItem.quantity <= 0) {
         throw new BadRequestException(
           `Số lượng sản phẩm phải lớn hơn 0, nhận được: ${cartItem.quantity}`,
         );
       }
 
+      // Lấy thông tin sản phẩm
       const product = await this.productRepository.findOne({
         where: { id: cartItem.productId },
       });
@@ -72,17 +106,19 @@ export class OrdersService {
         throw new BadRequestException(`Sản phẩm với ID ${cartItem.productId} không tồn tại`);
       }
 
+      // Validate stock
       if (product.stockQuantity < cartItem.quantity) {
         throw new BadRequestException(
           `Sản phẩm "${product.name}" không đủ hàng. Còn lại: ${product.stockQuantity}, yêu cầu: ${cartItem.quantity}`,
         );
       }
 
-      // Validate price TRƯỚC
+      // Validate price
       if (product.price < 0) {
         throw new BadRequestException(`Giá sản phẩm không hợp lệ: ${product.price}`);
       }
 
+      // Tính tổng tiền
       const itemTotal = product.price * cartItem.quantity;
       totalAmount += itemTotal;
 
@@ -93,9 +129,20 @@ export class OrdersService {
       });
     }
 
-    // 3. Tạo đơn hàng trong transaction
+    return { orderItems, totalAmount };
+  }
+
+  /**
+   * Tạo đơn hàng trong transaction
+   */
+  private async createOrderTransaction(
+    userId: string,
+    createOrderDto: CreateOrderDto,
+    orderItems: Pick<OrderItem, 'productId' | 'quantity' | 'priceAtPurchase'>[],
+    totalAmount: number,
+  ): Promise<Order> {
     try {
-      const order = await this.dataSource.transaction(async (manager) => {
+      return await this.dataSource.transaction(async (manager) => {
         // Tạo order
         const order = manager.create(Order, {
           userId: userId,
@@ -113,7 +160,7 @@ export class OrdersService {
         for (const item of orderItems) {
           const orderItem = manager.create(OrderItem, {
             ...item,
-            order_id: savedOrder.id,
+            orderId: savedOrder.id,
           });
           await manager.save(orderItem);
 
@@ -126,32 +173,35 @@ export class OrdersService {
 
         return savedOrder;
       });
-
-      let qrCode: QRCodeResponse | undefined;
-
-      // Nếu payment method là SEPAY_QR, tạo QR code
-      if (createOrderDto.paymentMethod === PaymentMethodEnum.SEPAY_QR) {
-        try {
-          qrCode = await this.paymentService.generateQRCode(
-            order.id,
-            Number(order.totalAmount),
-            PaymentMethodEnum.SEPAY_QR,
-          );
-          this.logger.log(`QR code generated successfully for order ${order.id}`);
-        } catch (qrError) {
-          this.logger.error(`Failed to generate QR code for order ${order.id}:`, qrError);
-          // QR generation fails không làm fail tạo order
-          // Có thể retry sau hoặc chuyển sang COD
-        }
-      }
-
-      return {
-        order: this.orderMapperProvider.mapOrderToDto(order),
-        qrCode,
-      };
     } catch (error) {
-      this.logger.error('Error creating order:', error);
+      this.logger.error('Error creating order transaction:', error);
       throw new BadRequestException(`Không thể tạo đơn hàng: ${error.message}`);
+    }
+  }
+
+  /**
+   * Tạo QR code nếu payment method là SEPAY_QR
+   */
+  private async generateQRCodeIfNeeded(
+    order: Order,
+    paymentMethod: PaymentMethodEnum,
+  ): Promise<QRCodeResponse | undefined> {
+    if (paymentMethod !== PaymentMethodEnum.SEPAY_QR) {
+      return undefined;
+    }
+
+    try {
+      const qrCode = await this.paymentService.generateQRCode(
+        order.id,
+        Number(order.totalAmount),
+        PaymentMethodEnum.SEPAY_QR,
+      );
+      this.logger.log(`QR code generated successfully for order ${order.id}`);
+      return qrCode;
+    } catch (qrError) {
+      this.logger.error(`Failed to generate QR code for order ${order.id}:`, qrError);
+      // QR generation fails không làm fail tạo order
+      return undefined;
     }
   }
 
@@ -178,15 +228,31 @@ export class OrdersService {
     userId: string,
     query: PaginationQueryDto,
   ): Promise<PaginatedResponse<OrderDto>> {
-    const { data, total } = await this.ordersProvider.findUserOrders(userId, query);
+    try {
+      this.logger.log(`📦 Lấy danh sách đơn hàng cho user: ${userId}, query:`, query);
 
-    const page = query.page ?? 1;
-    const limit = query.limit ?? 10;
+      const { data, total } = await this.ordersProvider.findUserOrders(userId, query);
 
-    return {
-      data: data.map((order) => this.orderMapperProvider.mapOrderToDto(order)),
-      meta: this.createPaginationMeta(total, page, limit),
-    };
+      const page = query.page ?? 1;
+      const limit = query.limit ?? 10;
+
+      // Log thông tin debug
+      this.logger.log(`📊 Tìm được ${total} đơn hàng cho user ${userId}, trang ${page}`);
+
+      if (total === 0) {
+        this.logger.log(`📭 User ${userId} chưa có đơn hàng nào`);
+      }
+
+      const result = {
+        data: data.map((order) => this.orderMapperProvider.mapOrderToDto(order)),
+        meta: this.createPaginationMeta(total, page, limit),
+      };
+
+      return result;
+    } catch (error) {
+      this.logger.error(`❌ Lỗi khi lấy danh sách đơn hàng cho user ${userId}:`, error);
+      throw new BadRequestException(`Không thể lấy danh sách đơn hàng: ${error.message}`);
+    }
   }
 
   /**

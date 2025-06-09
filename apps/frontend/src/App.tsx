@@ -11,6 +11,9 @@ import { CheckoutPage } from '@/pages/CheckoutPage';
 import { UserRole } from '@web-ecom/shared-types/auth/enums';
 import { useEffect } from 'react';
 import { useAuthStore } from '@/stores/authStore';
+import ProfilePage from '@/pages/ProfilePage';
+import { OrdersPage } from '@/pages/OrdersPage';
+import { OrderDetailPage } from '@/pages/OrderDetailPage';
 
 const App = () => {
   const initializeAuth = useAuthStore(state => state.initializeAuth);
@@ -45,12 +48,25 @@ const App = () => {
           path="/profile"
           element={
             <ProtectedRoute>
-              <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                <div className="text-center">
-                  <h1 className="text-2xl font-bold">Profile Page</h1>
-                  <p className="text-gray-600">Coming soon...</p>
-                </div>
-              </div>
+              <ProfilePage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/orders"
+          element={
+            <ProtectedRoute>
+              <OrdersPage />
+            </ProtectedRoute>
+          }
+        />
+
+        <Route
+          path="/orders/:orderId"
+          element={
+            <ProtectedRoute>
+              <OrderDetailPage />
             </ProtectedRoute>
           }
         />

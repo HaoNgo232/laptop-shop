@@ -20,6 +20,7 @@ export class Order extends BaseEntity {
   @Column({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP',
+    name: 'order_date',
   })
   orderDate: Date;
 
@@ -27,6 +28,7 @@ export class Order extends BaseEntity {
     type: 'enum',
     enum: OrderStatusEnum,
     default: OrderStatusEnum.PENDING,
+    name: 'status',
   })
   @IsEnum(OrderStatusEnum)
   status: OrderStatusEnum;
@@ -45,6 +47,7 @@ export class Order extends BaseEntity {
     type: 'enum',
     enum: PaymentMethodEnum,
     default: PaymentMethodEnum.SEPAY_QR,
+    name: 'payment_method',
   })
   @IsEnum(PaymentMethodEnum)
   paymentMethod: PaymentMethodEnum;

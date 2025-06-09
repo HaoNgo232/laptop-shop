@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { authService } from "@/services/authService";
+import { userService } from "@/services/userService";
 import type {
   User,
   LoginUser,
@@ -90,14 +91,34 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   updateProfile: async (data) => {
     try {
+      set({ isLoading: true, error: null });
       const currentUser = get().user;
-      if (currentUser) {
-        const updatedUser = { ...currentUser, ...data };
-        set({ user: updatedUser, error: null });
+      if (!currentUser) {
+        throw new Error("User không tồn tại");
       }
+
+      // Lọc bỏ các trường rỗng
+      const cleanData = Object.fromEntries(
+        Object.entries(data).filter(
+          ([_, value]) =>
+            value !== undefined &&
+            value !== null &&
+            String(value).trim() !== "",
+        ),
+      ) as UpdateProfile;
+
+      const response = await userService.updateProfile(cleanData);
+
+      set({
+        user: response,
+        isLoading: false,
+      });
     } catch (error) {
       const apiError = error as ApiError;
-      set({ error: apiError.message || "Cập nhật thông tin thất bại" });
+      set({
+        error: apiError.message || "Cập nhật thông tin thất bại",
+        isLoading: false,
+      });
       throw error;
     }
   },
