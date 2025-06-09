@@ -4,6 +4,11 @@ import { Repository } from 'typeorm';
 import { CreateUserDto } from '@/auth/dtos/create-user.dto';
 import { UpdateUserProfileDto } from '@/auth/dtos/update-profile.dto';
 import { User } from '@/auth/entities/user.entity';
+import { AdminUserViewDto } from '@/admin/dtos/admin-user-view.dto';
+import { AdminUserQueryDto } from '@/admin/dtos/admin-user-query.dto';
+import { PaginationMeta } from '@web-ecom/shared-types/common/interfaces.cjs';
+import { AdminViewDetailDto } from '@/admin/dtos/admin-view-detail.dto';
+import { UpdateUserByAdminDto } from '@/admin/dtos/update-user-by-admin.dto';
 
 @Injectable()
 export class UsersService {

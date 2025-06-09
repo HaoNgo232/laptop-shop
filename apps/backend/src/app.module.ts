@@ -19,6 +19,7 @@ import { AppService } from '@/app.service';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthenticationGuard } from '@/auth/guards/authentication/authentication.guard';
 import { AccessTokenGuard } from '@/auth/guards/access-token/access-token.guard';
+import { AdminModule } from '@/admin/admin.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { AccessTokenGuard } from '@/auth/guards/access-token/access-token.guard'
     ConfigModule.forFeature(jwtConfig),
     JwtModule.registerAsync(jwtConfig.asProvider()),
     PaymentModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [

@@ -24,6 +24,7 @@ import { RefreshTokenProvider } from '@/auth/providers/refresh-token.provider';
 import { ValidateUserProvider } from '@/auth/providers/validate-user.provider';
 import { ForgotPasswordProvider } from '@/auth/providers/forgot-password.provider';
 import { ResetPasswordProvider } from '@/auth/providers/reset-password.provider';
+import { AdminDashboardService } from '@/admin/services/admin-dashboard.service';
 
 @Module({
   imports: [
