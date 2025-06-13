@@ -1,3 +1,8 @@
+import {
+  IPaginatedResponse,
+  IPaginationMeta,
+} from "@web-ecom/shared-types/common/interfaces";
+
 // Common API response types
 export interface ApiResponse<T = unknown> {
   data: T;
@@ -5,19 +10,9 @@ export interface ApiResponse<T = unknown> {
   statusCode: number;
 }
 
-export interface PaginationMeta {
-  currentPage: number;
-  itemsPerPage: number;
-  totalItems: number;
-  totalPages: number;
-  hasPreviousPage: boolean;
-  hasNextPage: boolean;
-}
+export type PaginationMeta = IPaginationMeta;
 
-export interface PaginatedResponse<T> {
-  data: T[];
-  meta: PaginationMeta;
-}
+export type PaginatedResponse<T> = IPaginatedResponse<T>;
 
 // Error response structure
 export interface ApiError {

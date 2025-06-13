@@ -7,7 +7,7 @@ import { UpdateCategoryDto } from '@/products/dtos/update-category.dto';
 import { CategoriesService } from '@/products/services/categories.service';
 import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
 
-@Controller('api/admin.categories')
+@Controller('api/admin/categories')
 @Auth(AuthType.Bearer, UserRole.ADMIN)
 export class AdminCategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}

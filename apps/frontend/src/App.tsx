@@ -14,6 +14,10 @@ import { useAuthStore } from '@/stores/authStore';
 import ProfilePage from '@/pages/ProfilePage';
 import { OrdersPage } from '@/pages/OrdersPage';
 import { OrderDetailPage } from '@/pages/OrderDetailPage';
+import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage';
+import { AdminPage } from '@/pages/admin/AdminPage';
+import AdminProductsPage from '@/pages/admin/AdminProductsPage';
+import AdminOrdersPage from '@/pages/admin/AdminOrdersPage';
 
 const App = () => {
   const initializeAuth = useAuthStore(state => state.initializeAuth);
@@ -82,18 +86,38 @@ const App = () => {
 
         {/* Admin Routes */}
         <Route
-          path="/admin/*"
+          path="/admin/dashboard"
           element={
             <ProtectedRoute requiredRole={UserRole.ADMIN}>
-              <div className="min-h-screen flex items-center justify-center bg-gray-50">
-                <div className="text-center">
-                  <h1 className="text-2xl font-bold">Admin Panel</h1>
-                  <p className="text-gray-600">Coming soon...</p>
-                </div>
-              </div>
+              <AdminDashboardPage />
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/admin/users"
+          element={
+            <ProtectedRoute requiredRole={UserRole.ADMIN}>
+              <AdminPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/products"
+          element={
+            <ProtectedRoute requiredRole={UserRole.ADMIN}>
+              <AdminProductsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/orders"
+          element={
+            <ProtectedRoute requiredRole={UserRole.ADMIN}>
+              <AdminOrdersPage />
+            </ProtectedRoute>
+          }
+        />
+
 
         {/* 404 Page */}
         <Route

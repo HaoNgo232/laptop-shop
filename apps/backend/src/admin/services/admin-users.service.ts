@@ -6,7 +6,7 @@ import { AdminUserQueryDto } from '@/admin/dtos/admin-user-query.dto';
 import { AdminUserViewDto } from '@/admin/dtos/admin-user-view.dto';
 import { AdminViewDetailDto } from '@/admin/dtos/admin-view-detail.dto';
 import { UpdateUserByAdminDto } from '@/admin/dtos/update-user-by-admin.dto';
-import { PaginationMeta } from '@web-ecom/shared-types/common/interfaces.cjs';
+import { IPaginationMeta } from '@web-ecom/shared-types/common/interfaces.cjs';
 
 @Injectable()
 export class AdminUsersService {
@@ -22,7 +22,7 @@ export class AdminUsersService {
    */
   async findAllForAdmin(query: AdminUserQueryDto): Promise<{
     data: AdminUserViewDto[];
-    meta: PaginationMeta;
+    meta: IPaginationMeta;
   }> {
     const page = query.page ?? 1;
     const limit = query.limit ?? 10;

@@ -15,3 +15,6 @@ export * from "./payment";
 
 // Export order types
 export * from "./orders";
+
+// Export admin types
+export * from "./admin";

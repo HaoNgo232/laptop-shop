@@ -1,4 +1,4 @@
-import { ICreateProduct } from '@web-ecom/shared-types';
+import { ICreateProduct } from '@web-ecom/shared-types/products/interfaces.cjs';
 import { IsNotEmpty, IsNumber, IsString, IsUrl, IsUUID, Min } from 'class-validator';
 
 export class CreateProductDto implements ICreateProduct {

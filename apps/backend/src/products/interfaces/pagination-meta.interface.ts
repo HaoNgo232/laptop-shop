@@ -1,4 +1,6 @@
-export interface PaginationMeta {
+import { IPaginationMeta } from '@web-ecom/shared-types/common/interfaces.cjs';
+
+export type PaginationMeta = IPaginationMeta & {
   /**
    * Trang hiện tại
    */
@@ -23,4 +25,4 @@ export interface PaginationMeta {
    * Có trang sau không
    */
   hasNextPage: boolean;
-}
+};

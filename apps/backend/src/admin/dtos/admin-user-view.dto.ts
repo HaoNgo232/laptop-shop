@@ -1,6 +1,6 @@
-import { IAdminUserView } from '@web-ecom/shared-types/admin/interfaces.cjs';
+import { IAdminView } from '@web-ecom/shared-types/admin/interfaces.cjs';
 
-export class AdminUserViewDto implements IAdminUserView {
+export class AdminUserViewDto implements IAdminView {
   id: string;
   email: string;
   username: string;

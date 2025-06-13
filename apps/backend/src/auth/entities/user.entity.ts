@@ -1,8 +1,9 @@
-import { Column, Entity, OneToOne } from 'typeorm';
+import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
 import { IsEmail, IsString, MinLength } from 'class-validator';
 import { Cart } from '@/cart/entities/cart.entity';
 import { BaseEntity } from '@/common/entities/base.entity';
 import { UserRole } from '@/auth/enums/user-role.enum';
+import { Order } from '@/orders/entities/order.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -29,9 +30,12 @@ export class User extends BaseEntity {
   @Column({ type: 'enum', enum: UserRole, default: UserRole.USER })
   role: UserRole;
 
-  // // Relationships
-  // @OneToMany(() => Order, (order) => order.user)
-  // orders: Order[];
+  @Column({ nullable: true })
+  avatarUrl?: string;
+
+  // Relationships
+  @OneToMany(() => Order, (order) => order.user)
+  orders: Order[];
 
   // @OneToMany(() => Review, (review) => review.user)
   // reviews: Review[];

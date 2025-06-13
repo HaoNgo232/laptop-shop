@@ -1,8 +1,9 @@
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Home, Package, User, ShoppingBag, LogIn, UserPlus, LogOut } from 'lucide-react';
+import { Home, Package, User, ShoppingBag, LogIn, UserPlus, LogOut, ChartBar } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { MiniCart } from '@/components/cart/MiniCart';
 import { useAuthStore } from '@/stores/authStore';
+import { UserRole } from '@web-ecom/shared-types/auth/enums';
 
 export function Header() {
     const navigate = useNavigate();
@@ -27,6 +28,10 @@ export function Header() {
 
     const userNavItems = [
         { label: 'Tài khoản', path: '/profile', icon: User },
+    ];
+
+    const adminNavItems = [
+        { label: 'Dashboard', path: '/admin/dashboard', icon: ChartBar },
     ];
 
     // Check if path is active
@@ -71,6 +76,23 @@ export function Header() {
                                 const Icon = item.icon;
                                 return (
                                     <Button
+                                        key={item.path}
+                                        variant={isActive(item.path) ? "default" : "ghost"}
+                                        size="sm"
+                                        onClick={() => navigate(item.path)}
+                                        className="flex items-center space-x-2"
+                                    >
+                                        <Icon className="h-4 w-4" />
+                                        <span>{item.label}</span>
+                                    </Button>
+                                );
+                            })}
+
+                            {/** Admin navigation */}
+                            {isAuthenticated && user?.role === UserRole.ADMIN && adminNavItems.map((item) => {
+                                const Icon = item.icon;
+                                return (
+                                    < Button
                                         key={item.path}
                                         variant={isActive(item.path) ? "default" : "ghost"}
                                         size="sm"
@@ -163,6 +185,6 @@ export function Header() {
                     </nav>
                 </div>
             </div>
-        </header>
+        </header >
     );
 } 

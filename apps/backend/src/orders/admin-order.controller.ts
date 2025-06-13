@@ -25,8 +25,8 @@ export class AdminOrdersController {
   @Get()
   @ApiOperation({ summary: 'Lấy tất cả đơn hàng (Admin)' })
   @ApiResponse({ status: 200, description: 'Danh sách đơn hàng' })
-  async getAllOrders(@Query() query: AdminOrderQueryDto): Promise<PaginatedResponse<OrderDto>> {
-    return await this.ordersService.getAllOrders(query);
+  async getOrders(@Query() query: AdminOrderQueryDto): Promise<PaginatedResponse<OrderDto>> {
+    return await this.ordersService.getOrders(query);
   }
 
   @Get(':orderId')

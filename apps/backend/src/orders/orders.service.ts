@@ -282,7 +282,7 @@ export class OrdersService {
   /**
    * Admin: Lấy tất cả đơn hàng
    */
-  async getAllOrders(query: AdminOrderQueryDto): Promise<PaginatedResponse<OrderDto>> {
+  async getOrders(query: AdminOrderQueryDto): Promise<PaginatedResponse<OrderDto>> {
     const { data, total } = await this.ordersProvider.findAllOrders(query);
 
     const page = query.page ?? 1;
@@ -322,14 +322,14 @@ export class OrdersService {
     return await this.dataSource.transaction(async (manager) => {
       const order = await manager.findOne(Order, {
         where: { id: orderId },
-        lock: { mode: 'pessimistic_write' }, // Lock để tránh race condition
+        lock: { mode: 'pessimistic_write' },
       });
 
       if (!order) {
         throw new NotFoundException(`Order with ID ${orderId} not found`);
       }
 
-      // Chỉ cập nhật nếu đang PENDING
+      // Chỉ cập nhật nếu đang PENDING payment
       if (order.paymentStatus !== PaymentStatusEnum.PENDING) {
         this.logger.warn(
           `Attempted to update payment status for order ${orderId} ` +
@@ -344,11 +344,13 @@ export class OrdersService {
         return order;
       }
 
+      // Cập nhật payment status
       order.paymentStatus = paymentStatus;
       order.transactionId = transactionId;
 
       // Nếu thanh toán thành công, chuyển order status
       if (paymentStatus === PaymentStatusEnum.PAID) {
+        // Khi thanh toán thành công, chuyển order status sang PROCESSING
         order.status = OrderStatusEnum.PROCESSING;
       } else if (paymentStatus === PaymentStatusEnum.FAILED) {
         order.status = OrderStatusEnum.CANCELLED;
@@ -370,6 +372,9 @@ export class OrdersService {
           }
         }
       }
+
+      // PaymentStatusEnum.WAITING -> order status vẫn PENDING
+      // PaymentStatusEnum.CANCELLED -> order status chuyển sang CANCELLED
 
       const savedOrder = await manager.save(order);
       this.logger.log(

@@ -1,8 +1,9 @@
 import { OrderStatusEnum } from '@/orders/enums/order-status.enum';
+import { IAdminOrderQuery } from '@web-ecom/shared-types/orders/interfaces.cjs';
 import { Type } from 'class-transformer';
 import { IsOptional, IsUUID, IsEnum, IsDateString, IsInt, Min } from 'class-validator';
 
-export class AdminOrderQueryDto {
+export class AdminOrderQueryDto implements IAdminOrderQuery {
   @IsOptional()
   @Type(() => Number)
   @IsInt()

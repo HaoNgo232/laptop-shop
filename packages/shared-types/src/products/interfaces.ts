@@ -1,5 +1,5 @@
 import { SortOrder } from "./enums";
-import type { PaginatedResponse } from "../common/interfaces";
+import type { IPaginatedResponse } from "../common/interfaces";
 
 // Category interfaces
 export interface ICategory {
@@ -81,5 +81,5 @@ export interface IQueryProduct {
 }
 
 // Response types
-export type IProductListResponse = PaginatedResponse<IProduct>;
+export type IProductListResponse = IPaginatedResponse<IProduct>;
 export type ICategoryListResponse = ICategory[];

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ICategory } from '@web-ecom/shared-types';
+import { ICategory } from '@web-ecom/shared-types/products/interfaces.cjs';
 
 export class CategoryDto implements ICategory {
   @ApiProperty({

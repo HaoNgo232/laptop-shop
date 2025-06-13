@@ -4,7 +4,7 @@ import type {
   ProductListResponse,
   QueryProduct,
 } from "@/types/product";
-import { apiClient } from "./api";
+import { apiClient } from "@/services/api";
 
 class ProductService {
   // Lấy danh sách sản phẩm với filters

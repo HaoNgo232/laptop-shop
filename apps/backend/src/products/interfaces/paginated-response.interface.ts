@@ -1,6 +1,7 @@
-import { PaginationMeta } from './pagination-meta.interface';
+import { PaginationMeta } from '@/products/interfaces/pagination-meta.interface';
+import { IPaginatedResponse } from '@web-ecom/shared-types/common/interfaces.cjs';
 
-export interface PaginatedResponse<T> {
+export type PaginatedResponse<T> = IPaginatedResponse<T> & {
   /**
    * Dữ liệu trả về
    */
@@ -9,4 +10,4 @@ export interface PaginatedResponse<T> {
    * Metadata phân trang
    */
   meta: PaginationMeta;
-}
+};

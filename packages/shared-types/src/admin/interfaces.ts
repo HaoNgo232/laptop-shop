@@ -1,31 +1,31 @@
 import { UserRole } from "../auth/enums";
 
-export interface IAdminUserView {
+export interface IAdminView {
   id: string;
   email: string;
   username: string;
-  role: string;
+  role: UserRole;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export interface IAdminUserDetail {
+export interface IAdminDetail {
   id: string;
   email: string;
   username: string;
   address?: string;
   phoneNumber?: string;
-  role: string;
+  role: UserRole;
   createdAt: Date;
   updatedAt: Date;
 }
 
-export interface IUpdateUserByAdmin {
+export interface IUpdateByAdmin {
   role: UserRole;
   isActive: boolean;
 }
 
-export interface IAdminUserQuery {
+export interface IAdminQuery {
   page?: number;
   limit?: number;
   search?: string;
@@ -39,4 +39,19 @@ export interface IDashboardSummary {
   totalUsers: number;
   totalOrders: number;
   totalProducts: number;
+}
+
+export interface IOrdersByStatus {
+  status: string;
+  count: number;
+}
+
+export interface IRevenueByMonth {
+  month: string;
+  revenue: number;
+}
+
+export interface IDetailedStats {
+  ordersByStatus: IOrdersByStatus[];
+  revenueByMonth: IRevenueByMonth[];
 }

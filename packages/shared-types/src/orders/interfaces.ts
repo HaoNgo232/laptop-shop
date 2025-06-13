@@ -1,6 +1,6 @@
 import type {
-  PaginatedResponse,
-  PaginatedResponseWithMessage,
+  IPaginatedResponse,
+  IPaginatedResponseWithMessage,
 } from "../common/interfaces";
 import { OrderStatusEnum, PaymentStatusEnum, PaymentMethodEnum } from "./enums";
 
@@ -76,6 +76,24 @@ export interface ICheckoutState {
 }
 
 // Response types
-export type IOrderListResponse = PaginatedResponse<IOrder>;
+export type IOrderListResponse = IPaginatedResponse<IOrder>;
 export type IOrderListResponseWithMessage =
-  PaginatedResponseWithMessage<IOrder>;
+  IPaginatedResponseWithMessage<IOrder>;
+
+export interface IAdminOrderQuery {
+  page?: number;
+
+  limit?: number;
+
+  status?: OrderStatusEnum;
+
+  userId?: string;
+
+  dateFrom?: string;
+
+  dateTo?: string;
+}
+
+export interface IUpdateOrderStatus {
+  status: OrderStatusEnum;
+}

@@ -14,6 +14,7 @@ import type {
   ICheckoutState,
   IOrderListResponse,
   IOrderListResponseWithMessage,
+  IUpdateOrderStatus,
 } from "@web-ecom/shared-types/orders/interfaces";
 import { z } from "zod";
 
@@ -25,6 +26,7 @@ export type QRCodeResponse = z.infer<typeof QRCodeResponseSchema>;
 export type CreateOrderResponse = z.infer<typeof CreateOrderResponseSchema>;
 export type ShippingAddress = z.infer<typeof ShippingAddressSchema>;
 export type CheckoutState = z.infer<typeof CheckoutStateSchema>;
+export type UpdateOrderStatus = z.infer<typeof UpdateOrderStatusSchema>;
 
 // Response types
 export interface OrderListResponse extends IOrderListResponse {}
@@ -94,6 +96,10 @@ const CreateOrderResponseSchema: z.ZodType<ICreateOrderResponse> = z.object({
 const ShippingAddressSchema: z.ZodType<IShippingAddress> = z.object({
   fullAddress: z.string().min(10, "Địa chỉ đầy đủ phải có ít nhất 10 ký tự"),
   note: z.string().max(200, "Ghi chú không được vượt quá 200 ký tự").optional(),
+});
+
+const UpdateOrderStatusSchema: z.ZodType<IUpdateOrderStatus> = z.object({
+  status: z.nativeEnum(OrderStatusEnum),
 });
 
 const CheckoutStateSchema: z.ZodType<ICheckoutState> = z.object({

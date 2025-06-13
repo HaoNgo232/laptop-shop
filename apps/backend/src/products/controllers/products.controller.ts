@@ -6,6 +6,7 @@ import { ProductsService } from '@/products/services/products.service';
 import { AuthType } from '@/auth/enums/auth-type.enum';
 import { PaginatedResponse } from '@/products/interfaces/paginated-response.interface';
 import { Controller, Get, Param, Query } from '@nestjs/common';
+import { ApiOperation, ApiResponse } from '@nestjs/swagger';
 
 @Auth(AuthType.None)
 @Controller('api/products')

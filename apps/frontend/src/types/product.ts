@@ -29,7 +29,7 @@ export interface ProductListResponse extends IProductListResponse {}
 export interface CategoryListResponse extends ICategoryListResponse {}
 
 // Zod Validation Schemas
-const CategorySchema: z.ZodType<ICategory> = z.object({
+export const CategorySchema: z.ZodType<ICategory> = z.object({
   id: z.string().uuid(),
   name: z.string().min(1, "Tên danh mục là bắt buộc"),
   description: z.string().optional(),
@@ -37,12 +37,12 @@ const CategorySchema: z.ZodType<ICategory> = z.object({
   updatedAt: z.coerce.date(),
 });
 
-const CategoryBriefSchema: z.ZodType<ICategoryBrief> = z.object({
+export const CategoryBriefSchema: z.ZodType<ICategoryBrief> = z.object({
   id: z.string().uuid(),
   name: z.string(),
 });
 
-const ProductSchema: z.ZodType<IProduct> = z.object({
+export const ProductSchema: z.ZodType<IProduct> = z.object({
   id: z.string().uuid(),
   name: z.string().min(1, "Tên sản phẩm là bắt buộc"),
   description: z.string(),
@@ -54,7 +54,7 @@ const ProductSchema: z.ZodType<IProduct> = z.object({
   updatedAt: z.coerce.date(),
 });
 
-const ProductDetailSchema: z.ZodType<IProductDetail> = z.object({
+export const ProductDetailSchema: z.ZodType<IProductDetail> = z.object({
   id: z.string().uuid(),
   name: z.string().min(1, "Tên sản phẩm là bắt buộc"),
   description: z.string(),
@@ -66,7 +66,7 @@ const ProductDetailSchema: z.ZodType<IProductDetail> = z.object({
   updatedAt: z.coerce.date(),
 });
 
-const CreateProductDtoSchema: z.ZodType<ICreateProduct> = z.object({
+export const CreateProductDtoSchema: z.ZodType<ICreateProduct> = z.object({
   name: z
     .string()
     .min(1, "Tên sản phẩm là bắt buộc")
@@ -78,7 +78,7 @@ const CreateProductDtoSchema: z.ZodType<ICreateProduct> = z.object({
   categoryId: z.string().uuid("Category ID không hợp lệ"),
 });
 
-const UpdateProductDtoSchema: z.ZodType<IUpdateProduct> = z.object({
+export const UpdateProductDtoSchema: z.ZodType<IUpdateProduct> = z.object({
   name: z
     .string()
     .min(1, "Tên sản phẩm là bắt buộc")
@@ -96,7 +96,7 @@ const UpdateProductDtoSchema: z.ZodType<IUpdateProduct> = z.object({
   active: z.boolean().optional(),
 });
 
-const CreateCategoryDtoSchema: z.ZodType<ICreateCategory> = z.object({
+export const CreateCategoryDtoSchema: z.ZodType<ICreateCategory> = z.object({
   name: z
     .string()
     .min(1, "Tên danh mục là bắt buộc")
@@ -104,7 +104,7 @@ const CreateCategoryDtoSchema: z.ZodType<ICreateCategory> = z.object({
   description: z.string().optional(),
 });
 
-const UpdateCategoryDtoSchema: z.ZodType<IUpdateCategory> = z.object({
+export const UpdateCategoryDtoSchema: z.ZodType<IUpdateCategory> = z.object({
   name: z
     .string()
     .min(1, "Tên danh mục là bắt buộc")
@@ -114,7 +114,7 @@ const UpdateCategoryDtoSchema: z.ZodType<IUpdateCategory> = z.object({
   active: z.boolean().optional(),
 });
 
-const QueryProductDtoSchema: z.ZodType<IQueryProduct> = z.object({
+export const QueryProductDtoSchema: z.ZodType<IQueryProduct> = z.object({
   page: z.number().int().positive().optional(),
   limit: z.number().int().positive().max(100).optional(),
   categoryId: z.string().uuid().optional(),

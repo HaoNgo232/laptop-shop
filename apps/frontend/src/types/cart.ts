@@ -1,7 +1,4 @@
-import type {
-  IProduct,
-  ICategoryBrief,
-} from "@web-ecom/shared-types/products/interfaces";
+import type { ICategoryBrief } from "@web-ecom/shared-types/products/interfaces";
 import type {
   ICartItem,
   ICart,
@@ -11,9 +8,9 @@ import type {
   ICartSummary,
 } from "@web-ecom/shared-types/cart/interfaces";
 import { z } from "zod";
+import { ProductSchema } from "@/types/product";
 
 export type CategoryBrief = z.infer<typeof CategoryBriefSchema>;
-export type Product = z.infer<typeof ProductSchema>;
 export type CartItem = z.infer<typeof CartItemSchema>;
 export type Cart = z.infer<typeof CartSchema>;
 export type AddToCart = z.infer<typeof AddToCartSchema>;
@@ -25,18 +22,6 @@ export type CartSummary = z.infer<typeof CartSummarySchema>;
 const CategoryBriefSchema: z.ZodType<ICategoryBrief> = z.object({
   id: z.string().uuid(),
   name: z.string(),
-});
-
-const ProductSchema: z.ZodType<IProduct> = z.object({
-  id: z.string().uuid(),
-  name: z.string(),
-  description: z.string(),
-  price: z.number().positive(),
-  stockQuantity: z.number().int().min(0),
-  imageUrl: z.string().url(),
-  category: CategoryBriefSchema,
-  createdAt: z.coerce.date(),
-  updatedAt: z.coerce.date(),
 });
 
 // Zod Validation Schemas

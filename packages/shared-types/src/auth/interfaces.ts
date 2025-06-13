@@ -10,6 +10,7 @@ export interface IUser {
   role: UserRole;
   createdAt: Date;
   updatedAt: Date;
+  avatarUrl?: string;
 }
 
 export interface ILoginUser {

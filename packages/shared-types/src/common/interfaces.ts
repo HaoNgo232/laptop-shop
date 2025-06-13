@@ -1,19 +1,19 @@
 // Common API response types
-export interface ApiResponse<T = unknown> {
+export interface IApiResponse<T = unknown> {
   data: T;
   message?: string;
   statusCode: number;
 }
 
 // Enhanced API response with required message
-export interface ApiResponseWithMessage<T = unknown> {
+export interface IApiResponseWithMessage<T = unknown> {
   data: T;
   message: string;
   statusCode: number;
   timestamp?: string;
 }
 
-export interface PaginationMeta {
+export interface IPaginationMeta {
   currentPage: number;
   itemsPerPage: number;
   totalItems: number;
@@ -22,20 +22,20 @@ export interface PaginationMeta {
   hasNextPage: boolean;
 }
 
-export interface PaginatedResponse<T> {
+export interface IPaginatedResponse<T> {
   data: T[];
-  meta: PaginationMeta;
+  meta: IPaginationMeta;
 }
 
 // Enhanced paginated response with message
-export interface PaginatedResponseWithMessage<T> {
+export interface IPaginatedResponseWithMessage<T> {
   data: T[];
-  meta: PaginationMeta;
+  meta: IPaginationMeta;
   message: string;
 }
 
 // Error response structure
-export interface ApiError {
+export interface IApiError {
   message: string;
   error?: string;
   statusCode: number;

@@ -7,7 +7,7 @@ import { UpdateProductDto } from '@/products/dtos/update-product.dto';
 import { ProductsService } from '@/products/services/products.service';
 import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
 
-@Controller('api/admin.products')
+@Controller('api/admin/products')
 @Auth(AuthType.Bearer, UserRole.ADMIN)
 export class AdminProductsController {
   constructor(private readonly productsService: ProductsService) {}
