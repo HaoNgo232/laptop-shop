@@ -22,10 +22,10 @@ class ProductService {
   }
 
   // Lấy chi tiết một sản phẩm
-  async getProductById(id: string): Promise<ProductDetail> {
+  async getProductById(productId: string): Promise<ProductDetail> {
     try {
       const response = await apiClient.get<ProductDetail>(
-        `/api/products/${id}`,
+        `/api/products/${productId}`,
       );
       return response;
     } catch (error) {

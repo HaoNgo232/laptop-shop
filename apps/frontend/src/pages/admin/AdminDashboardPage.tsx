@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useAdminStore } from '@/stores/adminStore';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import {
     Users,
@@ -13,6 +12,7 @@ import {
     AlertCircle
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useAdminDashboardStore } from '@/stores/admin/adminDashboardStore';
 
 export function AdminDashboardPage() {
     const {
@@ -23,7 +23,7 @@ export function AdminDashboardPage() {
         fetchDashboardSummary,
         fetchDetailedStats,
         clearError
-    } = useAdminStore();
+    } = useAdminDashboardStore();
 
     useEffect(() => {
         loadDashboardData();

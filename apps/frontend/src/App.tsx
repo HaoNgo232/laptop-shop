@@ -15,7 +15,7 @@ import ProfilePage from '@/pages/ProfilePage';
 import { OrdersPage } from '@/pages/OrdersPage';
 import { OrderDetailPage } from '@/pages/OrderDetailPage';
 import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage';
-import { AdminPage } from '@/pages/admin/AdminPage';
+import { AdminUserPage } from '@/pages/admin/AdminUserPage';
 import AdminProductsPage from '@/pages/admin/AdminProductsPage';
 import AdminOrdersPage from '@/pages/admin/AdminOrdersPage';
 
@@ -97,7 +97,7 @@ const App = () => {
           path="/admin/users"
           element={
             <ProtectedRoute requiredRole={UserRole.ADMIN}>
-              <AdminPage />
+              <AdminUserPage />
             </ProtectedRoute>
           }
         />

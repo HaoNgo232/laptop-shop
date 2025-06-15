@@ -1,4 +1,6 @@
 import { apiClient } from "@/services/api";
+import { AdminQuery } from "@/types/admin";
+import { PaginatedResponse } from "@/types/api";
 import type {
   CreateOrderRequest,
   CreateOrderResponse,
@@ -6,6 +8,7 @@ import type {
   OrderDetail,
   OrderListResponse,
   OrderListResponseWithMessage,
+  UpdateOrderStatus,
 } from "@/types/order";
 
 class OrderService {

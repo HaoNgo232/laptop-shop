@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AdminLayout } from '@/components/admin/AdminLayout';
-import { useAdminStore } from '@/stores/adminStore';
+import { useAdminUserStore } from '@/stores/admin/adminUserStore';
 import type { AdminQuery } from '@/types/admin';
 import { AdminTable } from '@/components/admin/AdminTable';
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,7 @@ import { Search, Plus, Filter } from 'lucide-react';
 import { UserRole } from '@web-ecom/shared-types/auth/enums';
 import { PaginationMeta } from '@/types/api';
 
-export function AdminPage() {
+export function AdminUserPage() {
     const {
         users,
         selectedUser,
@@ -22,7 +22,7 @@ export function AdminPage() {
         updateUser,
         clearError,
         clearSelectedUser
-    } = useAdminStore();
+    } = useAdminUserStore();
 
     const [query, setQuery] = useState<AdminQuery>({
         page: 1,
@@ -45,7 +45,7 @@ export function AdminPage() {
 
     useEffect(() => {
         loadUsers();
-    }, [query]);
+    }, []);
 
     const loadUsers = async () => {
         try {

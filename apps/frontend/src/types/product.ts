@@ -16,6 +16,7 @@ import type {
 
 export type ProductDetail = z.infer<typeof ProductDetailSchema>;
 export type Product = z.infer<typeof ProductSchema>;
+export type ProductFormData = z.infer<typeof ProductSchema>;
 export type Category = z.infer<typeof CategorySchema>;
 export type CategoryBrief = z.infer<typeof CategoryBriefSchema>;
 export type CreateProduct = z.infer<typeof CreateProductDtoSchema>;

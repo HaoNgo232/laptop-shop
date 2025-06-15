@@ -27,6 +27,9 @@ export class Product extends BaseEntity {
   @Column()
   categoryId: string;
 
+  @Column({ default: true })
+  isActive: boolean;
+
   // Relationships
   @ManyToOne(() => Category, (category) => category.products)
   @JoinColumn({ name: 'category_id' })

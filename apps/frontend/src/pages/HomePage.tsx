@@ -14,7 +14,6 @@ export function HomePage() {
     const navigate = useNavigate();
 
     const { user, isAuthenticated, isLoading: authLoading } = useAuthStore();
-    console.log('Auth state:', { isAuthenticated, authLoading, user: user?.username });
 
     const {
         products,

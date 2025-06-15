@@ -67,23 +67,39 @@ class ApiClient {
   }
 
   async get<T>(url: string, params?: object): Promise<T> {
-    const response = await this.client.get(url, { params });
-    return response.data;
+    try {
+      const response = await this.client.get(url, { params });
+      return response.data;
+    } catch (error) {
+      throw this.transformError(error as AxiosError);
+    }
   }
 
   async post<T>(url: string, data?: object): Promise<T> {
-    const response = await this.client.post(url, data);
-    return response.data;
+    try {
+      const response = await this.client.post(url, data);
+      return response.data;
+    } catch (error) {
+      throw this.transformError(error as AxiosError);
+    }
   }
 
   async put<T>(url: string, data?: object): Promise<T> {
-    const response = await this.client.put(url, data);
-    return response.data;
+    try {
+      const response = await this.client.put(url, data);
+      return response.data;
+    } catch (error) {
+      throw this.transformError(error as AxiosError);
+    }
   }
 
   async delete<T>(url: string): Promise<T> {
-    const response = await this.client.delete(url);
-    return response.data;
+    try {
+      const response = await this.client.delete(url);
+      return response.data;
+    } catch (error) {
+      throw this.transformError(error as AxiosError);
+    }
   }
 }
 

@@ -26,7 +26,7 @@ export class AdminProductsController {
   }
 
   @Delete(':id')
-  public remove(@Param('id') id: string): Promise<void> {
+  public remove(@Param('id') id: string): Promise<string> {
     return this.productsService.remove(id);
   }
 }

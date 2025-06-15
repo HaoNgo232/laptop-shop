@@ -12,7 +12,6 @@ interface CartSummaryProps {
 export function CartSummary({ cart, onClearCart }: CartSummaryProps) {
     const navigate = useNavigate();
 
-    // Format giá tiền
     const formatPrice = (price: number): string => {
         return new Intl.NumberFormat('vi-VN', {
             style: 'currency',
@@ -20,12 +19,10 @@ export function CartSummary({ cart, onClearCart }: CartSummaryProps) {
         }).format(price);
     };
 
-    // Điều hướng đến trang thanh toán
     const handleCheckout = () => {
         navigate('/checkout');
     };
 
-    // Tiếp tục mua sắm
     const handleContinueShopping = () => {
         navigate('/');
     };
