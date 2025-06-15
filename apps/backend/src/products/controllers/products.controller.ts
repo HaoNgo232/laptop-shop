@@ -1,5 +1,4 @@
 import { Auth } from '@/auth/decorators/auth.decorator';
-import { ProductDetailDto } from '@/products/dtos/product-detail.dto';
 import { ProductDto } from '@/products/dtos/product.dto';
 import { QueryProductDto } from '@/products/dtos/query-product.dto';
 import { ProductsService } from '@/products/services/products.service';
@@ -19,7 +18,7 @@ export class ProductsController {
   }
 
   @Get(':id')
-  public findOne(@Param('id') id: string): Promise<ProductDetailDto> {
+  public findOne(@Param('id') id: string): Promise<ProductDto> {
     return this.productsService.findOne(id);
   }
 }

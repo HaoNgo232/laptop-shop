@@ -21,6 +21,7 @@ interface AdminProductState {
     updateProductDto: UpdateProduct,
   ) => Promise<void>;
   deleteProduct: (productId: string) => Promise<string>;
+  restoreProduct: (productId: string) => Promise<void>;
   clearSelectedProduct: () => void;
   clearError: () => void;
 }
@@ -112,17 +113,39 @@ export const useAdminProductStore = create<AdminProductState>((set, get) => ({
   async deleteProduct(productId: string): Promise<string> {
     try {
       set({ isLoading: true, error: null });
-      const message = await adminProductService.deleteProduct(productId);
+      const response = await adminProductService.deleteProduct(productId);
       const { products } = get();
       set({
         products: products.filter((product) => product.id !== productId),
         isLoading: false,
       });
-      return message;
+      return response.message; // Trả về message từ response object
     } catch (error) {
       const apiError = error as ApiError;
       set({
-        error: apiError.message || "Không thể xóa sản phẩm",
+        error: apiError.message || "Không thể chuyển sản phẩm vào thùng rác",
+        isLoading: false,
+      });
+      throw error;
+    }
+  },
+
+  async restoreProduct(productId: string): Promise<void> {
+    try {
+      set({ isLoading: true, error: null });
+      const restoredProduct =
+        await adminProductService.restoreProduct(productId);
+      const { selectedProduct } = get();
+      set({
+        isLoading: false,
+        // Cập nhật selectedProduct nếu đó là sản phẩm vừa được khôi phục
+        selectedProduct:
+          selectedProduct?.id === productId ? restoredProduct : selectedProduct,
+      });
+    } catch (error) {
+      const apiError = error as ApiError;
+      set({
+        error: apiError.message || "Không thể khôi phục sản phẩm",
         isLoading: false,
       });
       throw error;

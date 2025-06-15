@@ -6,9 +6,6 @@ import { CategoriesController } from '@/products/controllers/categories.controll
 import { ProductsController } from '@/products/controllers/products.controller';
 import { Category } from '@/products/entities/category.entity';
 import { Product } from '@/products/entities/product.entity';
-import { CategoryMapperProvider } from '@/products/providers/category-mapper.provider';
-import { ProductMapperProvider } from '@/products/providers/product-mapper.provider';
-import { ProductsProvider } from '@/products/providers/products.provider';
 import { CategoriesService } from '@/products/services/categories.service';
 import { ProductsService } from '@/products/services/products.service';
 import { forwardRef, Module } from '@nestjs/common';
@@ -26,19 +23,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
     AdminProductsController,
     AdminCategoriesController,
   ],
-  providers: [
-    ProductsService,
-    CategoriesService,
-    CategoryMapperProvider,
-    ProductMapperProvider,
-    ProductsProvider,
-  ],
-  exports: [
-    ProductsService,
-    CategoriesService,
-    CategoryMapperProvider,
-    ProductMapperProvider,
-    ProductsProvider,
-  ],
+  providers: [ProductsService, CategoriesService],
+  exports: [ProductsService, CategoriesService],
 })
 export class ProductsModule {}

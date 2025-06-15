@@ -6,11 +6,11 @@ import { BcryptProvider } from '@/auth/providers/bcrypt.provider';
 import { ResetPasswordDto } from '@/auth/dtos/reset-password.dto';
 import type { ConfigType } from '@nestjs/config';
 import jwtConfig from '@/auth/config/jwt.config';
-import { ResetPasswordPayload } from '@/auth/interfaces/reset-password-payload.interface'; // Import ResetPasswordPayload
+import { ResetPasswordPayload } from '@/auth/interfaces/reset-password-payload.interface';
 import { User } from '@/auth/entities/user.entity';
 
 @Injectable()
-export class ResetPasswordProvider {
+export class ResetPasswordUseCase {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -20,7 +20,7 @@ export class ResetPasswordProvider {
     private readonly bcryptProvider: BcryptProvider,
   ) {}
 
-  async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<void> {
+  async execute(resetPasswordDto: ResetPasswordDto): Promise<void> {
     try {
       const resetPayload = await this.jwtService.verifyAsync<ResetPasswordPayload>(
         resetPasswordDto.token,
@@ -41,10 +41,8 @@ export class ResetPasswordProvider {
         throw new UnauthorizedException('User không tồn tại');
       }
 
-      // Mã hóa mật khẩu mới
       const hashedPassword = await this.bcryptProvider.hashPassword(resetPasswordDto.newPassword);
 
-      // Cập nhật mật khẩu
       user.passwordHash = hashedPassword;
       await this.userRepository.save(user);
     } catch (error) {

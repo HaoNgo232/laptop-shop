@@ -14,7 +14,7 @@ import { MailService } from '@/mail/mail.service';
 import { CartService } from '@/cart/cart.service';
 
 @Injectable()
-export class CreateUserProvider {
+export class CreateUserUseCase {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -23,7 +23,7 @@ export class CreateUserProvider {
     private readonly cartService: CartService,
   ) {}
 
-  async createUser(registerUserDto: RegisterUserDto) {
+  async execute(registerUserDto: RegisterUserDto) {
     try {
       // Kiểm tra email đã tồn tại chưa
       const existingUser = await this.userRepository.findOne({

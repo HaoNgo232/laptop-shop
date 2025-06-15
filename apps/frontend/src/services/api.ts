@@ -7,7 +7,7 @@ import axios, {
 import type { ApiError } from "@/types/api";
 
 class ApiClient {
-  private client: AxiosInstance;
+  private readonly client: AxiosInstance;
 
   constructor() {
     this.client = axios.create({
@@ -87,6 +87,15 @@ class ApiClient {
   async put<T>(url: string, data?: object): Promise<T> {
     try {
       const response = await this.client.put(url, data);
+      return response.data;
+    } catch (error) {
+      throw this.transformError(error as AxiosError);
+    }
+  }
+
+  async patch<T>(url: string, data?: object): Promise<T> {
+    try {
+      const response = await this.client.patch(url, data);
       return response.data;
     } catch (error) {
       throw this.transformError(error as AxiosError);

@@ -1,12 +1,11 @@
 import { AdminLayout } from '@/components/admin/AdminLayout'
-import React from 'react'
 
-function AdminOrdersPage() {
+function AdminSettingPage() {
     return (
         <AdminLayout>
-            <div>AdminOrdersPage</div>
+            <div>AdminSettingPage</div>
         </AdminLayout>
     )
 }
 
-export default AdminOrdersPage
+export default AdminSettingPage

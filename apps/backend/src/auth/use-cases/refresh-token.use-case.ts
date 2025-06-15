@@ -11,7 +11,7 @@ import { LoginResponseDto } from '@/auth/dtos/login-response.dto';
 import { User } from '@/auth/entities/user.entity';
 
 @Injectable()
-export class RefreshTokenProvider {
+export class RefreshTokenUseCase {
   constructor(
     private readonly jwtService: JwtService,
 
@@ -24,7 +24,7 @@ export class RefreshTokenProvider {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  public async refreshTokens(refreshTokenDto: RefreshTokenDto): Promise<LoginResponseDto> {
+  public async execute(refreshTokenDto: RefreshTokenDto): Promise<LoginResponseDto> {
     try {
       // Xác thực refresh token
       const payload = await this.jwtService.verifyAsync<JwtPayload>(refreshTokenDto.refreshToken, {

@@ -50,6 +50,8 @@ export const ProductSchema: z.ZodType<IProduct> = z.object({
   price: z.number().positive("Giá sản phẩm phải lớn hơn 0"),
   stockQuantity: z.number().int().min(0, "Số lượng tồn kho không được âm"),
   imageUrl: z.string().url("URL hình ảnh không hợp lệ"),
+  active: z.boolean(),
+  deletedAt: z.coerce.date().nullable(),
   category: CategoryBriefSchema,
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
@@ -63,6 +65,7 @@ export const ProductDetailSchema: z.ZodType<IProductDetail> = z.object({
   stockQuantity: z.number().int().min(0, "Số lượng tồn kho không được âm"),
   imageUrl: z.string().url("URL hình ảnh không hợp lệ"),
   category: CategorySchema,
+  active: z.boolean(),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 });

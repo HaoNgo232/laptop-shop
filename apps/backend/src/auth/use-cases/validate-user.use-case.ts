@@ -5,13 +5,13 @@ import { BcryptProvider } from '@/auth/providers/bcrypt.provider';
 import { User } from '@/auth/entities/user.entity';
 
 @Injectable()
-export class ValidateUserProvider {
+export class ValidateUserUseCase {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly bcryptProvider: BcryptProvider, // Inject BcryptProvider
   ) {}
-  async validateUser(email: string, password: string): Promise<User> {
+  async execute(email: string, password: string): Promise<User> {
     // Tìm user theo email
     const user = await this.userRepository.findOne({
       where: { email },

@@ -9,7 +9,7 @@ import { ResetPasswordPayload } from '@/auth/interfaces/reset-password-payload.i
 import { User } from '@/auth/entities/user.entity';
 
 @Injectable()
-export class ForgotPasswordProvider {
+export class ForgotPasswordUseCase {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
@@ -19,7 +19,7 @@ export class ForgotPasswordProvider {
     private readonly mailerService: MailerService,
   ) {}
 
-  async sendResetPasswordEmail(email: string): Promise<void> {
+  async execute(email: string): Promise<void> {
     // Tìm user theo email
     const user = await this.userRepository.findOne({
       where: { email },

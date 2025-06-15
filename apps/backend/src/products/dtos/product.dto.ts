@@ -16,6 +16,10 @@ export class ProductDto implements IProduct {
 
   category: CategoryBriefDto;
 
+  active: boolean;
+
+  deletedAt?: Date | null;
+
   createdAt: Date;
 
   updatedAt: Date;

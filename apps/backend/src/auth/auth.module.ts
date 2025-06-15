@@ -16,15 +16,15 @@ import { UsersService } from '@/auth/services/users.service';
 import { BcryptProvider } from '@/auth/providers/bcrypt.provider';
 import { JwtStrategy } from '@/auth/strategies/jwt.strategy';
 import { TokenBlacklistProvider } from '@/auth/providers/token-blacklist.provider';
-import { CreateUserProvider } from '@/auth/providers/create-user.provider';
 import { AuthenticationGuard } from '@/auth/guards/authentication/authentication.guard';
 import { GenerateTokensProvider } from '@/auth/providers/generate-tokens.provider';
 import { RolesGuard } from '@/auth/guards/authentication/roles.guard';
-import { RefreshTokenProvider } from '@/auth/providers/refresh-token.provider';
-import { ValidateUserProvider } from '@/auth/providers/validate-user.provider';
-import { ForgotPasswordProvider } from '@/auth/providers/forgot-password.provider';
-import { ResetPasswordProvider } from '@/auth/providers/reset-password.provider';
-import { AdminDashboardService } from '@/admin/services/admin-dashboard.service';
+import { CreateUserUseCase } from './use-cases/create-user.use-case';
+import { ValidateUserUseCase } from './use-cases/validate-user.use-case';
+import { ForgotPasswordUseCase } from './use-cases/forgot-password.use-case';
+import { ResetPasswordUseCase } from './use-cases/reset-password.use-case';
+import { RefreshTokenUseCase } from './use-cases/refresh-token.use-case';
+import { ChangePasswordUseCase } from './use-cases/change-password.use-case';
 
 @Module({
   imports: [
@@ -53,14 +53,15 @@ import { AdminDashboardService } from '@/admin/services/admin-dashboard.service'
     JwtStrategy,
     TokenBlacklistProvider,
     BcryptProvider,
-    CreateUserProvider,
     GenerateTokensProvider,
-    ValidateUserProvider,
-    ForgotPasswordProvider,
-    ResetPasswordProvider,
-    RefreshTokenProvider,
     AuthenticationGuard,
     RolesGuard,
+    CreateUserUseCase,
+    ValidateUserUseCase,
+    ForgotPasswordUseCase,
+    ResetPasswordUseCase,
+    RefreshTokenUseCase,
+    ChangePasswordUseCase,
   ],
   exports: [
     UsersService,
@@ -68,12 +69,7 @@ import { AdminDashboardService } from '@/admin/services/admin-dashboard.service'
     TokenBlacklistProvider,
     BcryptProvider,
     JwtModule,
-    CreateUserProvider,
     GenerateTokensProvider,
-    ValidateUserProvider,
-    ForgotPasswordProvider,
-    ResetPasswordProvider,
-    RefreshTokenProvider,
     AuthenticationGuard,
     AccessTokenGuard,
     RolesGuard,

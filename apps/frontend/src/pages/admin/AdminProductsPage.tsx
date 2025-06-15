@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react';
 import { useAdminProductStore } from '@/stores/admin/adminProductStore';
 import { ProductsTable } from '@/components/admin/ProductsTable';
@@ -43,10 +44,6 @@ export default function AdminProductsPage() {
     } = useAdminProductStore();
 
     const { categories, fetchCategories } = useAdminCategoryStore();
-
-    console.log(products);
-
-
 
     //  Local state
     const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
@@ -115,7 +112,6 @@ export default function AdminProductsPage() {
     };
 
     const handleViewProduct = (product: Product) => {
-        // TODO: Navigate to product detail page or open view modal
         toast.info(`Xem chi tiết sản phẩm: ${product.name}`);
     };
 
@@ -148,7 +144,6 @@ export default function AdminProductsPage() {
 
         try {
             const message = await deleteProduct(productToDelete.id);
-            console.log(message);
             toast.success(message);
             setIsDeleteDialogOpen(false);
             setProductToDelete(null);
@@ -156,6 +151,7 @@ export default function AdminProductsPage() {
             // Refresh lại danh sách
             await fetchProducts(currentQuery);
         } catch (error) {
+            // Lỗi đã được store xử lý và hiển thị qua useEffect
             console.error('Lỗi khi xóa sản phẩm:', error);
         }
     };
@@ -196,7 +192,7 @@ export default function AdminProductsPage() {
                                         placeholder="Tìm kiếm theo tên sản phẩm..."
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
-                                        onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
+                                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
                                         className="pl-10"
                                     />
                                 </div>

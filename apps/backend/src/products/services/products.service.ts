@@ -8,14 +8,13 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Category } from '@/products/entities/category.entity';
 import { Product } from '@/products/entities/product.entity';
-import { ProductMapperProvider } from '@/products/providers/product-mapper.provider';
-import { ProductsProvider } from '@/products/providers/products.provider';
 import { QueryProductDto } from '@/products/dtos/query-product.dto';
 import { PaginatedResponse } from '@/products/interfaces/paginated-response.interface';
 import { ProductDto } from '@/products/dtos/product.dto';
-import { ProductDetailDto } from '@/products/dtos/product-detail.dto';
 import { CreateProductDto } from '@/products/dtos/create-product.dto';
 import { UpdateProductDto } from '@/products/dtos/update-product.dto';
+import { PaginationMeta } from '@/products/interfaces/pagination-meta.interface';
+import { SortOrder } from '@web-ecom/shared-types/products/enums';
 
 @Injectable()
 export class ProductsService {
@@ -24,20 +23,21 @@ export class ProductsService {
     private readonly productRepository: Repository<Product>,
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
-
-    private readonly productsProvider: ProductsProvider,
-    private readonly productMapper: ProductMapperProvider,
   ) {}
 
   async findAll(queryDto: QueryProductDto): Promise<PaginatedResponse<ProductDto>> {
     try {
-      return await this.productsProvider.findAllProducts(queryDto);
+      return await this.findAllProducts(queryDto);
     } catch (error) {
-      throw new NotAcceptableException('Không thể tải danh sách sản phẩm');
+      console.error('Lỗi khi tải danh sách sản phẩm:', error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new BadRequestException('Không thể tải danh sách sản phẩm');
     }
   }
 
-  async findOne(id: string): Promise<ProductDetailDto> {
+  async findOne(id: string): Promise<ProductDto> {
     try {
       // 1. Tìm sản phẩm theo ID với relations đến category
       const product = await this.productRepository.findOne({
@@ -49,7 +49,7 @@ export class ProductsService {
         throw new NotFoundException(`Không tìm thấy sản phẩm với ID: ${id}`);
       }
 
-      return this.productMapper.toProductDetailDto(product);
+      return product;
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error;
@@ -93,13 +93,14 @@ export class ProductsService {
       // 1. Tìm sản phẩm theo ID
       const product = await this.productRepository.findOne({
         where: { id },
+        relations: ['category'],
       });
 
       if (!product) {
         throw new NotFoundException(`Không tìm thấy sản phẩm với ID: ${id}`);
       }
 
-      // 3. Nếu có category_id, kiểm tra category tồn tại
+      // 2. Nếu có categoryId, kiểm tra category tồn tại và set vào product
       if (updateProductDto.categoryId) {
         const category = await this.categoryRepository.findOne({
           where: { id: updateProductDto.categoryId },
@@ -110,12 +111,18 @@ export class ProductsService {
             `Không tìm thấy danh mục với ID: ${updateProductDto.categoryId}`,
           );
         }
+
+        // Set category object vào product thay vì chỉ categoryId
+        product.category = category;
+        product.categoryId = updateProductDto.categoryId;
       }
-      // 4. Cập nhật thông tin sản phẩm
-      Object.assign(product, updateProductDto);
-      // 5. Lưu vào database
+
+      // 3. Cập nhật các trường khác (loại bỏ categoryId khỏi updateProductDto để tránh conflict)
+      const { categoryId, ...otherFields } = updateProductDto;
+      Object.assign(product, otherFields);
+
+      // 4. Lưu vào database
       const result = await this.productRepository.save(product);
-      // 6. Trả về sản phẩm đã cập nhật
 
       return result;
     } catch (error) {
@@ -126,45 +133,113 @@ export class ProductsService {
     }
   }
 
-  async remove(id: string): Promise<string> {
+  async remove(id: string): Promise<void> {
     try {
-      // 1. Tìm sản phẩm với orderItems relation
-      const product = await this.productRepository.findOne({
-        where: { id },
-        relations: ['orderItems'],
-      });
+      // TypeORM tự động kiểm tra sản phẩm tồn tại và chưa bị soft delete
+      const deleteResult = await this.productRepository.softDelete(id);
 
-      if (!product) {
-        throw new NotFoundException(`Không tìm thấy sản phẩm với ID: ${id}`);
+      if (deleteResult.affected === 0) {
+        throw new NotFoundException(
+          `Không tìm thấy sản phẩm với ID: ${id} để chuyển vào thùng rác!`,
+        );
       }
-
-      // 2. ✅ Kiểm tra orderItems trực tiếp
-      if (product.orderItems && product.orderItems.length > 0) {
-        // ✅ Soft delete: Set stock = 0 thay vì xóa
-        await this.productRepository.update(id, {
-          stockQuantity: 0,
-        });
-
-        return `Sản phẩm "${product.name}" đã được ẩn khỏi hệ thống vì có trong ${product.orderItems.length} đơn hàng`;
-      }
-
-      // 3. Nếu không có ràng buộc, xóa bình thường
-      await this.productRepository.remove(product);
-      return `Xóa sản phẩm "${product.name}" thành công`;
     } catch (error) {
-      console.error('Lỗi khi xóa sản phẩm:', error);
-
-      // ✅ Handle specific foreign key error
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      if (error.code === '23503') {
-        throw new BadRequestException('Sản phẩm đã có trong đơn hàng, không thể xóa.');
-      }
-
       if (error instanceof NotFoundException) {
         throw error;
       }
-
-      throw new NotAcceptableException(`Không thể xóa sản phẩm`);
+      throw new NotAcceptableException(`Không thể chuyển sản phẩm vào thùng rác`);
     }
+  }
+
+  async restore(id: string): Promise<Product> {
+    try {
+      // TypeORM tự động set deletedAt = null
+      const restoreResult = await this.productRepository.restore(id);
+
+      if (restoreResult.affected === 0) {
+        throw new NotFoundException(`Không tìm thấy sản phẩm với ID: ${id} để khôi phục!`);
+      }
+
+      // Lấy lại sản phẩm sau khi khôi phục để trả về
+      const restoredProduct = await this.productRepository.findOne({
+        where: { id },
+        relations: ['category'],
+      });
+
+      if (!restoredProduct) {
+        throw new NotFoundException(`Không tìm thấy sản phẩm với ID: ${id} sau khi khôi phục!`);
+      }
+
+      return restoredProduct;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
+      throw new NotAcceptableException(`Không thể khôi phục sản phẩm`);
+    }
+  }
+
+  private async findAllProducts(queryDto: QueryProductDto): Promise<PaginatedResponse<ProductDto>> {
+    // 1. Trích xuất tham số truy vấn
+    const {
+      page = 1,
+      limit = 10,
+      sortBy = 'createdAt',
+      sortOrder = SortOrder.DESC,
+      search,
+      priceMin,
+      priceMax,
+      categoryId,
+    } = queryDto;
+
+    // 2. Xây dựng query với điều kiện lọc
+    const queryBuilder = this.productRepository
+      .createQueryBuilder('product')
+      .leftJoinAndSelect('product.category', 'category');
+
+    // Áp dụng các bộ lọc nếu có
+    if (search) {
+      queryBuilder.andWhere('product.name LIKE :name', { name: `%${search}%` });
+    }
+
+    if (priceMin !== undefined) {
+      queryBuilder.andWhere('product.price >= :priceMin', { priceMin });
+    }
+
+    if (priceMax !== undefined) {
+      queryBuilder.andWhere('product.price <= :priceMax', { priceMax });
+    }
+
+    if (categoryId) {
+      queryBuilder.andWhere('product.categoryId = :categoryId', {
+        categoryId,
+      });
+    }
+
+    // 3. Tính toán phân trang
+    const skip = (page - 1) * limit;
+    queryBuilder.skip(skip).take(limit);
+
+    // 4. Áp dụng sắp xếp
+    queryBuilder.orderBy(`product.${sortBy}`, sortOrder);
+
+    // 5. Thực thi truy vấn
+    const [productsList, total] = await queryBuilder.getManyAndCount();
+
+    // 7. Tạo metadata phân trang
+    const meta: PaginationMeta = {
+      currentPage: page,
+      itemsPerPage: limit,
+      totalItems: total,
+      totalPages: Math.ceil(total / limit),
+      hasNextPage: page < Math.ceil(total / limit),
+      hasPreviousPage: page > 1,
+    };
+
+    // Trả về kết quả đã phân trang
+    return {
+      data: productsList,
+      meta,
+    };
   }
 }

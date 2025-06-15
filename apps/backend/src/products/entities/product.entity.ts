@@ -1,7 +1,7 @@
 import { BaseEntity } from '@/common/entities/base.entity';
 import { CartItem } from '@/cart/entities/cart-item.entity';
 import { Min, MinLength } from 'class-validator';
-import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, OneToMany, DeleteDateColumn } from 'typeorm';
 import { Category } from './category.entity';
 import { OrderItem } from '@/orders/entities/order-item.entity';
 
@@ -28,11 +28,14 @@ export class Product extends BaseEntity {
   categoryId: string;
 
   @Column({ default: true })
-  isActive: boolean;
+  active: boolean;
+
+  @DeleteDateColumn()
+  deletedAt: Date | null;
 
   // Relationships
   @ManyToOne(() => Category, (category) => category.products)
-  @JoinColumn({ name: 'category_id' })
+  @JoinColumn()
   category: Category;
 
   @OneToMany(() => CartItem, (cartItem) => cartItem.product)
@@ -43,7 +46,4 @@ export class Product extends BaseEntity {
 
   @OneToMany(() => OrderItem, (orderItem) => orderItem.product)
   orderItems: OrderItem[];
-
-  // @OneToMany(() => StockMovement, stockMovement => stockMovement.product)
-  // stock_movements: StockMovement[];
 }

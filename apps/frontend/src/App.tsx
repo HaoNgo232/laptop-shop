@@ -18,6 +18,7 @@ import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage';
 import { AdminUserPage } from '@/pages/admin/AdminUserPage';
 import AdminProductsPage from '@/pages/admin/AdminProductsPage';
 import AdminOrdersPage from '@/pages/admin/AdminOrdersPage';
+import AdminSettingPage from '@/pages/admin/AdminSettingPage';
 
 const App = () => {
   const initializeAuth = useAuthStore(state => state.initializeAuth);
@@ -118,6 +119,14 @@ const App = () => {
           }
         />
 
+        <Route
+          path="/admin/setting"
+          element={
+            <ProtectedRoute requiredRole={UserRole.ADMIN}>
+              <AdminSettingPage />
+            </ProtectedRoute>
+          }
+        />
 
         {/* 404 Page */}
         <Route

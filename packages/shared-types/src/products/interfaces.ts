@@ -28,6 +28,8 @@ export interface IProduct {
   stockQuantity: number;
   imageUrl: string;
   category: ICategoryBrief;
+  active: boolean;
+  deletedAt?: Date | null; // Soft delete
   createdAt: Date;
   updatedAt: Date;
 }

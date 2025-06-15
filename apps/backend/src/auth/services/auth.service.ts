@@ -2,33 +2,30 @@ import { LoginResponseDto } from '@/auth/dtos/login-response.dto';
 import { ResetPasswordDto } from '@/auth/dtos/reset-password.dto';
 import { RefreshTokenDto } from '@/auth/dtos/refresh-token.dto';
 import { Injectable } from '@nestjs/common';
-import { CreateUserProvider } from '@/auth/providers/create-user.provider';
 import { GenerateTokensProvider } from '@/auth/providers/generate-tokens.provider';
-import { ValidateUserProvider } from '@/auth/providers/validate-user.provider';
-import { ForgotPasswordProvider } from '@/auth/providers/forgot-password.provider';
-import { ResetPasswordProvider } from '@/auth/providers/reset-password.provider';
-import { RefreshTokenProvider } from '@/auth/providers/refresh-token.provider';
 import { TokenBlacklistProvider } from '@/auth/providers/token-blacklist.provider';
 import { RegisterUserDto } from '@/auth/dtos/register-user.dto';
 import { LoginUserDto } from '@/auth/dtos/login.dto';
 import { User } from '@/auth/entities/user.entity';
+import { CreateUserUseCase } from '@/auth/use-cases/create-user.use-case';
+import { ValidateUserUseCase } from '@/auth/use-cases/validate-user.use-case';
+import { ForgotPasswordUseCase } from '@/auth/use-cases/forgot-password.use-case';
+import { ResetPasswordUseCase } from '@/auth/use-cases/reset-password.use-case';
+import { RefreshTokenUseCase } from '@/auth/use-cases/refresh-token.use-case';
+import { ChangePasswordDto } from '../dtos/change-password.dto';
+import { ChangePasswordUseCase } from '../use-cases/change-password.use-case';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly createUserProvider: CreateUserProvider,
-
     private readonly generateTokensProvider: GenerateTokensProvider,
-
-    private readonly validateUserProvider: ValidateUserProvider,
-
-    private readonly forgotPasswordProvider: ForgotPasswordProvider,
-
-    private readonly resetPasswordProvider: ResetPasswordProvider,
-
-    private readonly refreshTokenProvider: RefreshTokenProvider,
-
     private readonly tokenBlacklistProvider: TokenBlacklistProvider,
+    private readonly createUserUseCase: CreateUserUseCase,
+    private readonly validateUserUseCase: ValidateUserUseCase,
+    private readonly forgotPasswordUseCase: ForgotPasswordUseCase,
+    private readonly resetPasswordUseCase: ResetPasswordUseCase,
+    private readonly refreshTokenUseCase: RefreshTokenUseCase,
+    private readonly changePasswordUseCase: ChangePasswordUseCase,
   ) {}
 
   /**
@@ -37,7 +34,7 @@ export class AuthService {
    * @returns Thông tin người dùng đã được tạo (không bao gồm mật khẩu).
    */
   async register(registerUserDto: RegisterUserDto) {
-    return this.createUserProvider.createUser(registerUserDto);
+    return this.createUserUseCase.execute(registerUserDto);
   }
 
   /**
@@ -50,10 +47,7 @@ export class AuthService {
     refreshToken: string;
     user: User;
   }> {
-    const user = await this.validateUserProvider.validateUser(
-      loginUserDto.email,
-      loginUserDto.password,
-    );
+    const user = await this.validateUserUseCase.execute(loginUserDto.email, loginUserDto.password);
     const tokens = await this.generateTokensProvider.generateTokens(user);
     return { ...tokens, user };
   }
@@ -64,11 +58,11 @@ export class AuthService {
    * @returns Access token và refresh token mới.
    */
   async refreshToken(refreshTokenDto: RefreshTokenDto): Promise<LoginResponseDto> {
-    return this.refreshTokenProvider.refreshTokens(refreshTokenDto);
+    return this.refreshTokenUseCase.execute(refreshTokenDto);
   }
 
   async validateUser(email: string, password: string): Promise<User | null> {
-    const user = await this.validateUserProvider.validateUser(email, password);
+    const user = await this.validateUserUseCase.execute(email, password);
     return user;
   }
 
@@ -78,11 +72,18 @@ export class AuthService {
   }
 
   async forgotPassword(email: string): Promise<void> {
-    return this.forgotPasswordProvider.sendResetPasswordEmail(email);
+    return this.forgotPasswordUseCase.execute(email);
   }
 
   async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<void> {
-    return this.resetPasswordProvider.resetPassword(resetPasswordDto);
+    return this.resetPasswordUseCase.execute(resetPasswordDto);
+  }
+
+  async changePassword(
+    userId: string,
+    changePasswordDto: ChangePasswordDto,
+  ): Promise<{ message: string }> {
+    return this.changePasswordUseCase.execute(userId, changePasswordDto);
   }
 
   /**

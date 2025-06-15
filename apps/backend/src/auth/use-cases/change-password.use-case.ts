@@ -6,14 +6,14 @@ import { ChangePasswordDto } from '@/auth/dtos/change-password.dto';
 import { User } from '@/auth/entities/user.entity';
 
 @Injectable()
-export class ChangePasswordProvider {
+export class ChangePasswordUseCase {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly bcryptProvider: BcryptProvider,
   ) {}
 
-  async changePassword(
+  async execute(
     userId: string,
     changePasswordDto: ChangePasswordDto,
   ): Promise<{ message: string }> {
