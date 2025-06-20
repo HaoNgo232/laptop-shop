@@ -13,6 +13,8 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAdminDashboardStore } from '@/stores/admin/adminDashboardStore';
+import { getOrderStatusLabel } from '@/utils/orderStatus';
+import { OrderStatusEnum } from '@web-ecom/shared-types';
 
 export function AdminDashboardPage() {
     const {
@@ -233,7 +235,7 @@ export function AdminDashboardPage() {
                         <div className="space-y-4">
                             {detailedStats?.ordersByStatus?.map((item, index) => (
                                 <div key={index} className="flex items-center justify-between">
-                                    <span className="text-sm font-medium">{item.status}</span>
+                                    <span className="text-sm font-medium">{getOrderStatusLabel(item.status as OrderStatusEnum)}</span>
                                     <span className="text-2xl font-bold">{item.count}</span>
                                 </div>
                             )) || (

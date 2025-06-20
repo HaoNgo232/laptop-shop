@@ -200,6 +200,7 @@ export function CheckoutPage() {
                                         <div className="p-4 border rounded-lg">
                                             <h3 className="font-medium mb-2">Địa chỉ giao hàng</h3>
                                             <p className="text-sm text-gray-600">{shippingAddress?.fullAddress}</p>
+                                            <p className="text-sm text-gray-600">Số điện thoại: {shippingAddress?.phoneNumber}</p>
                                             {shippingAddress?.note && (
                                                 <p className="text-sm text-gray-500 mt-1">Ghi chú: {shippingAddress.note}</p>
                                             )}

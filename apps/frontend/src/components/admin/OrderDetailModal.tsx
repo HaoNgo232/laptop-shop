@@ -105,7 +105,7 @@ export function OrderDetailModal({ order, isOpen, onClose }: OrderDetailModalPro
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-w-4xl lg:max-w-6xl xl:max-w-7xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         <Package className="h-5 w-5" />

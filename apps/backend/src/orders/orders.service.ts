@@ -208,7 +208,12 @@ export class OrdersService {
   /**
    * Helper method để tạo pagination meta
    */
-  private createPaginationMeta(total: number, page: number, limit: number): PaginationMeta {
+  private createPaginationMeta(
+    total: number,
+    page: number,
+    limit: number,
+    search?: string,
+  ): PaginationMeta {
     const totalPages = Math.ceil(total / limit);
 
     return {
@@ -297,9 +302,9 @@ export class OrdersService {
   /**
    * Admin: Lấy chi tiết đơn hàng
    */
-  async getOrderById(orderId: string): Promise<OrderDetailDto> {
+  async getOrderById(orderId: string): Promise<OrderDto> {
     const order = await this.ordersProvider.findOrderById(orderId);
-    return this.orderMapperProvider.mapOrderToDetailDto(order);
+    return order;
   }
 
   /**
@@ -310,7 +315,7 @@ export class OrdersService {
     updateStatusDto: UpdateOrderStatusDto,
   ): Promise<OrderDto> {
     const order = await this.ordersProvider.updateOrderStatus(orderId, updateStatusDto.status);
-    return this.orderMapperProvider.mapOrderToDto(order);
+    return order;
   }
 
   // Method để cập nhật order khi nhận webhook với transaction handling

@@ -31,8 +31,8 @@ export class AdminOrdersController {
 
   @Get(':orderId')
   @ApiOperation({ summary: 'Lấy chi tiết đơn hàng (Admin)' })
-  @ApiResponse({ status: 200, description: 'Chi tiết đơn hàng', type: OrderDetailDto })
-  async getOrderById(@Param('orderId', ParseUUIDPipe) orderId: string): Promise<OrderDetailDto> {
+  @ApiResponse({ status: 200, description: 'Chi tiết đơn hàng', type: OrderDto })
+  async getOrderById(@Param('orderId', ParseUUIDPipe) orderId: string): Promise<OrderDto> {
     return await this.ordersService.getOrderById(orderId);
   }
 

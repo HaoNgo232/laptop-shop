@@ -14,6 +14,7 @@ interface ShippingAddressFormProps {
 
 export function ShippingAddressForm({ onSubmit, initialData, isLoading = false }: ShippingAddressFormProps) {
     const [fullAddress, setFullAddress] = useState(initialData?.fullAddress || '');
+    const [phoneNumber, setPhoneNumber] = useState(initialData?.phoneNumber || '');
     const [note, setNote] = useState(initialData?.note || '');
     const [errors, setErrors] = useState<{ fullAddress?: string }>({});
 
@@ -33,6 +34,7 @@ export function ShippingAddressForm({ onSubmit, initialData, isLoading = false }
         if (Object.keys(newErrors).length === 0) {
             onSubmit({
                 fullAddress: fullAddress.trim(),
+                phoneNumber: phoneNumber.trim(),
                 note: note.trim() || undefined
             });
         }
@@ -65,6 +67,22 @@ export function ShippingAddressForm({ onSubmit, initialData, isLoading = false }
                         {errors.fullAddress && (
                             <p className="text-sm text-destructive">{errors.fullAddress}</p>
                         )}
+                    </div>
+
+                    {/* Số điện thoại */}
+
+                    <div className="space-y-2">
+                        <Label htmlFor="phoneNumber">
+                            Số điện thoại <span className="text-red-500">*</span>
+                        </Label>
+                        <Input
+                            id="phoneNumber"
+                            type="text"
+                            placeholder="Số điện thoại"
+                            value={phoneNumber}
+                            onChange={(e) => setPhoneNumber(e.target.value)}
+                            disabled={isLoading}
+                        />
                     </div>
 
                     {/* Ghi chú */}

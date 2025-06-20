@@ -6,6 +6,7 @@ import type {
   IUpdateByAdmin,
   IAdminQuery,
 } from "@web-ecom/shared-types/admin/interfaces";
+import { IAdminOrderQuery } from "@web-ecom/shared-types/orders/interfaces";
 
 export interface DashboardSummary extends IDashboardSummary {}
 
@@ -18,3 +19,5 @@ export interface AdminDetail extends IAdminDetail {}
 export interface UpdateByAdmin extends IUpdateByAdmin {}
 
 export interface AdminQuery extends IAdminQuery {}
+
+export interface AdminOrderQuery extends IAdminOrderQuery {}

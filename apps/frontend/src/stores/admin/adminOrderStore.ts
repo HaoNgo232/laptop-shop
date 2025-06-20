@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { AdminQuery } from "@/types/admin";
 import { Order, UpdateOrderStatus } from "@/types/order";
-import { ApiError } from "@/types/api";
+import { ApiError, PaginatedResponse } from "@/types/api";
 import { adminOrderService } from "@/services/adminServices/adminOrderService";
 import { orderService } from "@/services/orderService";
 
@@ -12,6 +12,11 @@ interface AdminOrderState {
   isLoading: boolean;
   error: string | null;
 
+  // Pagination State
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+
   // Orders Actions
   fetchOrders: (query: AdminQuery) => Promise<void>;
   fetchOrderById: (orderId: string) => Promise<void>;
@@ -19,6 +24,7 @@ interface AdminOrderState {
     orderId: string,
     updateOrderStatusDto: UpdateOrderStatus,
   ) => Promise<void>;
+  setCurrentPage: (page: number) => void;
   clearSelectedOrder: () => void;
   clearError: () => void;
 }
@@ -29,14 +35,21 @@ export const useAdminOrderStore = create<AdminOrderState>((set, get) => ({
   selectedOrder: null,
   isLoading: false,
   error: null,
+  currentPage: 1,
+  totalPages: 1,
+  totalItems: 0,
 
   // Actions
   async fetchOrders(query: AdminQuery) {
     try {
       set({ isLoading: true, error: null });
-      const response = await adminOrderService.getOrders(query);
+      const response: PaginatedResponse<Order> =
+        await adminOrderService.getOrders(query);
       set({
         orders: response.data,
+        currentPage: response.meta.currentPage,
+        totalPages: response.meta.totalPages,
+        totalItems: response.meta.totalItems,
         isLoading: false,
       });
     } catch (error) {
@@ -91,6 +104,8 @@ export const useAdminOrderStore = create<AdminOrderState>((set, get) => ({
       });
     }
   },
+
+  setCurrentPage: (page: number) => set({ currentPage: page }),
 
   clearSelectedOrder: () => set({ selectedOrder: null }),
   clearError: () => set({ error: null }),

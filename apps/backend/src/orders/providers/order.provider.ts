@@ -93,7 +93,7 @@ export class OrdersProvider {
    * Admin: Tìm tất cả đơn hàng với filters
    */
   async findAllOrders(query: AdminOrderQueryDto): Promise<{ data: Order[]; total: number }> {
-    const { page = 1, limit = 10, status, userId, dateFrom, dateTo } = query;
+    const { page = 1, limit = 10, status, userId, dateFrom, dateTo, search } = query;
     const skip = (page - 1) * limit;
 
     let queryBuilder = this.orderRepository
@@ -107,22 +107,41 @@ export class OrdersProvider {
     }
 
     if (userId) {
-      queryBuilder = queryBuilder.andWhere('order.user_id = :userId', { userId });
+      queryBuilder = queryBuilder.andWhere('order.userId = :userId', { userId });
     }
 
     if (dateFrom) {
-      queryBuilder = queryBuilder.andWhere('order.order_date >= :dateFrom', { dateFrom });
+      queryBuilder = queryBuilder.andWhere('order.orderDate >= :dateFrom', { dateFrom });
     }
 
     if (dateTo) {
-      queryBuilder = queryBuilder.andWhere('order.order_date <= :dateTo', { dateTo });
+      queryBuilder = queryBuilder.andWhere('order.orderDate <= :dateTo', { dateTo });
     }
 
-    queryBuilder = queryBuilder.orderBy('order.order_date', 'DESC').skip(skip).take(limit);
+    if (search) {
+      const searchPattern = `%${search}%`;
+      queryBuilder = queryBuilder.andWhere(
+        `(
+          CAST(order.id AS TEXT) ILIKE :searchPattern OR 
+          user.email ILIKE :searchPattern OR 
+          user.username ILIKE :searchPattern OR 
+          COALESCE(user.phoneNumber, '') ILIKE :searchPattern OR
+          order.shippingAddress ILIKE :searchPattern
+        )`,
+        { searchPattern },
+      );
+    }
 
-    const [data, total] = await queryBuilder.getManyAndCount();
+    queryBuilder = queryBuilder.orderBy('order.orderDate', 'DESC').skip(skip).take(limit);
 
-    return { data, total };
+    try {
+      const [data, total] = await queryBuilder.getManyAndCount();
+
+      return { data, total };
+    } catch (error) {
+      this.logger.error(' Error in findAllOrders:', error);
+      throw new BadRequestException('Không thể lấy danh sách đơn hàng');
+    }
   }
 
   /**
@@ -177,8 +196,16 @@ export class OrdersProvider {
     newStatus: OrderStatusEnum,
   ): void {
     const validTransitions: Record<OrderStatusEnum, OrderStatusEnum[]> = {
-      [OrderStatusEnum.PENDING]: [OrderStatusEnum.PROCESSING, OrderStatusEnum.CANCELLED],
-      [OrderStatusEnum.PROCESSING]: [OrderStatusEnum.SHIPPED, OrderStatusEnum.CANCELLED],
+      [OrderStatusEnum.PENDING]: [
+        OrderStatusEnum.PROCESSING,
+        OrderStatusEnum.SHIPPED,
+        OrderStatusEnum.CANCELLED,
+      ],
+      [OrderStatusEnum.PROCESSING]: [
+        OrderStatusEnum.SHIPPED,
+        OrderStatusEnum.DELIVERED,
+        OrderStatusEnum.CANCELLED,
+      ],
       [OrderStatusEnum.SHIPPED]: [OrderStatusEnum.DELIVERED],
       [OrderStatusEnum.DELIVERED]: [], // Không thể chuyển từ DELIVERED
       [OrderStatusEnum.CANCELLED]: [], // Không thể chuyển từ CANCELLED

@@ -16,7 +16,7 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Eye, MoreHorizontal, Edit, Truck, CheckCircle, XCircle } from 'lucide-react';
+import { Eye, MoreHorizontal, Edit, Truck, CheckCircle, XCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { OrderStatusEnum } from '@web-ecom/shared-types/orders/enums';
 import { cn } from '@/lib/utils';
 
@@ -25,13 +25,19 @@ interface OrdersTableProps {
     onView: (order: Order) => void;
     onUpdateStatus: (order: Order) => void;
     isLoading?: boolean;
+    currentPage?: number;
+    totalPages?: number;
+    onPageChange?: (page: number) => void;
 }
 
 export function OrdersTable({
     orders,
     onView,
     onUpdateStatus,
-    isLoading = false
+    isLoading = false,
+    currentPage = 1,
+    totalPages = 1,
+    onPageChange
 }: OrdersTableProps) {
     const getStatusBadge = (status: OrderStatusEnum) => {
         const statusConfig = {
@@ -140,62 +146,109 @@ export function OrdersTable({
     }
 
     return (
-        <div className="border rounded-lg">
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>ID Đơn Hàng</TableHead>
-                        <TableHead>Ngày Đặt</TableHead>
-                        <TableHead>Khách Hàng</TableHead>
-                        <TableHead>Tổng Tiền</TableHead>
-                        <TableHead>Trạng Thái</TableHead>
-                        <TableHead className="text-right">Thao Tác</TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {orders.map((order) => (
-                        <TableRow key={order.id}>
-                            <TableCell className="font-mono text-sm">
-                                #{order.id.slice(-8)}
-                            </TableCell>
-                            <TableCell>{formatDate(order.orderDate)}</TableCell>
-                            <TableCell>
-                                <div className="flex flex-col">
-                                    <span className="font-medium">
-                                        {(order as any).user?.email || 'N/A'}
-                                    </span>
-                                    <span className="text-sm text-gray-500">
-                                        {(order as any).user?.username || 'Guest'}
-                                    </span>
-                                </div>
-                            </TableCell>
-                            <TableCell className="font-semibold">
-                                {formatCurrency(order.totalAmount)}
-                            </TableCell>
-                            <TableCell>{getStatusBadge(order.status)}</TableCell>
-                            <TableCell className="text-right">
-                                <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                        <Button variant="ghost" className="h-8 w-8 p-0">
-                                            <MoreHorizontal className="h-4 w-4" />
-                                        </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end">
-                                        <DropdownMenuItem onClick={() => onView(order)}>
-                                            <Eye className="h-4 w-4 mr-2" />
-                                            Xem Chi Tiết
-                                        </DropdownMenuItem>
-                                        <DropdownMenuItem onClick={() => onUpdateStatus(order)}>
-                                            <Edit className="h-4 w-4 mr-2" />
-                                            Cập Nhật Trạng Thái
-                                        </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                </DropdownMenu>
-                            </TableCell>
+        <div className="space-y-4">
+            <div className="border rounded-lg">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>ID Đơn Hàng</TableHead>
+                            <TableHead>Ngày Đặt</TableHead>
+                            <TableHead>Khách Hàng</TableHead>
+                            <TableHead>Tổng Tiền</TableHead>
+                            <TableHead>Trạng Thái</TableHead>
+                            <TableHead className="text-right">Thao Tác</TableHead>
                         </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+                    </TableHeader>
+                    <TableBody>
+                        {orders.map((order) => (
+                            <TableRow key={order.id}>
+                                <TableCell className="font-mono text-sm">
+                                    #{order.id.slice(-8)}
+                                </TableCell>
+                                <TableCell>{formatDate(order.orderDate)}</TableCell>
+                                <TableCell>
+                                    <div className="flex flex-col">
+                                        <span className="font-medium">
+                                            {(order as any).user?.email || 'N/A'}
+                                        </span>
+                                        <span className="text-sm text-gray-500">
+                                            {(order as any).user?.username || 'Guest'}
+                                        </span>
+                                    </div>
+                                </TableCell>
+                                <TableCell className="font-semibold">
+                                    {formatCurrency(order.totalAmount)}
+                                </TableCell>
+                                <TableCell>{getStatusBadge(order.status)}</TableCell>
+                                <TableCell className="text-right">
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" className="h-8 w-8 p-0">
+                                                <MoreHorizontal className="h-4 w-4" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                            <DropdownMenuItem onClick={() => onView(order)}>
+                                                <Eye className="h-4 w-4 mr-2" />
+                                                Xem Chi Tiết
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => onUpdateStatus(order)}>
+                                                <Edit className="h-4 w-4 mr-2" />
+                                                Cập Nhật Trạng Thái
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            </div>
+
+            {totalPages > 1 && (
+                <div className="flex items-center justify-between">
+                    <div className="text-sm text-gray-700">
+                        Trang {currentPage} / {totalPages}
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => onPageChange?.(currentPage - 1)}
+                            disabled={currentPage <= 1}
+                        >
+                            <ChevronLeft className="h-4 w-4" />
+                            Trước
+                        </Button>
+
+                        {Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                            const pageNum = Math.max(1, currentPage - 2) + i;
+                            if (pageNum > totalPages) return null;
+
+                            return (
+                                <Button
+                                    key={pageNum}
+                                    variant={pageNum === currentPage ? "default" : "outline"}
+                                    size="sm"
+                                    onClick={() => onPageChange?.(pageNum)}
+                                >
+                                    {pageNum}
+                                </Button>
+                            );
+                        })}
+
+                        <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => onPageChange?.(currentPage + 1)}
+                            disabled={currentPage >= totalPages}
+                        >
+                            Sau
+                            <ChevronRight className="h-4 w-4" />
+                        </Button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 } 

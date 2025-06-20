@@ -24,7 +24,7 @@ class AdminOrderService {
     updateOrderStatusDto: UpdateOrderStatus,
   ): Promise<Order> {
     try {
-      const response = await apiClient.put<Order>(
+      const response = await apiClient.patch<Order>(
         `/api/admin/orders/${orderId}/status`,
         updateOrderStatusDto,
       );

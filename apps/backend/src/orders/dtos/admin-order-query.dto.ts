@@ -1,7 +1,7 @@
 import { OrderStatusEnum } from '@/orders/enums/order-status.enum';
 import { IAdminOrderQuery } from '@web-ecom/shared-types/orders/interfaces.cjs';
 import { Type } from 'class-transformer';
-import { IsOptional, IsUUID, IsEnum, IsDateString, IsInt, Min } from 'class-validator';
+import { IsOptional, IsUUID, IsEnum, IsDateString, IsInt, Min, IsString } from 'class-validator';
 
 export class AdminOrderQueryDto implements IAdminOrderQuery {
   @IsOptional()
@@ -31,4 +31,8 @@ export class AdminOrderQueryDto implements IAdminOrderQuery {
   @IsOptional()
   @IsDateString()
   dateTo?: string;
+
+  @IsOptional()
+  @IsString()
+  search?: string;
 }

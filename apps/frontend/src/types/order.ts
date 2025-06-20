@@ -95,6 +95,7 @@ const CreateOrderResponseSchema: z.ZodType<ICreateOrderResponse> = z.object({
 
 const ShippingAddressSchema: z.ZodType<IShippingAddress> = z.object({
   fullAddress: z.string().min(10, "Địa chỉ đầy đủ phải có ít nhất 10 ký tự"),
+  phoneNumber: z.string().min(10, "Số điện thoại phải có ít nhất 10 ký tự"),
   note: z.string().max(200, "Ghi chú không được vượt quá 200 ký tự").optional(),
 });
 

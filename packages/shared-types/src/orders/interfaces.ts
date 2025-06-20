@@ -61,6 +61,7 @@ export interface ICreateOrderResponse {
 
 export interface IShippingAddress {
   fullAddress: string;
+  phoneNumber: string;
   note?: string;
 }
 
@@ -88,6 +89,8 @@ export interface IAdminOrderQuery {
   status?: OrderStatusEnum;
 
   userId?: string;
+
+  search?: string;
 
   dateFrom?: string;
 
