@@ -6,6 +6,7 @@ import type {
   LoginUser,
   RegisterUser,
   UpdateProfile,
+  LoginResponse,
 } from "@/types/auth";
 import type { ApiError } from "@/types/api";
 import { useCartStore } from "@/stores/cartStore";
@@ -38,7 +39,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       set({ isLoading: true, error: null });
 
-      const response = await authService.login(credentials);
+      const response: LoginResponse = await authService.login(credentials);
 
       set({
         user: response.user,
