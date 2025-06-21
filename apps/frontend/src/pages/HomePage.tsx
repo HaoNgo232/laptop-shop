@@ -340,11 +340,11 @@ export function HomePage() {
                             <p className="text-gray-300 mb-4">
                                 Đăng ký để nhận thông báo về sản phẩm mới và khuyến mãi
                             </p>
-                            <div className="max-w-md mx-auto flex gap-2">
+                            <div className="max-w-md mx-auto flex gap-2 ">
                                 <input
                                     type="email"
                                     placeholder="Email của bạn"
-                                    className="flex-1 px-3 py-2 rounded text-gray-50 text-sm"
+                                    className="flex-1 px-3 py-2 rounded text-gray-50 text-sm border-1 border-amber-50"
                                 />
                                 <Button className="bg-blue-600 hover:bg-blue-700">
                                     Đăng ký

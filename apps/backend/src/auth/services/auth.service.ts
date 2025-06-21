@@ -45,11 +45,12 @@ export class AuthService {
   async login(loginUserDto: LoginUserDto): Promise<{
     accessToken: string;
     refreshToken: string;
-    user: User;
+    user: Omit<User, 'passwordHash'>;
   }> {
     const user = await this.validateUserUseCase.execute(loginUserDto.email, loginUserDto.password);
+
     const tokens = await this.generateTokensProvider.generateTokens(user);
-    return { ...tokens, user };
+    return { ...tokens, user: user as Omit<User, 'passwordHash'> };
   }
 
   /**
