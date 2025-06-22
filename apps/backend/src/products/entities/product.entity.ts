@@ -4,6 +4,7 @@ import { Min, MinLength } from 'class-validator';
 import { Entity, Column, ManyToOne, JoinColumn, OneToMany, DeleteDateColumn } from 'typeorm';
 import { Category } from './category.entity';
 import { OrderItem } from '@/orders/entities/order-item.entity';
+import { Review } from '@/reviews/entities/review.entity';
 
 @Entity('products')
 export class Product extends BaseEntity {
@@ -18,7 +19,7 @@ export class Product extends BaseEntity {
   @Min(0, { message: 'Giá sản phẩm phải lớn hơn 0' })
   price: number;
 
-  @Column('int')
+  @Column('int', { default: 0 })
   stockQuantity: number;
 
   @Column({ nullable: false })
@@ -33,16 +34,24 @@ export class Product extends BaseEntity {
   @DeleteDateColumn()
   deletedAt: Date | null;
 
+  @Column({ type: 'decimal', precision: 3, scale: 2, default: 0 })
+  averageRating: number;
+
+  @Column({ type: 'int', default: 0 })
+  reviewCount: number;
+
   // Relationships
-  @ManyToOne(() => Category, (category) => category.products)
-  @JoinColumn()
+  @ManyToOne(() => Category, (category) => category.products, {
+    onDelete: 'SET NULL',
+  })
+  @JoinColumn({ name: 'category_id' })
   category: Category;
 
   @OneToMany(() => CartItem, (cartItem) => cartItem.product)
   cartItems: CartItem[];
 
-  // @OneToMany(() => Review, review => review.product)
-  // reviews: Review[];
+  @OneToMany(() => Review, (review) => review.product)
+  reviews: Review[];
 
   @OneToMany(() => OrderItem, (orderItem) => orderItem.product)
   orderItems: OrderItem[];

@@ -390,4 +390,15 @@ export class OrdersService {
       return savedOrder;
     });
   }
+
+  async hasPurchasedProduct(userId: string, productId: string): Promise<boolean> {
+    const count = await this.orderRepository
+      .createQueryBuilder('order')
+      .innerJoin('order.items', 'item')
+      .where('order.user.id = :userId', { userId })
+      .andWhere('item.product.id = :productId', { productId })
+      .andWhere('order.status = :status', { status: OrderStatusEnum.DELIVERED })
+      .getCount();
+    return count > 0;
+  }
 }

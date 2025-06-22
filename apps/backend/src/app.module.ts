@@ -20,6 +20,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthenticationGuard } from '@/auth/guards/authentication/authentication.guard';
 import { AccessTokenGuard } from '@/auth/guards/access-token/access-token.guard';
 import { AdminModule } from '@/admin/admin.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { AdminModule } from '@/admin/admin.module';
     JwtModule.registerAsync(jwtConfig.asProvider()),
     PaymentModule,
     AdminModule,
+    ReviewsModule,
   ],
   controllers: [AppController],
   providers: [

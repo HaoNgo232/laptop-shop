@@ -1,0 +1,100 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "🚀 Debug NestJS App",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/apps/backend/node_modules/@nestjs/cli/bin/nest.js",
+      "args": ["start", "--debug", "--watch"],
+      "cwd": "${workspaceFolder}/apps/backend",
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "integratedTerminal",
+      "restart": true,
+      "protocol": "inspector",
+      "skipFiles": ["<node_internals>/**"],
+      "sourceMaps": true,
+      "outFiles": ["${workspaceFolder}/apps/backend/dist/**/*.js"]
+    },
+    {
+      "name": "🧪 Debug Jest Tests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/apps/backend/node_modules/.bin/jest",
+      "args": [
+        "--runInBand",
+        "--config",
+        "${workspaceFolder}/apps/backend/package.json"
+      ],
+      "cwd": "${workspaceFolder}/apps/backend",
+      "env": {
+        "NODE_ENV": "test"
+      },
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": ["<node_internals>/**"],
+      "sourceMaps": true
+    },
+    {
+      "name": "🧪 Debug Current Jest Test File",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/apps/backend/node_modules/.bin/jest",
+      "args": [
+        "--runInBand",
+        "--config",
+        "${workspaceFolder}/apps/backend/package.json",
+        "${relativeFile}"
+      ],
+      "cwd": "${workspaceFolder}/apps/backend",
+      "env": {
+        "NODE_ENV": "test"
+      },
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": ["<node_internals>/**"],
+      "sourceMaps": true
+    },
+    {
+      "name": "🔬 Debug E2E Tests",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/apps/backend/node_modules/.bin/jest",
+      "args": [
+        "--runInBand",
+        "--config",
+        "${workspaceFolder}/apps/backend/test/jest-e2e.json"
+      ],
+      "cwd": "${workspaceFolder}/apps/backend",
+      "env": {
+        "NODE_ENV": "test"
+      },
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": ["<node_internals>/**"],
+      "sourceMaps": true
+    },
+    {
+      "name": "🌱 Debug Seed Script",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/apps/backend/node_modules/.bin/ts-node",
+      "args": [
+        "-r",
+        "tsconfig-paths/register",
+        "--project",
+        "tsconfig.json",
+        "src/scripts/seed-data.ts"
+      ],
+      "cwd": "${workspaceFolder}/apps/backend",
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"],
+      "sourceMaps": true
+    }
+  ]
+}

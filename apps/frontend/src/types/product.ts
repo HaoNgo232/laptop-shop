@@ -52,6 +52,8 @@ export const ProductSchema: z.ZodType<IProduct> = z.object({
   imageUrl: z.string().url("URL hình ảnh không hợp lệ"),
   active: z.boolean(),
   deletedAt: z.coerce.date().nullable(),
+  averageRating: z.number().min(0).max(5),
+  reviewCount: z.number().int().min(0),
   category: CategoryBriefSchema,
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
@@ -66,6 +68,8 @@ export const ProductDetailSchema: z.ZodType<IProductDetail> = z.object({
   imageUrl: z.string().url("URL hình ảnh không hợp lệ"),
   category: CategorySchema,
   active: z.boolean(),
+  averageRating: z.number().min(0).max(5),
+  reviewCount: z.number().int().min(0),
   createdAt: z.coerce.date(),
   updatedAt: z.coerce.date(),
 });

@@ -30,6 +30,8 @@ export interface IProduct {
   category: ICategoryBrief;
   active: boolean;
   deletedAt?: Date | null; // Soft delete
+  averageRating: number;
+  reviewCount: number;
   createdAt: Date;
   updatedAt: Date;
 }

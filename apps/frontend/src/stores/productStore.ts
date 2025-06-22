@@ -39,8 +39,13 @@ export const useProductStore = create<ProductState>((set) => ({
   fetchProducts: async (params) => {
     try {
       set({ isLoading: true, error: null });
+      const defaultParams: QueryProduct = {
+        page: 1,
+        limit: 12,
+        ...params,
+      };
 
-      const response = await productService.getProducts(params);
+      const response = await productService.getProducts(defaultParams);
 
       set({
         products: response.data,

@@ -8,7 +8,12 @@ import { Badge } from '@/components/ui/badge';
 import { useProductStore } from '@/stores/productStore';
 import { useCartStore } from '@/stores/cartStore';
 import { useAuthStore } from '@/stores/authStore';
+import { useReviewStore } from '@/stores/reviewStore';
 import { formatCurrency } from '@/utils/currency';
+import { formatRating, getRatingStars } from '@/utils/rating';
+import { ReviewList } from '@/components/reviews/ReviewList';
+import { ReviewForm } from '@/components/reviews/ReviewForm';
+import type { ReviewWithUser } from '@/types/review';
 
 export function ProductDetailPage() {
     const { id } = useParams<{ id: string }>();
@@ -22,16 +27,27 @@ export function ProductDetailPage() {
         clearError
     } = useProductStore();
     const { addToCart, cartSummary } = useCartStore();
+    const { currentUserReview, checkUserReview, clearReviews, fetchProductReviews } = useReviewStore();
 
     const [quantity, setQuantity] = useState(1);
     const [isAddingToCart, setIsAddingToCart] = useState(false);
+    const [editingReview, setEditingReview] = useState<ReviewWithUser | null>(null);
 
     // Load product detail khi component mount
     useEffect(() => {
         if (id) {
             fetchProductById(id);
+            // Clear reviews khi chuyển sản phẩm khác
+            clearReviews();
         }
-    }, [id, fetchProductById]);
+    }, [id, fetchProductById, clearReviews]);
+
+    // Check user review khi product loaded và user authenticated
+    useEffect(() => {
+        if (product && isAuthenticated) {
+            checkUserReview(product.id);
+        }
+    }, [product, isAuthenticated, checkUserReview]);
 
     // Handle quantity change
     const handleQuantityChange = (change: number) => {
@@ -202,11 +218,16 @@ export function ProductDetailPage() {
                                         {Array.from({ length: 5 }).map((_, i) => (
                                             <Star
                                                 key={i}
-                                                className={`h-4 w-4 ${i < 4 ? 'text-yellow-400 fill-current' : 'text-gray-300'}`}
+                                                className={`h-4 w-4 ${i < getRatingStars(product?.averageRating ?? 0)
+                                                    ? 'text-yellow-400 fill-current'
+                                                    : 'text-gray-300'
+                                                    }`}
                                             />
                                         ))}
                                     </div>
-                                    <span className="text-sm text-gray-600">(4.5 / 5 từ 24 đánh giá)</span>
+                                    <span className="text-sm text-gray-600">
+                                        ({formatRating(product?.averageRating ?? 0, product?.reviewCount ?? 0)})
+                                    </span>
                                 </div>
                             </div>
 
@@ -377,6 +398,35 @@ export function ProductDetailPage() {
                             </div>
                         </CardContent>
                     </Card>
+
+                    {/* Reviews Section */}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+                        {/* Review Form - chỉ hiển thị khi user đã đăng nhập */}
+                        {isAuthenticated && (
+                            <div className="lg:col-span-1">
+                                <ReviewForm
+                                    productId={product.id}
+                                    existingReview={editingReview || currentUserReview}
+                                    onSuccess={() => {
+                                        // Reload user review và review list sau khi success
+                                        checkUserReview(product.id);
+                                        fetchProductReviews(product.id);
+                                        setEditingReview(null);
+                                        console.log('Review submitted successfully!');
+                                    }}
+                                    onCancel={() => setEditingReview(null)}
+                                />
+                            </div>
+                        )}
+
+                        {/* Review List */}
+                        <div className={isAuthenticated ? "lg:col-span-2" : "lg:col-span-3"}>
+                            <ReviewList
+                                productId={product.id}
+                                onEditReview={setEditingReview}
+                            />
+                        </div>
+                    </div>
                 </div>
             </main>
         </div>

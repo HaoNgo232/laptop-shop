@@ -4,6 +4,7 @@ import { Cart } from '@/cart/entities/cart.entity';
 import { BaseEntity } from '@/common/entities/base.entity';
 import { UserRole } from '@/auth/enums/user-role.enum';
 import { Order } from '@/orders/entities/order.entity';
+import { Review } from '@/reviews/entities/review.entity';
 
 @Entity()
 export class User extends BaseEntity {
@@ -37,8 +38,8 @@ export class User extends BaseEntity {
   @OneToMany(() => Order, (order) => order.user)
   orders: Order[];
 
-  // @OneToMany(() => Review, (review) => review.user)
-  // reviews: Review[];
+  @OneToMany(() => Review, (review) => review.user)
+  reviews: Review[];
 
   @OneToOne(() => Cart, (cart) => cart.user, { cascade: true })
   cart: Cart;

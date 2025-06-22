@@ -10,12 +10,14 @@ import { Product } from '@/products/entities/product.entity';
 import { Order } from '@/orders/entities/order.entity';
 import { ProductsModule } from '@/products/products.module';
 import { OrdersModule } from '@/orders/orders.module';
+import { ReviewsModule } from '@/reviews/reviews.module';
 
 @Module({
   imports: [
     AuthModule,
     ProductsModule,
     OrdersModule,
+    ReviewsModule,
     TypeOrmModule.forFeature([User, Product, Order]),
   ],
   controllers: [AdminDashboardController, AdminUsersController],

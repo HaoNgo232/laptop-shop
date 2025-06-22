@@ -4,25 +4,25 @@ export type PaginationMeta = IPaginationMeta & {
   /**
    * Trang hiện tại
    */
-  currentPage: number;
+  currentPage: number | undefined;
   /**
    * Số lượng item trên mỗi trang
    */
-  itemsPerPage: number;
+  itemsPerPage: number | undefined;
   /**
    * Tổng số item
    */
-  totalItems: number;
+  totalItems: number | undefined;
   /**
    * Tổng số trang
    */
-  totalPages: number;
+  totalPages: number | undefined;
   /**
    * Có trang trước không
    */
-  hasPreviousPage: boolean;
+  hasPreviousPage: boolean | undefined;
   /**
    * Có trang sau không
    */
-  hasNextPage: boolean;
+  hasNextPage: boolean | undefined;
 };

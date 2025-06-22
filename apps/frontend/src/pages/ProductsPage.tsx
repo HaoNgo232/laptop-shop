@@ -8,18 +8,20 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useProductStore } from '@/stores/productStore';
 import { SortOrder } from '@web-ecom/shared-types/products/enums';
+import { Pagination } from '@/components/Pagination';
 
 export function ProductsPage() {
     const [searchParams] = useSearchParams();
     const {
         products,
         categories,
+        pagination,
         isLoading: productsLoading,
         error: productsError,
         fetchProducts,
         fetchCategories,
-        searchProducts,
-        clearError
+        clearError,
+        searchProducts
     } = useProductStore();
 
     const [currentCategory, setCurrentCategory] = useState<string>('all');
@@ -33,8 +35,8 @@ export function ProductsPage() {
         const categoryParam = searchParams.get('category');
         const urlSearchQuery = searchParams.get('query');
 
-        const effectiveCategoryId = categoryParam || (currentCategory === 'all' ? undefined : currentCategory);
-        const effectiveSearchTerm = urlSearchQuery || searchTerm;
+        const effectiveCategoryId = categoryParam ?? (currentCategory === 'all' ? undefined : currentCategory);
+        const effectiveSearchTerm = urlSearchQuery ?? searchTerm;
 
         if (effectiveSearchTerm) {
             searchProducts(effectiveSearchTerm, {
@@ -74,6 +76,19 @@ export function ProductsPage() {
 
     const handleSortOrderChange = (newSortOrder: SortOrder) => {
         setSortOrder(newSortOrder);
+    };
+
+    // Handler cho pagination
+    const handlePageChange = async (page: number) => {
+        const params = {
+            page,
+            limit: 12,
+            categoryId: currentCategory === 'all' ? undefined : currentCategory,
+            sortBy,
+            sortOrder,
+        };
+
+        await fetchProducts(params);
     };
 
     return (
@@ -144,7 +159,7 @@ export function ProductsPage() {
                         <h2 className="text-xl font-semibold text-gray-900">
                             {currentCategory === 'all'
                                 ? `Tất cả sản phẩm (${products.length} sản phẩm)`
-                                : `${categories.find(c => c.id === currentCategory)?.name || 'Danh mục'} (${products.length} sản phẩm)`
+                                : `${categories.find(c => c.id === currentCategory)?.name ?? 'Danh mục'} (${products.length} sản phẩm)`
                             }
                         </h2>
                         {productsError && (
@@ -184,6 +199,18 @@ export function ProductsPage() {
                         />
                     )}
 
+                    {/* PAGINATION */}
+                    {!productsError && !productsLoading && pagination && (
+                        <Pagination
+                            currentPage={pagination.currentPage}
+                            totalPages={pagination.totalPages}
+                            totalItems={pagination.totalItems}
+                            itemsPerPage={pagination.itemsPerPage}
+                            onPageChange={handlePageChange}
+                            isLoading={productsLoading}
+                        />
+                    )}
+
                     {/* Empty State */}
                     {!productsLoading && !productsError && products.length === 0 && (
                         <Card className="max-w-2xl mx-auto">
@@ -207,4 +234,4 @@ export function ProductsPage() {
             </main>
         </div>
     );
-} 
+}

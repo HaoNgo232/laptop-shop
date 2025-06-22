@@ -20,6 +20,10 @@ export class ProductDto implements IProduct {
 
   deletedAt?: Date | null;
 
+  averageRating: number;
+
+  reviewCount: number;
+
   createdAt: Date;
 
   updatedAt: Date;

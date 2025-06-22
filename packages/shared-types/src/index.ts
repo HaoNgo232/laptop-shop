@@ -18,3 +18,6 @@ export * from "./orders";
 
 // Export admin types
 export * from "./admin";
+
+// Export reviews types
+export * from "./reviews";
