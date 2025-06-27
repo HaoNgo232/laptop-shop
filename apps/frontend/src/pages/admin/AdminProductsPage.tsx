@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useAdminProductStore } from '@/stores/admin/adminProductStore';
 import { ProductsTable } from '@/components/admin/ProductsTable';
-import { ProductForm } from '@/components/forms/ProductForm';
+import ProductForm from '@/components/product/ProductForm';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

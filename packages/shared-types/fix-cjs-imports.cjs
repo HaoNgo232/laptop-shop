@@ -93,7 +93,7 @@ const cjsDir = path.join(__dirname, "dist", "cjs");
 const result = fixAllFiles(cjsDir);
 
 const duration = Date.now() - startTime;
-console.log("\n✅ Import fix completed!");
+console.log("\n Import fix completed!");
 console.log(`📊 Files processed: ${result.total}`);
 console.log(`🔧 Files fixed: ${result.fixed}`);
 console.log(`⏱️  Duration: ${duration}ms`);

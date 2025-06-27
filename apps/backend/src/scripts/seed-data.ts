@@ -61,7 +61,7 @@ async function seedData() {
       let product = await productRepo.findOneBy({ name: productData.name });
       if (!product) {
         product = await productRepo.save(productData);
-        console.log(`✅ Created product: ${productData.name}`);
+        console.log(` Created product: ${productData.name}`);
       } else {
         console.log(`⚠️  Product already exists: ${productData.name}`);
       }
@@ -435,7 +435,7 @@ async function seedData() {
       let user = await userRepo.findOneBy({ email: userData.email });
       if (!user) {
         user = await userRepo.save(userData);
-        console.log(`✅ Created user: ${userData.email}`);
+        console.log(` Created user: ${userData.email}`);
       } else {
         console.log(`⚠️  User already exists: ${userData.email}`);
       }
@@ -484,7 +484,7 @@ async function seedData() {
       role: UserRole.USER,
     });
 
-    console.log('✅ Tech Store seed data completed successfully!');
+    console.log(' Tech Store seed data completed successfully!');
     console.log('📂 Categories: Laptop, Phụ kiện, Linh kiện, Màn hình, Thiết bị di động');
     console.log('📱 Products: 38 sản phẩm công nghệ cao cấp');
     console.log('👥 Test users:');

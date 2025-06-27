@@ -20,7 +20,7 @@ class AdminReviewService {
     return apiClient.get<PaginatedResponse<ReviewWithUser>>(url);
   }
 
-  // ✅ Xóa review (Admin)
+  //  Xóa review (Admin)
   async deleteReview(reviewId: string): Promise<void> {
     return apiClient.delete(`admin/reviews/${reviewId}`);
   }

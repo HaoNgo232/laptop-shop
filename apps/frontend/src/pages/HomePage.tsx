@@ -7,9 +7,10 @@ import { Header } from '@/components/layout/Header';
 import { useAuthStore } from '@/stores/authStore';
 import { useProductStore } from '@/stores/productStore';
 import {
-    ShoppingBag, Package, User, Heart, Star, TrendingUp,
-    ArrowRight, Shield, Truck, Clock, ChevronLeft, ChevronRight,
-    Tag, Gift, Users, Award, Search, Phone
+    ShoppingBag, Package, User, Star,
+    ArrowRight, Shield, Truck, ChevronLeft, ChevronRight,
+    Tag, Search, Phone,
+    ShoppingCart
 } from 'lucide-react';
 
 export function HomePage() {
@@ -113,8 +114,8 @@ export function HomePage() {
                                             className="h-auto py-3 flex-col space-y-1 hover:bg-red-50 hover:border-red-300"
                                             onClick={() => navigate('/cart')}
                                         >
-                                            <Heart className="h-5 w-5 text-red-600" />
-                                            <span className="text-sm">Yêu thích</span>
+                                            <ShoppingCart className="h-5 w-5 text-red-600" />
+                                            <span className="text-sm">Giỏ hàng</span>
                                         </Button>
                                     </div>
                                 </CardContent>
@@ -247,7 +248,7 @@ export function HomePage() {
                                                                 <h3 className="font-medium text-sm text-gray-900 mb-2 line-clamp-2">
                                                                     {product.name}
                                                                 </h3>
-                                                                <p className="text-lg font-semibold text-blue-600 mb-2">
+                                                                <p className="text-lg font-semibold mb-2">
                                                                     {product.price.toLocaleString('vi-VN')}đ
                                                                 </p>
                                                                 <Badge variant="secondary" className="text-xs mb-2">

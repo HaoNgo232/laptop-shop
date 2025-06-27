@@ -52,10 +52,10 @@ export function AdminLayout({ children }: AdminLayoutProps) {
             icon: ShoppingCart,
         },
         {
-            label: 'Cài đặt',
-            path: '/admin/settings',
-            icon: Settings,
-        },
+            label: 'Danh mục',
+            path: '/admin/categories',
+            icon: Package,
+        }
     ];
 
     const isActive = (path: string) => {

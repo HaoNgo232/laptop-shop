@@ -1,6 +1,6 @@
 import type { IPaginatedResponse } from "../common/interfaces";
 
-// ✅ Base Review interfaces - đây là "single source of truth"
+//  Base Review interfaces - đây là "single source of truth"
 export interface IReview {
   id: string;
   rating: number;
@@ -20,7 +20,7 @@ export interface IReviewWithUser extends IReview {
   productId: string;
 }
 
-// ✅ DTOs for API operations
+//  DTOs for API operations
 export interface ICreateReview {
   rating: number;
   comment?: string;
@@ -39,17 +39,17 @@ export interface IReviewQuery {
   search?: string;
 }
 
-// ✅ Admin specific interfaces
+//  Admin specific interfaces
 export interface IAdminReviewQuery extends IReviewQuery {
   userId?: string;
   productId?: string;
 }
 
-// ✅ Response types
+//  Response types
 export interface IReviewListResponse
   extends IPaginatedResponse<IReviewWithUser> {}
 
-// ✅ Extract types - đây là pattern để đồng bộ type safety
+//  Extract types - đây là pattern để đồng bộ type safety
 // Backend entities sẽ extend từ đây, Frontend sẽ import trực tiếp
 export type ReviewEntityFields = Pick<
   IReview,
@@ -61,7 +61,7 @@ export type UpdateReviewFields = Partial<
 >;
 export type UserBriefFields = Pick<IUserBrief, "id" | "username" | "avatar">;
 
-// ✅ Type guards để validate runtime
+//  Type guards để validate runtime
 export const isValidRating = (rating: number): boolean => {
   return Number.isInteger(rating) && rating >= 1 && rating <= 5;
 };

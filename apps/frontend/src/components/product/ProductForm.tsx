@@ -16,7 +16,7 @@ import {
 import { CreateProduct, UpdateProduct, Category, Product } from '@/types/product';
 import { z } from 'zod';
 
-// ✅ Schema validation riêng cho form
+//  Schema validation riêng cho form
 const ProductFormSchema = z.object({
     name: z.string().min(3, 'Tên sản phẩm phải có ít nhất 3 ký tự'),
     description: z.string().min(10, 'Mô tả phải có ít nhất 10 ký tự'),
@@ -36,13 +36,13 @@ interface ProductFormProps {
     isLoading: boolean;
 }
 
-export function ProductForm({
+const ProductForm = ({
     product,
     categories,
     onSubmit,
     onCancel,
     isLoading = false,
-}: ProductFormProps) {
+}: ProductFormProps) => {
     const {
         register,
         handleSubmit,
@@ -62,10 +62,9 @@ export function ProductForm({
         },
     });
 
-    // ✅ Handle initial data load
+    //  Handle initial data load
     useEffect(() => {
         if (product) {
-            console.log('Loading product for edit:', product);
             reset({
                 name: product.name,
                 description: product.description,
@@ -87,12 +86,10 @@ export function ProductForm({
         }
     }, [product, reset]);
 
-    // ✅ Handle form submission với error handling tốt hơn
+    //  Handle form submission với error handling tốt hơn
     const handleFormSubmit = async (data: ProductFormData) => {
         try {
-            console.log('Submitting form data:', data);
-
-            // ✅ Validate categoryId
+            //  Validate categoryId
             if (!data.categoryId) {
                 throw new Error('Vui lòng chọn danh mục');
             }
@@ -258,4 +255,6 @@ export function ProductForm({
             </CardContent>
         </Card>
     );
-}
+};
+
+export default ProductForm;

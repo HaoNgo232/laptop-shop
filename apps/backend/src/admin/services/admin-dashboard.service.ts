@@ -98,7 +98,7 @@ export class AdminDashboardService {
         .select("DATE_TRUNC('month', order.order_date)", 'month')
         .addSelect('SUM(order.total_amount)', 'revenue')
         .where('order.paymentStatus = :paymentStatus', {
-          paymentStatus: PaymentStatusEnum.PAID, // ✅ Dựa trên payment
+          paymentStatus: PaymentStatusEnum.PAID, //  Dựa trên payment
         })
         .andWhere('order.order_date >= :sixMonthsAgo', { sixMonthsAgo })
         .groupBy('month')

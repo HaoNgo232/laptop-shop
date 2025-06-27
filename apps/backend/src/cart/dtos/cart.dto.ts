@@ -1,5 +1,5 @@
 import { CartItemDto } from '@/cart/dtos/cart-item.dto';
-import { ICart } from '@web-ecom/shared-types';
+import { ICart } from '@web-ecom/shared-types/cart/interfaces.cjs';
 import { IsArray, IsNumber, IsUUID, ValidateNested } from 'class-validator';
 import { Type } from 'class-transformer';
 

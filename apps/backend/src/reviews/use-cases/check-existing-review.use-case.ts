@@ -13,10 +13,6 @@ export interface CheckExistingReviewOutput {
   existingReview?: Review;
 }
 
-/**
- * Use-case để check xem user đã review sản phẩm này chưa
- * Tuân thủ Single Responsibility Principle - chỉ làm một việc duy nhất
- */
 @Injectable()
 export class CheckExistingReviewUseCase {
   constructor(

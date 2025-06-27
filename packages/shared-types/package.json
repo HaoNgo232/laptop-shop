@@ -43,9 +43,9 @@
         "type-check": "tsc --noEmit",
         "prepublishOnly": "pnpm run build",
         "clean": "rm -rf dist",
-        "verify": "pnpm run type-check && pnpm run build && echo '✅ Shared-types verification passed!'",
+        "verify": "pnpm run type-check && pnpm run build && echo ' Shared-types verification passed!'",
         "watch": "concurrently \"tsc -p tsconfig.esm.json --watch\" \"tsc -p tsconfig.cjs.json --watch\"",
-        "check:exports": "node -e \"console.log('📦 Checking exports...'); const pkg = require('./package.json'); console.log('✅ Exports config:', Object.keys(pkg.exports));\""
+        "check:exports": "node -e \"console.log('📦 Checking exports...'); const pkg = require('./package.json'); console.log(' Exports config:', Object.keys(pkg.exports));\""
     },
     "files": [
         "dist",

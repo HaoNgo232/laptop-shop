@@ -18,11 +18,14 @@ import { PaginationQueryDto } from '@/orders/dtos/pagination-query.dto';
 import { CurrentUser } from '@/auth/decorators/current-user.decorator';
 import type { JwtPayload } from '@/auth/interfaces/jwt-payload.interface';
 import { UserRole } from '@web-ecom/shared-types/auth/enums.cjs';
+import { Auth } from '@/auth/decorators/auth.decorator';
+import { AuthType } from '@/auth/enums/auth-type.enum';
 
 @Controller('api/reviews')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
+  @Auth(AuthType.None)
   @Get('product/:productId')
   async getProductReviews(
     @Param('productId') productId: string,
