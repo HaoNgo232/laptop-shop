@@ -7,10 +7,11 @@ import {
 } from "@/types/admin";
 import { ApiError } from "@/types/api";
 import { adminUserService } from "@/services/adminServices/adminUserService";
+import { IPaginatedResponse } from "@web-ecom/shared-types/common/interfaces";
 
 interface AdminUserState {
   // Users State
-  users: AdminView[];
+  users: IPaginatedResponse<AdminView>;
   selectedUser: AdminDetail | null;
   isLoading: boolean;
   error: string | null;
@@ -25,7 +26,17 @@ interface AdminUserState {
 
 export const useAdminUserStore = create<AdminUserState>((set) => ({
   // State
-  users: [],
+  users: {
+    data: [],
+    meta: {
+      currentPage: 1,
+      itemsPerPage: 10,
+      totalItems: 0,
+      totalPages: 0,
+      hasPreviousPage: false,
+      hasNextPage: false,
+    },
+  },
   selectedUser: null,
   isLoading: false,
   error: null,
@@ -35,7 +46,7 @@ export const useAdminUserStore = create<AdminUserState>((set) => ({
     try {
       set({ isLoading: true, error: null });
       const response = await adminUserService.getUsers(query);
-      set({ users: response.data, isLoading: false });
+      set({ users: response, isLoading: false });
     } catch (error) {
       const apiError = error as ApiError;
       set({

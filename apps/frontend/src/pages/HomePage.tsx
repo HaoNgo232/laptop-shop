@@ -6,6 +6,8 @@ import { Badge } from '@/components/ui/badge';
 import { Header } from '@/components/layout/Header';
 import { useAuthStore } from '@/stores/authStore';
 import { useProductStore } from '@/stores/productStore';
+import { MinimalBackground } from '@/components/backgrounds/MinimalBackground';
+import { MinimalDarkWrapper } from '@/components/backgrounds/MinimalDarkWrapper';
 import {
     ShoppingBag, Package, User, Star,
     ArrowRight, Shield, Truck, ChevronLeft, ChevronRight,
@@ -60,132 +62,73 @@ export function HomePage() {
         <div className="min-h-screen bg-gray-50">
             <Header />
 
-            <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-                <div className="px-4 sm:px-0 space-y-8">
-
-                    {/* Welcome Section cho User */}
-                    {isAuthenticated && user && (
-                        <div className="space-y-6">
-                            {/* Simple Welcome Card */}
-                            <Card className="bg-white border border-gray-200 shadow-sm">
-                                <CardHeader className="pb-4">
-                                    <div className="flex items-center justify-between">
-                                        <div>
-                                            <CardTitle className="text-xl font-semibold text-gray-900">
-                                                Xin chào, {user.username}! 👋
-                                            </CardTitle>
-                                            <CardDescription className="text-gray-600 mt-1">
-                                                Chúc bạn có một ngày mua sắm vui vẻ
-                                            </CardDescription>
-                                        </div>
-                                        <Badge variant="outline" className="hidden sm:block">
-                                            {user.role === 'admin' ? 'Quản trị viên' : 'Khách hàng'}
-                                        </Badge>
+            {/* Hero Background cho tất cả users */}
+            <MinimalBackground theme="dark"
+                showCTA={!isAuthenticated}
+                onCTAClick={() => navigate('/products')}
+            >
+                {/* Welcome Section cho User đã đăng nhập */}
+                {isAuthenticated && user && (
+                    <div className="mt-8 max-w-4xl mx-auto">
+                        <Card className="bg-gray-800/90 backdrop-blur-md border border-gray-700/50 shadow-xl text-white">
+                            <CardHeader className="pb-4">
+                                <div className="flex items-center justify-between">
+                                    <div>
+                                        <CardTitle className="text-xl font-semibold text-white">
+                                            Xin chào, {user.username}! 👋
+                                        </CardTitle>
+                                        <CardDescription className="text-gray-300 mt-1">
+                                            Chúc bạn có một ngày mua sắm vui vẻ
+                                        </CardDescription>
                                     </div>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                        <Button
-                                            variant="outline"
-                                            className="h-auto py-3 flex-col space-y-1 hover:bg-blue-50 hover:border-blue-300"
-                                            onClick={() => navigate('/products')}
-                                        >
-                                            <ShoppingBag className="h-5 w-5 text-blue-600" />
-                                            <span className="text-sm">Sản phẩm</span>
-                                        </Button>
-                                        <Button
-                                            variant="outline"
-                                            className="h-auto py-3 flex-col space-y-1 hover:bg-green-50 hover:border-green-300"
-                                            onClick={() => navigate('/orders')}
-                                        >
-                                            <Package className="h-5 w-5 text-green-600" />
-                                            <span className="text-sm">Đơn hàng</span>
-                                        </Button>
-                                        <Button
-                                            variant="outline"
-                                            className="h-auto py-3 flex-col space-y-1 hover:bg-purple-50 hover:border-purple-300"
-                                            onClick={() => navigate('/profile')}
-                                        >
-                                            <User className="h-5 w-5 text-purple-600" />
-                                            <span className="text-sm">Tài khoản</span>
-                                        </Button>
-                                        <Button
-                                            variant="outline"
-                                            className="h-auto py-3 flex-col space-y-1 hover:bg-red-50 hover:border-red-300"
-                                            onClick={() => navigate('/cart')}
-                                        >
-                                            <ShoppingCart className="h-5 w-5 text-red-600" />
-                                            <span className="text-sm">Giỏ hàng</span>
-                                        </Button>
-                                    </div>
-                                </CardContent>
-                            </Card>
-                        </div>
-                    )}
-
-                    {/* Welcome Banner cho Guest */}
-                    {!isAuthenticated && (
-                        <Card className="bg-gray-600 text-white border-0">
-                            <CardContent className="py-12 text-center">
-                                <h1 className="text-3xl md:text-4xl font-bold mb-4">
-                                    Web Ecommerce
-                                </h1>
-                                <p className="text-lg text-blue-100 mb-6 max-w-2xl mx-auto">
-                                    Cửa hàng trực tuyến uy tín với hàng ngàn sản phẩm chính hãng,
-                                    giao hàng nhanh chóng, giá cả hợp lý
-                                </p>
-                                <div className="flex flex-col sm:flex-row gap-3 justify-center">
-                                    <Button
-                                        className="bg-white text-blue-950 hover:bg-gray-600 hover:text-white"
-                                        onClick={() => navigate('/register')}
-                                    >
-                                        Đăng ký tài khoản
-                                    </Button>
+                                    <Badge variant="outline" className="hidden sm:block border-gray-600 bg-gray-700/50 text-gray-200">
+                                        {user.role === 'admin' ? 'Quản trị viên' : 'Khách hàng'}
+                                    </Badge>
+                                </div>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                     <Button
                                         variant="outline"
-                                        className=" bg-white text-blue-950 hover:bg-gray-600 hover:text-white"
-                                        onClick={() => navigate('/login')}
-                                    >
-                                        Đăng nhập
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        className=" bg-white text-blue-950 hover:bg-gray-600 hover:text-white"
+                                        className="h-auto py-3 flex-col space-y-1 bg-gray-700/30 border-gray-600 text-gray-100 hover:bg-gray-600/50 hover:border-gray-500"
                                         onClick={() => navigate('/products')}
                                     >
-                                        <Search className="mr-2 h-4 w-4" />
-                                        Xem sản phẩm
+                                        <ShoppingBag className="h-5 w-5" />
+                                        <span className="text-sm">Sản phẩm</span>
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        className="h-auto py-3 flex-col space-y-1 bg-gray-700/30 border-gray-600 text-gray-100 hover:bg-gray-600/50 hover:border-gray-500"
+                                        onClick={() => navigate('/orders')}
+                                    >
+                                        <Package className="h-5 w-5" />
+                                        <span className="text-sm">Đơn hàng</span>
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        className="h-auto py-3 flex-col space-y-1 bg-gray-700/30 border-gray-600 text-gray-100 hover:bg-gray-600/50 hover:border-gray-500"
+                                        onClick={() => navigate('/profile')}
+                                    >
+                                        <User className="h-5 w-5" />
+                                        <span className="text-sm">Tài khoản</span>
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        className="h-auto py-3 flex-col space-y-1 bg-gray-700/30 border-gray-600 text-gray-100 hover:bg-gray-600/50 hover:border-gray-500"
+                                        onClick={() => navigate('/cart')}
+                                    >
+                                        <ShoppingCart className="h-5 w-5" />
+                                        <span className="text-sm">Giỏ hàng</span>
                                     </Button>
                                 </div>
                             </CardContent>
                         </Card>
-                    )}
+                    </div>
+                )}
+            </MinimalBackground>
 
-                    {/* Quick Stats */}
-                    <Card className="bg-white border border-gray-200">
-                        <CardContent className="py-6">
-                            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                                <div className="space-y-1">
-                                    <div className="text-2xl font-bold text-blue-600">{stats.totalUsers.toLocaleString()}+</div>
-                                    <div className="text-gray-600 text-sm">Khách hàng</div>
-                                </div>
-                                <div className="space-y-1">
-                                    <div className="text-2xl font-bold text-green-600">{stats.totalProducts.toLocaleString()}+</div>
-                                    <div className="text-gray-600 text-sm">Sản phẩm</div>
-                                </div>
-                                <div className="space-y-1">
-                                    <div className="text-2xl font-bold text-purple-600">{stats.totalOrders.toLocaleString()}+</div>
-                                    <div className="text-gray-600 text-sm">Đơn hàng</div>
-                                </div>
-                                <div className="space-y-1">
-                                    <div className="text-2xl font-bold text-yellow-600 flex items-center justify-center gap-1">
-                                        {stats.satisfaction}/5 <Star className="h-5 w-5 fill-current" />
-                                    </div>
-                                    <div className="text-gray-600 text-sm">Đánh giá</div>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
+            <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+                <div className="px-4 sm:px-0 space-y-8">
 
                     {/* Categories Grid */}
                     {categories.length > 0 && (
@@ -333,26 +276,24 @@ export function HomePage() {
                             </CardContent>
                         </Card>
                     </div>
-
-                    {/* Simple Newsletter */}
-                    <Card className="bg-gray-800 text-white">
-                        <CardContent className="py-8 text-center">
+                    <MinimalDarkWrapper padding="lg" className="rounded-lg">
+                        <div className="text-center">
                             <h3 className="text-xl font-semibold mb-2">Nhận thông tin ưu đãi</h3>
                             <p className="text-gray-300 mb-4">
                                 Đăng ký để nhận thông báo về sản phẩm mới và khuyến mãi
                             </p>
-                            <div className="max-w-md mx-auto flex gap-2 ">
+                            <div className="max-w-md mx-auto flex gap-2">
                                 <input
                                     type="email"
                                     placeholder="Email của bạn"
-                                    className="flex-1 px-3 py-2 rounded text-gray-50 text-sm border-1 border-amber-50"
+                                    className="flex-1 px-3 py-2 rounded bg-gray-800/50 border border-gray-700 text-white placeholder-gray-400 focus:border-gray-600 focus:outline-none"
                                 />
-                                <Button className="bg-blue-600 hover:bg-blue-700">
+                                <Button className="bg-blue-600 hover:bg-blue-700 text-white mt-0.5">
                                     Đăng ký
                                 </Button>
                             </div>
-                        </CardContent>
-                    </Card>
+                        </div>
+                    </MinimalDarkWrapper>
                 </div>
             </main>
         </div>

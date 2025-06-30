@@ -132,16 +132,9 @@ export function AdminTable({
                                                     variant="ghost"
                                                     size="sm"
                                                     onClick={() => onUserEdit(user.id)}
-                                                    className="h-8 w-8 p-0"
+                                                    className="h-8 w-15 p-0"
                                                 >
                                                     <Edit className="h-4 w-4" />
-                                                </Button>
-                                                <Button
-                                                    variant="ghost"
-                                                    size="sm"
-                                                    className="h-8 w-8 p-0"
-                                                >
-                                                    <Eye className="h-4 w-4" />
                                                 </Button>
                                             </div>
                                         </td>

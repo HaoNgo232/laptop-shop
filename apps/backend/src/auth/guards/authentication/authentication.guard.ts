@@ -1,13 +1,12 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unused-expressions */
-/* eslint-disable no-unused-labels */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { AccessTokenGuard } from '../access-token/access-token.guard';
-import { AuthType } from '../../enums/auth-type.enum';
-import { AUTH_TYPE_KEY } from '../../constants/auth.constants';
+import { AuthType } from '@/auth/enums/auth-type.enum';
+import { AUTH_TYPE_KEY } from '@/auth/constants/auth.constants';
+import { AccessTokenGuard } from '@/auth/guards/access-token/access-token.guard';
 
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
@@ -33,12 +32,12 @@ export class AuthenticationGuard implements CanActivate {
 
     // array of guards
     const guards = authTypes.map((type) => this.authtypeGuardMap[type]).flat();
-    const error = new UnauthorizedException();
+    const error = new UnauthorizedException('Không có quyền truy cập');
 
     // Loop guards canActivate
     for (const instance of guards) {
       const canActivate = await Promise.resolve(instance.canActivate(context)).catch((err) => {
-        error: err;
+        throw new UnauthorizedException('Không có quyền truy cập', err);
       });
       if (canActivate) {
         return true;

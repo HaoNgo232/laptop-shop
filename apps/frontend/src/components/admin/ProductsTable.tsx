@@ -14,6 +14,7 @@ import { Edit, Trash2, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Product } from '@/types/product';
 import { PaginationMeta } from '@/types/api';
 import { cn } from '@/lib/utils';
+import { useNavigate } from 'react-router-dom';
 
 interface ProductsTableProps {
     products: Product[];
@@ -34,6 +35,7 @@ export function ProductsTable({
     onPageChange,
     isLoading = false,
 }: ProductsTableProps) {
+    const navigate = useNavigate();
     //  Format giá tiền
     const formatPrice = (price: number) => {
         return new Intl.NumberFormat('vi-VN', {

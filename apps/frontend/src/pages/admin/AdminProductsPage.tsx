@@ -29,8 +29,11 @@ import { Product, CreateProduct, UpdateProduct } from '@/types/product';
 import { AdminQuery } from '@/types/admin';
 import { useAdminCategoryStore } from '@/stores/admin/adminCategoryStore';
 import { AdminLayout } from '@/components/admin/AdminLayout';
+import { useNavigate } from 'react-router-dom';
 
 export default function AdminProductsPage() {
+    const navigate = useNavigate();
+
     const {
         products,
         pagination,
@@ -112,7 +115,7 @@ export default function AdminProductsPage() {
     };
 
     const handleViewProduct = (product: Product) => {
-        toast.info(`Xem chi tiết sản phẩm: ${product.name}`);
+        navigate(`/products/${product.id}`);
     };
 
     const handleDeleteProduct = (product: Product) => {

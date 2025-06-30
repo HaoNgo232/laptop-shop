@@ -3,10 +3,11 @@ import { AdminLayout } from '@/components/admin/AdminLayout';
 import { useAdminUserStore } from '@/stores/admin/adminUserStore';
 import type { AdminQuery } from '@/types/admin';
 import { AdminTable } from '@/components/admin/AdminTable';
+import { UserDetailModal } from '@/components/admin/UserDetailModal';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Search, Plus, Filter } from 'lucide-react';
 import { UserRole } from '@web-ecom/shared-types/auth/enums';
 import { PaginationMeta } from '@/types/api';
@@ -43,25 +44,31 @@ export function AdminUserPage() {
         hasNextPage: false
     });
 
+
+
     useEffect(() => {
         loadUsers();
-    }, []);
+    }, [query]);
 
     const loadUsers = async () => {
         try {
             await fetchUsers(query);
-            // Update pagination from API response if available
-            // setPagination(response.pagination);
+            setPagination(users.meta);
         } catch (error) {
             console.error('Lỗi khi tải danh sách người dùng:', error);
         }
     };
 
-    const handleSearch = (searchTerm: string) => {
-        setSearchTerm(searchTerm);
+    const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            handleSearch();
+        }
+    };
+
+    const handleSearch = () => {
         setQuery(prev => ({
             ...prev,
-            search: searchTerm || undefined,
+            search: searchTerm.trim() || undefined,
             page: 1 // Reset về trang đầu khi search
         }));
     };
@@ -135,11 +142,20 @@ export function AdminUserPage() {
                                 <Input
                                     placeholder="Tìm kiếm theo email hoặc tên người dùng..."
                                     value={searchTerm}
-                                    onChange={(e) => handleSearch(e.target.value)}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    onKeyDown={handleSearchKeyDown}
                                     className="pl-10"
                                 />
                             </div>
                             <div className="flex gap-2">
+                                <Button
+                                    variant="outline"
+                                    onClick={handleSearch}
+                                    className="whitespace-nowrap"
+                                >
+                                    <Search className="mr-2 h-4 w-4" />
+                                    Tìm kiếm
+                                </Button>
                                 <Select value={selectedRole} onValueChange={handleRoleFilter}>
                                     <SelectTrigger className="w-40">
                                         <Filter className="mr-2 h-4 w-4" />
@@ -159,24 +175,25 @@ export function AdminUserPage() {
 
             {/* Users Table */}
             <AdminTable
-                users={users}
+                users={users.data}
                 pagination={pagination}
                 isLoading={isLoading}
                 onUserEdit={handleUserEdit}
                 onPageChange={handlePageChange}
             />
 
-            {/* User Edit Modal */}
-            {showModal && selectedUser && (
-                <AdminUserModal
-                    user={selectedUser}
-                    onClose={handleCloseModal}
-                    onUpdate={handleUserUpdate}
-                />
-            )}
+            {/* User Detail Modal */}
+            <UserDetailModal
+                isOpen={showModal}
+                onClose={handleCloseModal}
+                user={selectedUser}
+                isLoading={isLoading}
+                onUpdate={handleUserUpdate}
+                error={error}
+            />
 
             {/* Error Display */}
-            {error && (
+            {error && !showModal && (
                 <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md">
                     <p className="text-red-800">{error}</p>
                     <Button
@@ -192,28 +209,3 @@ export function AdminUserPage() {
         </AdminLayout>
     );
 }
-
-// Component Modal để edit user (em sẽ tạo riêng file này)
-function AdminUserModal({ user, onClose, onUpdate }: any) {
-    // TODO: Implement user edit modal
-    return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-lg max-w-md w-full">
-                <h3 className="text-lg font-semibold mb-4">
-                    Chỉnh sửa người dùng
-                </h3>
-                <p>User ID: {user.id}</p>
-                <p>Email: {user.email}</p>
-                {/* TODO: Add form fields */}
-                <div className="flex gap-2 mt-4">
-                    <Button onClick={onClose} variant="outline">
-                        Hủy
-                    </Button>
-                    <Button onClick={() => onUpdate(user.id, {})}>
-                        Cập nhật
-                    </Button>
-                </div>
-            </div>
-        </div>
-    );
-} 

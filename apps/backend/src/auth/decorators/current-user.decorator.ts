@@ -2,28 +2,29 @@ import { JwtPayload } from '@/auth/interfaces/jwt-payload.interface';
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
 
 /**
- * Extracts the current user from the request object.
- * Can also extract a specific property of the user if a key is provided.
+ * Decorator để lấy thông tin user hiện tại từ JWT token
+ * Sử dụng trong controller để inject user đã được authenticate
  *
- * @example
- * // Get the whole user object
- * getProfile(@CurrentUser() user: User)
+ * // Lấy toàn bộ user object
+ * getProfile(@CurrentUser() user: JwtPayload) { ... }
  *
- * // Get a specific property (e.g., user ID)
- * updateProfile(@CurrentUser('id') userId: string)
+ * // Chỉ lấy userId
+ * getUserOrders(@CurrentUser('sub') userId: string) { ... }
  */
 export const CurrentUser = createParamDecorator(
   (data: keyof JwtPayload | undefined, ctx: ExecutionContext) => {
+    // Lấy request object từ execution context
     const request = ctx.switchToHttp().getRequest<{ user?: JwtPayload }>();
 
+    // User được inject bởi AuthenticationGuard sau khi verify JWT
     const user = request.user;
 
+    // Return null nếu không có user (không được authenticate)
     if (!user) {
-      // Consider throwing an UnauthorizedException if the user should always exist here,
-      // for example, if this decorator is only used in routes protected by JwtAuthGuard.
       return null;
     }
 
+    // Return field cụ thể nếu data được chỉ định, ngược lại return toàn bộ user
     return data ? user[data] : user;
   },
 );

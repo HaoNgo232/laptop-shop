@@ -1,9 +1,10 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import { applyDecorators, SetMetadata, UseGuards } from '@nestjs/common';
-import { AuthType } from '../enums/auth-type.enum';
-import { UserRole } from '../enums/user-role.enum';
-import { AUTH_TYPE_KEY } from '../constants/auth.constants';
-import { RolesGuard, ROLES_KEY } from '../guards/authentication/roles.guard';
-import { AuthenticationGuard } from '../guards/authentication/authentication.guard';
+import { AuthType } from '@/auth/enums/auth-type.enum';
+import { UserRole } from '@/auth/enums/user-role.enum';
+import { AUTH_TYPE_KEY } from '@/auth/constants/auth.constants';
+import { AuthenticationGuard } from '@/auth/guards/authentication/authentication.guard';
+import { ROLES_KEY, RolesGuard } from '@/auth/guards/authentication/roles.guard';
 
 /**
  * Decorator xác thực và phân quyền người dùng
@@ -11,7 +12,6 @@ import { AuthenticationGuard } from '../guards/authentication/authentication.gua
  * @param roles - Danh sách vai trò được phép truy cập
  */
 export function Auth(authType: AuthType = AuthType.Bearer, ...roles: UserRole[]) {
-  // Khởi tạo mảng decorators với các guard cơ bản
   const decorators = [
     // Lưu loại xác thực vào metadata
     SetMetadata(AUTH_TYPE_KEY, [authType]),

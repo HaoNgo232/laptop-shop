@@ -198,9 +198,6 @@ const ProductForm = ({
                         {errors.imageUrl && (
                             <p className="text-sm text-red-600">{errors.imageUrl.message}</p>
                         )}
-                        <p className="text-sm text-gray-500">
-                            💡 Tạm thời sử dụng URL. Module upload ảnh sẽ được phát triển sau.
-                        </p>
                     </div>
 
                     {/* Danh mục */}
