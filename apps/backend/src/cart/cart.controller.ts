@@ -28,7 +28,7 @@ export class CartController {
    */
   @Get()
   getCart(@CurrentUser('sub') userId: string): Promise<CartDto> {
-    return this.cartService.getCartByUserId(userId);
+    return this.cartService.findOne(userId);
   }
 
   /**
@@ -48,7 +48,7 @@ export class CartController {
     @Param('productId') productId: string,
     @Body() updateItemDto: UpdateCartItemDto,
   ): Promise<CartDto> {
-    return this.cartService.updateCartItemQuantity(userId, productId, updateItemDto.quantity);
+    return this.cartService.updateItemQuantity(userId, productId, updateItemDto.quantity);
   }
 
   /**
@@ -59,7 +59,7 @@ export class CartController {
     @CurrentUser('sub') userId: string,
     @Param('productId') productId: string,
   ): Promise<CartDto> {
-    return this.cartService.removeCartItem(userId, productId);
+    return this.cartService.removeItem(userId, productId);
   }
 
   /**
@@ -68,6 +68,6 @@ export class CartController {
   @Delete()
   @HttpCode(HttpStatus.NO_CONTENT)
   clearCart(@CurrentUser('sub') userId: string): Promise<void> {
-    return this.cartService.clearUserCart(userId);
+    return this.cartService.clear(userId);
   }
 }

@@ -78,7 +78,10 @@ export class OrdersProvider implements IOrdersProvider {
         total: total || 0,
       };
     } catch (error) {
-      this.logger.error(`❌ Database error while fetching orders for user ${userId}:`, error);
+      this.logger.error(
+        `OrdersProvider: Database error while fetching orders for user ${userId}:`,
+        error,
+      );
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       throw new BadRequestException(`Lỗi truy vấn cơ sở dữ liệu: ${errorMessage}`);
     }

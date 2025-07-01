@@ -15,3 +15,12 @@ export interface PaginatedApiResponse<T = any> extends ApiResponse<T> {
     hasNextPage: boolean;
   };
 }
+
+export interface PaginationMeta {
+  currentPage: number;
+  itemsPerPage: number;
+  totalItems: number;
+  totalPages: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}

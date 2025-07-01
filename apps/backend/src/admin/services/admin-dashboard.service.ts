@@ -10,8 +10,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThan, Repository } from 'typeorm';
 
 interface IAdminDashboardService {
-  getDashboardSummary(): Promise<DashboardSummaryDto>;
-  getDetailedStats(): Promise<DetailedStatsDto>;
+  getSummary(): Promise<DashboardSummaryDto>;
+  getStats(): Promise<DetailedStatsDto>;
 }
 
 @Injectable()
@@ -29,7 +29,7 @@ export class AdminDashboardService implements IAdminDashboardService {
    * Lấy tóm tắt dashboard bao gồm thống kê người dùng, sản phẩm, đơn hàng và doanh thu
    * @returns Promise<DashboardSummaryDto> - Dữ liệu tóm tắt dashboard
    */
-  async getDashboardSummary(): Promise<DashboardSummaryDto> {
+  async getSummary(): Promise<DashboardSummaryDto> {
     try {
       const thirtyDaysAgo = this.getDateDaysAgo(30);
 
@@ -52,7 +52,7 @@ export class AdminDashboardService implements IAdminDashboardService {
         totalRevenue,
       };
     } catch (error) {
-      console.error('Error in getDashboardSummary:', error);
+      console.error('Error in getSummary:', error);
       throw new InternalServerErrorException('Failed to get dashboard summary');
     }
   }
@@ -85,7 +85,7 @@ export class AdminDashboardService implements IAdminDashboardService {
   /**
    * Doanh thu theo tháng - cũng dựa trên payment status
    */
-  async getDetailedStats(): Promise<DetailedStatsDto> {
+  async getStats(): Promise<DetailedStatsDto> {
     const sixMonthsAgo = this.getDateDaysAgo(6 * 30);
 
     const [ordersByStatus, revenueByMonth] = await Promise.all([

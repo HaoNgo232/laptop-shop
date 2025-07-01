@@ -51,7 +51,7 @@ export class CreateUserUseCase {
       });
       await this.userRepository.save(newUser);
       // Tạo giỏ hàng cho user
-      await this.cartService.getCartEntityByUserId(newUser.id);
+      await this.cartService.findOneEntity(newUser.id);
 
       try {
         await this.mailService.sendUserWelcomeEmail(newUser);

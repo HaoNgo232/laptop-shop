@@ -20,12 +20,12 @@ export class AdminUsersController {
 
   @Get()
   async getUsers(@Query() query: AdminUserQueryDto): Promise<PaginatedResponse<AdminUserViewDto>> {
-    return this.adminUsersService.findAllForAdmin(query);
+    return this.adminUsersService.findAll(query);
   }
 
   @Get(':userId')
   async getUserById(@Param('userId') userId: string): Promise<AdminViewDetailDto> {
-    return this.adminUsersService.findByIdForAdmin(userId);
+    return this.adminUsersService.findOne(userId);
   }
 
   @Put(':userId')
@@ -33,6 +33,6 @@ export class AdminUsersController {
     @Param('userId') userId: string,
     @Body() updateUserDto: UpdateUserByAdminDto,
   ): Promise<AdminViewDetailDto> {
-    return this.adminUsersService.updateByAdmin(userId, updateUserDto);
+    return this.adminUsersService.update(userId, updateUserDto);
   }
 }

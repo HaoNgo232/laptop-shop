@@ -20,7 +20,7 @@ import {
   SuccessWebhookResponse,
 } from '@/payments/interfaces/webhook-response.interfaces';
 import { PaymentMethodEnum } from '@/payments/enums/payment-method.enum';
-import { OrdersService } from '@/orders/orders.service';
+import { AdminOrdersService } from '@/orders/services/admin-orders.service';
 import { PaymentStatusEnum } from '@/orders/enums/payment-status.enum';
 
 @Controller('api/payment')
@@ -29,7 +29,7 @@ export class PaymentsController {
 
   constructor(
     private readonly paymentsService: PaymentsService,
-    private readonly ordersService: OrdersService,
+    private readonly adminOrdersService: AdminOrdersService,
   ) {}
 
   @Post('create')
@@ -69,14 +69,14 @@ export class PaymentsController {
 
       // Cập nhật order status dựa trên kết quả
       if (result.status === 'success') {
-        await this.ordersService.updateOrderPaymentStatus(
+        await this.adminOrdersService.updatePaymentStatus(
           result.orderId,
           result.transactionId,
           PaymentStatusEnum.PAID,
         );
         this.logger.log(`Order ${result.orderId} payment status updated to PAID`);
       } else if (result.status === 'failed') {
-        await this.ordersService.updateOrderPaymentStatus(
+        await this.adminOrdersService.updatePaymentStatus(
           result.orderId,
           result.transactionId,
           PaymentStatusEnum.FAILED,

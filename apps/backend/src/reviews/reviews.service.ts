@@ -1,6 +1,6 @@
 import { DebugUtil } from '@/common/utils/debug.util';
 import { PaginationQueryDto } from '@/orders/dtos/pagination-query.dto';
-import { OrdersService } from '@/orders/orders.service';
+import { AdminOrdersService } from '@/orders/services/admin-orders.service';
 import { Product } from '@/products/entities/product.entity';
 import { CreateReviewDto } from '@/reviews/dtos/create-review.dto';
 import { AdminReviewQueryDto } from '@/reviews/dtos/admin-review-query.dto';
@@ -29,7 +29,7 @@ export class ReviewsService implements IReviewsService {
     private readonly reviewRepository: Repository<Review>,
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
-    private readonly ordersService: OrdersService,
+    private readonly adminOrdersService: AdminOrdersService,
     private readonly checkExistingReviewUseCase: CheckExistingReviewUseCase,
     private readonly dataSource: DataSource,
   ) {}
@@ -51,7 +51,7 @@ export class ReviewsService implements IReviewsService {
       }
 
       // 2. Check if user has purchased the product
-      const hasPurchased = await this.ordersService.hasPurchasedProduct(userId, productId);
+      const hasPurchased = await this.adminOrdersService.hasPurchasedProduct(userId, productId);
       if (!hasPurchased) {
         throw new ForbiddenException('Bạn phải mua sản phẩm để có thể đánh giá.');
       }

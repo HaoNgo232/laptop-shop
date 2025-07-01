@@ -17,12 +17,12 @@ export class AdminDashboardController {
   // Lấy tổng quan dashboard với các metrics cơ bản
   @Get('summary')
   async getSummary(): Promise<DashboardSummaryDto> {
-    return await this.adminDashboardService.getDashboardSummary();
+    return await this.adminDashboardService.getSummary();
   }
 
   // Lấy thống kê chi tiết với biểu đồ và phân tích sâu
   @Get('detailed-stats')
   async getDetailedStats(): Promise<DetailedStatsDto> {
-    return await this.adminDashboardService.getDetailedStats();
+    return await this.adminDashboardService.getStats();
   }
 }

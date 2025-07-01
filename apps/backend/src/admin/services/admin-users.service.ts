@@ -9,12 +9,12 @@ import { UpdateUserByAdminDto } from '@/admin/dtos/update-user-by-admin.dto';
 import { IPaginationMeta } from '@web-ecom/shared-types/common/interfaces.cjs';
 
 interface IAdminUsersService {
-  findAllForAdmin(query: AdminUserQueryDto): Promise<{
+  findAll(query: AdminUserQueryDto): Promise<{
     data: AdminUserViewDto[];
     meta: IPaginationMeta;
   }>;
-  findByIdForAdmin(userId: string): Promise<AdminViewDetailDto>;
-  updateByAdmin(userId: string, updateUserDto: UpdateUserByAdminDto): Promise<AdminViewDetailDto>;
+  findOne(userId: string): Promise<AdminViewDetailDto>;
+  update(userId: string, updateUserDto: UpdateUserByAdminDto): Promise<AdminViewDetailDto>;
 }
 
 @Injectable()
@@ -27,7 +27,7 @@ export class AdminUsersService implements IAdminUsersService {
   /**
    * Lấy danh sách tất cả người dùng cho admin với phân trang và tìm kiếm
    */
-  async findAllForAdmin(query: AdminUserQueryDto): Promise<{
+  async findAll(query: AdminUserQueryDto): Promise<{
     data: AdminUserViewDto[];
     meta: IPaginationMeta;
   }> {
@@ -48,7 +48,7 @@ export class AdminUsersService implements IAdminUsersService {
   /**
    * Lấy thông tin chi tiết một người dùng theo ID cho admin
    */
-  async findByIdForAdmin(userId: string): Promise<AdminViewDetailDto> {
+  async findOne(userId: string): Promise<AdminViewDetailDto> {
     const user = await this.findUserOrThrow(userId);
     return this.mapToAdminDetailView(user);
   }
@@ -56,10 +56,7 @@ export class AdminUsersService implements IAdminUsersService {
   /**
    * Cập nhật thông tin người dùng bởi admin
    */
-  async updateByAdmin(
-    userId: string,
-    updateUserDto: UpdateUserByAdminDto,
-  ): Promise<AdminViewDetailDto> {
+  async update(userId: string, updateUserDto: UpdateUserByAdminDto): Promise<AdminViewDetailDto> {
     const user = await this.findUserOrThrow(userId);
     this.updateUserFields(user, updateUserDto);
     const updatedUser = await this.userRepository.save(user);
