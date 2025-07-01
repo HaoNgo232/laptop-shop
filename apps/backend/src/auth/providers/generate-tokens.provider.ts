@@ -5,8 +5,13 @@ import jwtConfig from '@/auth/config/jwt.config';
 import { JwtPayload } from '@/auth/interfaces/jwt-payload.interface';
 import { User } from '@/auth/entities/user.entity';
 
+interface IGenerateTokensProvider {
+  signToken<T>(userId: string, expiresIn: string | number, payload?: T): Promise<string>;
+  generateTokens(user: User): Promise<{ accessToken: string; refreshToken: string }>;
+}
+
 @Injectable()
-export class GenerateTokensProvider {
+export class GenerateTokensProvider implements IGenerateTokensProvider {
   constructor(
     private readonly jwtService: JwtService,
 

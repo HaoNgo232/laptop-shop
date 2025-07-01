@@ -5,8 +5,15 @@ import { CreateUserDto } from '@/auth/dtos/create-user.dto';
 import { UpdateUserProfileDto } from '@/auth/dtos/update-profile.dto';
 import { User } from '@/auth/entities/user.entity';
 
+interface IUsersService {
+  findById(userId: string): Promise<User>;
+  findByEmail(email: string): Promise<User>;
+  create(createUserDto: CreateUserDto): Promise<User>;
+  update(userId: string, updateUserDto: UpdateUserProfileDto): Promise<User>;
+}
+
 @Injectable()
-export class UsersService {
+export class UsersService implements IUsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,

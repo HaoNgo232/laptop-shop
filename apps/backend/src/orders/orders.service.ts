@@ -23,8 +23,18 @@ import { PaymentMethodEnum } from '@/payments/enums/payment-method.enum';
 import { QRCodeResponse } from '@/payments/interfaces/payment-provider.interfaces';
 import { CartItem } from '@/cart/entities/cart-item.entity';
 
+interface IOrdersService {
+  createOrder(
+    userId: string,
+    createOrderDto: CreateOrderDto,
+  ): Promise<{ order: OrderDto; qrCode?: QRCodeResponse }>;
+  getUserOrders(userId: string, query: PaginationQueryDto): Promise<PaginatedResponse<OrderDto>>;
+  getUserOrderById(userId: string, orderId: string): Promise<OrderDetailDto>;
+  cancelUserOrder(userId: string, orderId: string): Promise<OrderDto>;
+}
+
 @Injectable()
-export class OrdersService {
+export class OrdersService implements IOrdersService {
   private readonly logger = new Logger(OrdersService.name);
 
   constructor(

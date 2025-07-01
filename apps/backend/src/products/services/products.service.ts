@@ -16,8 +16,16 @@ import { UpdateProductDto } from '@/products/dtos/update-product.dto';
 import { PaginationMeta } from '@/products/interfaces/pagination-meta.interface';
 import { SortOrder } from '@web-ecom/shared-types/products/enums';
 
+interface IProductsService {
+  findAll(queryDto: QueryProductDto): Promise<PaginatedResponse<ProductDto>>;
+  findOne(id: string): Promise<ProductDto>;
+  create(createProductDto: CreateProductDto): Promise<Product>;
+  update(id: string, updateProductDto: UpdateProductDto): Promise<Product>;
+  remove(id: string): Promise<void>;
+}
+
 @Injectable()
-export class ProductsService {
+export class ProductsService implements IProductsService {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,

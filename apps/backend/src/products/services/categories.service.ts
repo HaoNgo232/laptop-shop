@@ -7,8 +7,16 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+interface ICategoriesService {
+  findAll(): Promise<CategoryDto[]>;
+  findOne(id: string): Promise<CategoryDetailDto>;
+  create(createCategoryDto: CreateCategoryDto): Promise<CategoryDto>;
+  update(id: string, updateCategoryDto: UpdateCategoryDto): Promise<CategoryDto>;
+  remove(id: string): Promise<void>;
+}
+
 @Injectable()
-export class CategoriesService {
+export class CategoriesService implements ICategoriesService {
   constructor(
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,

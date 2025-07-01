@@ -1,9 +1,9 @@
 import { AuthModule } from '@/auth/auth.module';
 import { CartModule } from '@/cart/cart.module';
-import { AdminOrdersController } from '@/orders/admin-order.controller';
+import { AdminOrdersController } from '@/orders/controllers/admin-order.controller';
 import { OrderItem } from '@/orders/entities/order-item.entity';
 import { Order } from '@/orders/entities/order.entity';
-import { OrdersController } from '@/orders/orders.controller';
+import { OrdersController } from '@/orders/controllers/orders.controller';
 import { OrdersService } from '@/orders/orders.service';
 import { OrderMapperProvider } from '@/orders/providers/order-mapper.provider';
 import { OrdersProvider } from '@/orders/providers/order.provider';

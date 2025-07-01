@@ -7,8 +7,19 @@ import { Order } from '@/orders/entities/order.entity';
 import { OrderStatusEnum } from '@/orders/enums/order-status.enum';
 import { InjectRepository } from '@nestjs/typeorm';
 
+interface IOrdersProvider {
+  findUserOrders(
+    userId: string,
+    query: PaginationQueryDto,
+  ): Promise<{ data: Order[]; total: number }>;
+  findUserOrderById(userId: string, orderId: string): Promise<Order>;
+  findAllOrders(query: AdminOrderQueryDto): Promise<{ data: Order[]; total: number }>;
+  findOrderById(orderId: string): Promise<Order>;
+  updateOrderStatus(orderId: string, status: OrderStatusEnum): Promise<Order>;
+}
+
 @Injectable()
-export class OrdersProvider {
+export class OrdersProvider implements IOrdersProvider {
   private readonly logger = new Logger(OrdersProvider.name);
 
   constructor(

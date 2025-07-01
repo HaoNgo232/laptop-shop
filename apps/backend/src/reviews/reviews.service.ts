@@ -12,9 +12,18 @@ import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/commo
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserRole } from '@web-ecom/shared-types/auth/enums.cjs';
 import { DataSource, EntityManager, Repository } from 'typeorm';
+import { PaginatedResponse } from '@/products/interfaces/paginated-response.interface';
+
+interface IReviewsService {
+  create(userId: string, productId: string, createReviewDto: CreateReviewDto): Promise<Review>;
+  update(userId: string, reviewId: string, updateReviewDto: UpdateReviewDto): Promise<Review>;
+  delete(reviewId: string, userId: string, userRole: UserRole): Promise<void>;
+  findByProductId(productId: string, query: PaginationQueryDto): Promise<PaginatedResponse<Review>>;
+  findAllForAdmin(query: AdminReviewQueryDto): Promise<PaginatedResponse<Review>>;
+}
 
 @Injectable()
-export class ReviewsService {
+export class ReviewsService implements IReviewsService {
   constructor(
     @InjectRepository(Review)
     private readonly reviewRepository: Repository<Review>,
@@ -134,8 +143,18 @@ export class ReviewsService {
       take: limit,
       skip,
     });
-
-    return { data, meta: { total, page, limit } };
+    const result: PaginatedResponse<Review> = {
+      data,
+      meta: {
+        totalItems: total,
+        currentPage: page,
+        itemsPerPage: limit,
+        totalPages: Math.ceil(total / limit),
+        hasPreviousPage: page > 1,
+        hasNextPage: page < Math.ceil(total / limit),
+      },
+    };
+    return result;
   }
 
   async findAllForAdmin(query: AdminReviewQueryDto) {
@@ -159,7 +178,19 @@ export class ReviewsService {
 
     const [data, total] = await queryBuilder.getManyAndCount();
 
-    return { data, meta: { total, page, limit } };
+    const result: PaginatedResponse<Review> = {
+      data,
+      meta: {
+        hasPreviousPage: page > 1,
+        hasNextPage: page < Math.ceil(total / limit),
+        totalItems: total,
+        currentPage: page,
+        itemsPerPage: limit,
+        totalPages: Math.ceil(total / limit),
+      },
+    };
+
+    return result;
   }
 
   async checkExistingReview(userId: string, productId: string) {

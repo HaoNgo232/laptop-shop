@@ -15,8 +15,27 @@ import { RefreshTokenUseCase } from '@/auth/use-cases/refresh-token.use-case';
 import { ChangePasswordDto } from '../dtos/change-password.dto';
 import { ChangePasswordUseCase } from '../use-cases/change-password.use-case';
 
+interface IAuthService {
+  register(registerUserDto: RegisterUserDto): Promise<User>;
+  login(loginUserDto: LoginUserDto): Promise<{
+    accessToken: string;
+    refreshToken: string;
+    user: Omit<User, 'passwordHash'>;
+  }>;
+  refreshToken(refreshTokenDto: RefreshTokenDto): Promise<LoginResponseDto>;
+  validateUser(email: string, password: string): Promise<User | null>;
+  generateTokens(user: User): Promise<{ accessToken: string; refreshToken: string }>;
+  forgotPassword(email: string): Promise<void>;
+  resetPassword(resetPasswordDto: ResetPasswordDto): Promise<void>;
+  changePassword(
+    userId: string,
+    changePasswordDto: ChangePasswordDto,
+  ): Promise<{ message: string }>;
+  logout(accessToken: string, refreshToken?: string): Promise<void>;
+}
+
 @Injectable()
-export class AuthService {
+export class AuthService implements IAuthService {
   constructor(
     private readonly generateTokensProvider: GenerateTokensProvider,
     private readonly tokenBlacklistProvider: TokenBlacklistProvider,

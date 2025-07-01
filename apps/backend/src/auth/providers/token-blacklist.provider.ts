@@ -6,8 +6,14 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtPayload } from '@/auth/interfaces/jwt-payload.interface';
 import { TokenBlacklist } from '@/auth/entities/token-blacklist.entity';
 
+interface ITokenBlacklistProvider {
+  addToBlacklist(token: string, type: 'access' | 'refresh'): Promise<void>;
+  isBlacklisted(token: string): Promise<boolean>;
+  removeExpiredTokens(): Promise<void>;
+}
+
 @Injectable()
-export class TokenBlacklistProvider {
+export class TokenBlacklistProvider implements ITokenBlacklistProvider {
   constructor(
     @InjectRepository(TokenBlacklist)
     private readonly tokenBlacklistRepository: Repository<TokenBlacklist>,

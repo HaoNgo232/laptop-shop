@@ -8,7 +8,6 @@ import { OrdersService } from '@/orders/orders.service';
 import { PaginatedResponse } from '@/products/interfaces/paginated-response.interface';
 import { AdminOrderQueryDto } from '@/orders/dtos/admin-order-query.dto';
 import { OrderDto } from '@/orders/dtos/order.dto';
-import { OrderDetailDto } from '@/orders/dtos/order-detail.dto';
 import { UpdateOrderStatusDto } from '@/orders/dtos/update-order-status.dto';
 
 @Controller('api/admin/orders')

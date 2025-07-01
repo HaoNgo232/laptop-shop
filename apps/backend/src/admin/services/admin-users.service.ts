@@ -8,8 +8,17 @@ import { AdminViewDetailDto } from '@/admin/dtos/admin-view-detail.dto';
 import { UpdateUserByAdminDto } from '@/admin/dtos/update-user-by-admin.dto';
 import { IPaginationMeta } from '@web-ecom/shared-types/common/interfaces.cjs';
 
+interface IAdminUsersService {
+  findAllForAdmin(query: AdminUserQueryDto): Promise<{
+    data: AdminUserViewDto[];
+    meta: IPaginationMeta;
+  }>;
+  findByIdForAdmin(userId: string): Promise<AdminViewDetailDto>;
+  updateByAdmin(userId: string, updateUserDto: UpdateUserByAdminDto): Promise<AdminViewDetailDto>;
+}
+
 @Injectable()
-export class AdminUsersService {
+export class AdminUsersService implements IAdminUsersService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,

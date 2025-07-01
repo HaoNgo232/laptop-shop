@@ -9,8 +9,13 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { MoreThan, Repository } from 'typeorm';
 
+interface IAdminDashboardService {
+  getDashboardSummary(): Promise<DashboardSummaryDto>;
+  getDetailedStats(): Promise<DetailedStatsDto>;
+}
+
 @Injectable()
-export class AdminDashboardService {
+export class AdminDashboardService implements IAdminDashboardService {
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,

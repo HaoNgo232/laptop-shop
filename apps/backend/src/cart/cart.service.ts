@@ -6,8 +6,16 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
+interface ICartService {
+  getCartByUserId(userId: string): Promise<CartDto>;
+  getCartEntityByUserId(userId: string): Promise<Cart>;
+  addItemToCart(userId: string, productId: string, quantity: number): Promise<CartDto>;
+  updateCartItemQuantity(userId: string, productId: string, quantity: number): Promise<CartDto>;
+  removeCartItem(userId: string, productId: string): Promise<CartDto>;
+}
+
 @Injectable()
-export class CartService {
+export class CartService implements ICartService {
   constructor(
     @InjectRepository(Cart)
     private readonly cartRepository: Repository<Cart>,

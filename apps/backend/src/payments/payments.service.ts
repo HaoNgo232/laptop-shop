@@ -7,8 +7,30 @@ import {
   QRGenerationRequest,
 } from '@/payments/interfaces/payment-provider.interfaces';
 
+interface IPaymentsService {
+  generateQRCode(
+    orderId: string,
+    amount: number,
+    paymentMethod: PaymentMethodEnum,
+    additionalInfo?: Partial<QRGenerationRequest>,
+  ): Promise<QRCodeResponse>;
+  processWebhook(
+    providerMethod: PaymentMethodEnum,
+    payload: any,
+    signature?: string,
+  ): Promise<TransactionResult>;
+  getAvailablePaymentMethods(): PaymentMethodEnum[];
+  isPaymentMethodSupported(method: PaymentMethodEnum): boolean;
+  switchPaymentMethod(
+    orderId: string,
+    amount: number,
+    fromMethod: PaymentMethodEnum,
+    toMethod: PaymentMethodEnum,
+  ): Promise<QRCodeResponse>;
+}
+
 @Injectable()
-export class PaymentsService {
+export class PaymentsService implements IPaymentsService {
   private readonly logger = new Logger(PaymentsService.name);
 
   constructor(private readonly paymentProviderFactory: PaymentProviderFactory) {}
