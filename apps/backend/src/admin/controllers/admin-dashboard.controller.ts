@@ -1,5 +1,4 @@
 import { Controller, Get, Inject } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AdminDashboardService } from '@/admin/services/admin-dashboard.service';
 import { DashboardSummaryDto } from '@/admin/dtos/dashboard-summary.dto';
 import { Auth } from '@/auth/decorators/auth.decorator';
@@ -7,8 +6,6 @@ import { AuthType } from '@/auth/enums/auth-type.enum';
 import { UserRole } from '@web-ecom/shared-types/auth/enums.cjs';
 import { DetailedStatsDto } from '@/admin/dtos/detailed-stats.dto';
 
-@ApiTags('Admin Dashboard')
-@ApiBearerAuth()
 @Controller('api/admin/dashboard')
 @Auth(AuthType.Bearer, UserRole.ADMIN)
 export class AdminDashboardController {

@@ -9,7 +9,7 @@ import { validationSchema } from '@/config/validation.schema';
 import { SnakeCaseNamingStrategy } from '@/config/snake-case-naming.strategy';
 import { ProductsModule } from '@/products/products.module';
 import { OrdersModule } from '@/orders/orders.module';
-import { PaymentModule } from '@/payment/payment.module';
+import { PaymenstModule } from '@/payments/payments.module';
 import { AppController } from '@/app.controller';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -55,7 +55,7 @@ import { ReviewsModule } from './reviews/reviews.module';
     OrdersModule,
     ConfigModule.forFeature(jwtConfig),
     JwtModule.registerAsync(jwtConfig.asProvider()),
-    PaymentModule,
+    PaymenstModule,
     AdminModule,
     ReviewsModule,
   ],

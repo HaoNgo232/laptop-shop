@@ -1,10 +1,3 @@
-export interface PaymentProvider {
-  readonly name: string;
-  generateQRCode(orderInfo: QRGenerationRequest): Promise<QRCodeResponse>;
-  verifyWebhook(payload: any, signature?: string): boolean;
-  processTransaction(transaction: any): Promise<TransactionResult>;
-}
-
 export interface QRGenerationRequest {
   orderId: string;
   amount: number;

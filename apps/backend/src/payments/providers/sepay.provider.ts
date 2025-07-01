@@ -1,14 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import {
-  PaymentProvider,
   QRGenerationRequest,
   QRCodeResponse,
   TransactionResult,
-} from '@/payment/interfaces/payment-provider.interfaces';
+} from '@/payments/interfaces/payment-provider.interfaces';
 import * as crypto from 'crypto';
 import axios from 'axios';
-import { SepayWebhookDto } from '@/payment/dtos/sepay-webhook.dto';
+import { SepayWebhookDto } from '@/payments/dtos/sepay-webhook.dto';
+import { PaymentProvider } from './payment-provider.factory';
+import { AxiosError } from 'axios';
 
 @Injectable()
 export class SepayProvider implements PaymentProvider {
@@ -236,28 +237,33 @@ export class SepayProvider implements PaymentProvider {
       // Note: Rate limit 2 calls/second
       await this.rateLimit();
 
-      const response = await axios.get(`${baseUrl}/transactions`, {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
+      const response: { data: { data: TransactionResult[] } } = await axios.get(
+        `${baseUrl}/transactions`,
+        {
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+          },
+          params: {
+            limit,
+            offset: 0,
+          },
+          timeout: 10000, // 10 seconds timeout
         },
-        params: {
-          limit,
-          offset: 0,
-        },
-        timeout: 10000, // 10 seconds timeout
-      });
+      );
 
       this.logger.log(`Fetched ${response.data?.data?.length || 0} transactions from SePay`);
       return response.data?.data || [];
     } catch (error) {
       this.logger.error('Error fetching transaction history:', error);
 
-      if (error.response) {
-        this.logger.error(`SePay API Error: ${error.response.status} - ${error.response.data}`);
+      if (error instanceof AxiosError) {
+        this.logger.error(`SePay API Error: ${error.response?.status} - ${error.response?.data}`);
       }
 
-      throw new Error(`Failed to fetch SePay transaction history: ${error.message}`);
+      throw new Error(
+        `Failed to fetch SePay transaction history: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   }
 
@@ -275,18 +281,23 @@ export class SepayProvider implements PaymentProvider {
 
       await this.rateLimit();
 
-      const response = await axios.get(`${baseUrl}/bank-accounts`, {
-        headers: {
-          Authorization: `Bearer ${apiKey}`,
-          'Content-Type': 'application/json',
+      const response: { data: { data: TransactionResult[] } } = await axios.get(
+        `${baseUrl}/bank-accounts`,
+        {
+          headers: {
+            Authorization: `Bearer ${apiKey}`,
+            'Content-Type': 'application/json',
+          },
+          timeout: 10000,
         },
-        timeout: 10000,
-      });
+      );
 
       return response.data?.data || [];
     } catch (error) {
       this.logger.error('Error fetching bank accounts:', error);
-      throw new Error(`Failed to fetch SePay bank accounts: ${error.message}`);
+      throw new Error(
+        `Failed to fetch SePay bank accounts: ${error instanceof Error ? error.message : 'Unknown error'}`,
+      );
     }
   }
 

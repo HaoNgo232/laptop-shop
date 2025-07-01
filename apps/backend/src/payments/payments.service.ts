@@ -1,15 +1,15 @@
 import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { PaymentMethodEnum } from '@/payment/enums/payment-method.enum';
+import { PaymentMethodEnum } from '@/payments/enums/payment-method.enum';
 import { PaymentProviderFactory } from './providers/payment-provider.factory';
 import {
   QRCodeResponse,
   TransactionResult,
   QRGenerationRequest,
-} from '@/payment/interfaces/payment-provider.interfaces';
+} from '@/payments/interfaces/payment-provider.interfaces';
 
 @Injectable()
-export class PaymentService {
-  private readonly logger = new Logger(PaymentService.name);
+export class PaymentsService {
+  private readonly logger = new Logger(PaymentsService.name);
 
   constructor(private readonly paymentProviderFactory: PaymentProviderFactory) {}
 

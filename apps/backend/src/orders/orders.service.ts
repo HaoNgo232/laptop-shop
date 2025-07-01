@@ -18,9 +18,9 @@ import { OrderDetailDto } from '@/orders/dtos/order-detail.dto';
 import { UpdateOrderStatusDto } from '@/orders/dtos/update-order-status.dto';
 import { PaginationMeta } from '@/products/interfaces/pagination-meta.interface';
 import { OrderMapperProvider } from '@/orders/providers/order-mapper.provider';
-import { PaymentService } from '@/payment/payment.service';
-import { PaymentMethodEnum } from '@/payment/enums/payment-method.enum';
-import { QRCodeResponse } from '@/payment/interfaces/payment-provider.interfaces';
+import { PaymentsService } from '@/payments/payments.service';
+import { PaymentMethodEnum } from '@/payments/enums/payment-method.enum';
+import { QRCodeResponse } from '@/payments/interfaces/payment-provider.interfaces';
 import { CartItem } from '@/cart/entities/cart-item.entity';
 
 @Injectable()
@@ -36,7 +36,7 @@ export class OrdersService {
     private readonly ordersProvider: OrdersProvider,
     private readonly orderMapperProvider: OrderMapperProvider,
     private readonly dataSource: DataSource,
-    private readonly paymentService: PaymentService,
+    private readonly PaymentsService: PaymentsService,
   ) {}
 
   /**
@@ -191,7 +191,7 @@ export class OrdersService {
     }
 
     try {
-      const qrCode = await this.paymentService.generateQRCode(
+      const qrCode = await this.PaymentsService.generateQRCode(
         order.id,
         Number(order.totalAmount),
         PaymentMethodEnum.SEPAY_QR,

@@ -1,7 +1,18 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PaymentMethodEnum } from '@/payment/enums/payment-method.enum';
-import { PaymentProvider } from '@/payment/interfaces/payment-provider.interfaces';
+import { PaymentMethodEnum } from '@/payments/enums/payment-method.enum';
+import {
+  QRCodeResponse,
+  QRGenerationRequest,
+  TransactionResult,
+} from '@/payments/interfaces/payment-provider.interfaces';
 import { SepayProvider } from './sepay.provider';
+
+export interface PaymentProvider {
+  readonly name: string;
+  generateQRCode(orderInfo: QRGenerationRequest): Promise<QRCodeResponse>;
+  verifyWebhook(payload: any, signature?: string): boolean;
+  processTransaction(transaction: any): Promise<TransactionResult>;
+}
 
 @Injectable()
 export class PaymentProviderFactory {

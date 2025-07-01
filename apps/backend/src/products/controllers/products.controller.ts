@@ -1,14 +1,13 @@
-import { Auth } from '@/auth/decorators/auth.decorator';
+import { Controller, Get, Param, Query } from '@nestjs/common';
+import { ProductsService } from '@/products/services/products.service';
 import { ProductDto } from '@/products/dtos/product.dto';
 import { QueryProductDto } from '@/products/dtos/query-product.dto';
-import { ProductsService } from '@/products/services/products.service';
-import { AuthType } from '@/auth/enums/auth-type.enum';
 import { PaginatedResponse } from '@/products/interfaces/paginated-response.interface';
-import { Controller, Get, Param, Query } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { Auth } from '@/auth/decorators/auth.decorator';
+import { AuthType } from '@/auth/enums/auth-type.enum';
 
-@Auth(AuthType.None)
 @Controller('api/products')
+@Auth(AuthType.None)
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 

@@ -5,7 +5,7 @@ import { OrderStatusEnum } from '@/orders/enums/order-status.enum';
 import { PaymentStatusEnum } from '@/orders/enums/payment-status.enum';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, Index } from 'typeorm';
 import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
-import { PaymentMethodEnum } from '@/payment/enums/payment-method.enum';
+import { PaymentMethodEnum } from '@/payments/enums/payment-method.enum';
 
 @Entity('orders')
 @Index(['userId'])

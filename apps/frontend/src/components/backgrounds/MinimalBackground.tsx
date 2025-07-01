@@ -130,7 +130,7 @@ export function MinimalBackground({
                                 onClick={onCTAClick}
                                 variant="outline"
                                 size="lg"
-                                className="bg-gray-700/30 border-gray-600 text-gray-100 hover:bg-gray-600/50 hover:border-gray-500"
+                                className="bg-gray-700/30 border-gray-600 text-gray-100 hover:bg-gray-600/50 hover:border-gray-500 hover:text-white"
                             >
                                 Bắt đầu
                                 <ArrowRight className="ml-2 w-5 h-5" />

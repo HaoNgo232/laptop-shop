@@ -1,5 +1,5 @@
 import { IsString, IsNumber, IsEnum, IsOptional, Min } from 'class-validator';
-import { PaymentMethodEnum } from '@/payment/enums/payment-method.enum';
+import { PaymentMethodEnum } from '@/payments/enums/payment-method.enum';
 
 export class CreatePaymentDto {
   @IsString()

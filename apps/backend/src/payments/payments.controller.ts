@@ -9,38 +9,34 @@ import {
   Param,
   Post,
 } from '@nestjs/common';
-import { PaymentMethodEnum } from '@/payment/enums/payment-method.enum';
-import { SepayWebhookDto } from './dtos/sepay-webhook.dto';
-import { PaymentService } from './payment.service';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { Auth } from '@/auth/decorators/auth.decorator';
 import { AuthType } from '@/auth/enums/auth-type.enum';
-import { OrdersService } from '@/orders/orders.service';
-import { PaymentStatusEnum } from '@/orders/enums/payment-status.enum';
-import { CreatePaymentDto } from '@/payment/dtos/create-payment.dto';
-import { QRCodeResponse } from '@/payment/interfaces/payment-provider.interfaces';
+import { PaymentsService } from '@/payments/payments.service';
+import { CreatePaymentDto } from '@/payments/dtos/create-payment.dto';
+import { SepayWebhookDto } from '@/payments/dtos/sepay-webhook.dto';
+import { QRCodeResponse } from '@/payments/interfaces/payment-provider.interfaces';
 import {
   FailedWebhookResponse,
   SuccessWebhookResponse,
-} from '@/payment/interfaces/webhook-response.interfaces';
+} from '@/payments/interfaces/webhook-response.interfaces';
+import { PaymentMethodEnum } from '@/payments/enums/payment-method.enum';
+import { OrdersService } from '@/orders/orders.service';
+import { PaymentStatusEnum } from '@/orders/enums/payment-status.enum';
 
-@ApiTags('Payment')
-@Controller('/api/payment')
-export class PaymentController {
-  private readonly logger = new Logger(PaymentController.name);
+@Controller('api/payment')
+export class PaymentsController {
+  private readonly logger = new Logger(PaymentsController.name);
 
   constructor(
-    private readonly paymentService: PaymentService,
+    private readonly paymentsService: PaymentsService,
     private readonly ordersService: OrdersService,
   ) {}
 
   @Post('create')
   @Auth(AuthType.Bearer)
-  @ApiOperation({ summary: 'Tạo thanh toán mới' })
-  @ApiResponse({ status: 201, description: 'Tạo thanh toán thành công' })
   async createPayment(@Body() createPaymentDto: CreatePaymentDto): Promise<QRCodeResponse> {
     try {
-      return await this.paymentService.generateQRCode(
+      return await this.paymentsService.generateQRCode(
         createPaymentDto.orderId,
         createPaymentDto.amount,
         createPaymentDto.provider,
@@ -58,8 +54,6 @@ export class PaymentController {
   @Post('webhook/sepay')
   @Auth(AuthType.None)
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Webhook endpoint cho SePay' })
-  @ApiResponse({ status: 200, description: 'Webhook xử lý thành công' })
   async handleSepayWebhook(
     @Body() payload: SepayWebhookDto,
     @Headers('x-sepay-signature') signature?: string,
@@ -67,7 +61,7 @@ export class PaymentController {
     try {
       this.logger.log(`Received SePay webhook for transaction: ${payload.id}`);
 
-      const result = await this.paymentService.processWebhook(
+      const result = await this.paymentsService.processWebhook(
         PaymentMethodEnum.SEPAY_QR,
         payload,
         signature,
@@ -100,7 +94,6 @@ export class PaymentController {
     } catch (error) {
       this.logger.error('Error processing SePay webhook:', error);
 
-      // Return 200 to SePay để tránh retry
       return {
         success: false,
         message: 'Webhook processing failed',
@@ -111,16 +104,14 @@ export class PaymentController {
 
   @Get('methods')
   @Auth(AuthType.None)
-  @ApiOperation({ summary: 'Lấy danh sách phương thức thanh toán' })
   getPaymentMethods(): { methods: PaymentMethodEnum[] } {
     return {
-      methods: this.paymentService.getAvailablePaymentMethods(),
+      methods: this.paymentsService.getAvailablePaymentMethods(),
     };
   }
 
   @Post('switch/:orderId')
   @Auth(AuthType.Bearer)
-  @ApiOperation({ summary: 'Chuyển đổi phương thức thanh toán' })
   async switchPaymentMethod(
     @Param('orderId') orderId: string,
     @Body()
@@ -131,7 +122,7 @@ export class PaymentController {
     },
   ): Promise<QRCodeResponse> {
     try {
-      return await this.paymentService.switchPaymentMethod(
+      return await this.paymentsService.switchPaymentMethod(
         orderId,
         body.amount,
         body.fromMethod,
