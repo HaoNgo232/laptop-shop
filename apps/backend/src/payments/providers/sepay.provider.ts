@@ -18,21 +18,27 @@ export class SepayProvider implements PaymentProvider {
 
   constructor(private readonly configService: ConfigService) {}
 
+  /**
+   * Tạo QR code cho thanh toán SePay
+   */
   generateQRCode(orderInfo: QRGenerationRequest): Promise<QRCodeResponse> {
     try {
+      // Lấy thông tin bank từ config hoặc từ request
       const bankAccount = orderInfo.bankAccount ?? this.configService.get('SEPAY_BANK_ACCOUNT');
       const bankCode = this.configService.get<string>('SEPAY_BANK_CODE');
       const accountName = this.configService.get<string>('SEPAY_ACCOUNT_NAME');
 
       // Format content với order ID để dễ tracking theo format của Sepay: DH{orderId}
+      // Pattern này sẽ được dùng để extract orderId trong webhook
       const content = `DH${orderInfo.orderId}`;
 
+      // Validation required fields
       if (!bankAccount) {
-        throw new Error('Bank account là bắt buộc nhưng chưa được cấu hình');
+        throw new Error('Bank account là bắt buộc nhưng chưa được cấu hình');
       }
 
       if (!bankCode) {
-        throw new Error('Bank code là bắt buộc nhưng chưa được cấu hình');
+        throw new Error('Bank code là bắt buộc nhưng chưa được cấu hình');
       }
 
       // Tạo QR URL theo format SePay
@@ -44,6 +50,7 @@ export class SepayProvider implements PaymentProvider {
         accountName,
       });
 
+      // Set expire time - default 15 phút
       const expireTime = new Date();
       expireTime.setMinutes(expireTime.getMinutes() + (orderInfo.expireMinutes || 15));
 
@@ -66,9 +73,11 @@ export class SepayProvider implements PaymentProvider {
     }
   }
 
+  /**
+   * Xác minh webhook từ SePay
+   */
   verifyWebhook(payload: SepayWebhookDto, signature?: string): boolean {
     try {
-      // Sepay không đề cập đến signature HMAC trong docs, nhưng nếu có thì vẫn check
       if (signature) {
         const secret = this.configService.get<string>('SEPAY_WEBHOOK_SECRET');
         if (!secret) {
@@ -76,22 +85,19 @@ export class SepayProvider implements PaymentProvider {
           return true; // Bỏ qua nếu không có secret
         }
 
+        // Tạo expected signature bằng HMAC SHA256
         const expectedSignature = crypto
           .createHmac('sha256', secret)
           .update(JSON.stringify(payload))
           .digest('hex');
 
+        // So sánh signature
         if (signature !== expectedSignature) {
           this.logger.error('Invalid webhook signature');
           return false;
         }
         this.logger.log('Webhook signature verified successfully.');
       }
-
-      // Validation cơ bản đã được thực hiện bởi DTO (class-validator)
-      // Chỉ cần kiểm tra logic nghiệp vụ ở đây nếu cần.
-      // Ví dụ: kiểm tra xem gateway có phải từ một nguồn đáng tin cậy hay không.
-      // Hiện tại, DTO đã đủ.
 
       return true;
     } catch (error) {
@@ -100,6 +106,9 @@ export class SepayProvider implements PaymentProvider {
     }
   }
 
+  /**
+   * Xử lý transaction từ SePay webhook
+   */
   async processTransaction(transaction: SepayWebhookDto): Promise<TransactionResult> {
     try {
       this.logger.log(`Processing transaction:`, {
@@ -110,21 +119,19 @@ export class SepayProvider implements PaymentProvider {
         transferAmount: transaction.transferAmount,
       });
 
-      // Ưu tiên sử dụng trường `code` mà SePay đã bóc tách sẵn.
-      // Nếu không có, thử bóc tách từ `content`.
       let orderId: string;
 
+      // Strategy 1: Extract từ field 'code' (ưu tiên cao nhất)
       if (transaction.code) {
-        // SePay có thể chỉ trả về partial code, cần check format
         if (transaction.code.startsWith('DH')) {
+          // Remove prefix DH để lấy pure orderId
           orderId = transaction.code.replace(/^DH/, '');
         } else {
           orderId = transaction.code;
         }
         this.logger.log(`Extracted orderId from 'code': ${orderId}`);
       } else {
-        // Fallback: extract từ content với regex cho UUID (có thể có prefix như IBFT)
-        // Format: "IBFT DHdf2019b9d47c40de95f1fa8cfe16f138" hoặc "DHdf2019b9-d47c-40de-95f1-fa8cfe16f138"
+        // Strategy 2: Extract từ content bằng regex pattern
         const orderMatch = transaction.content.match(/DH([a-f0-9-]{32,36})/i);
         if (!orderMatch || !orderMatch[1]) {
           throw new Error(
@@ -134,9 +141,8 @@ export class SepayProvider implements PaymentProvider {
 
         let extractedId = orderMatch[1];
 
-        // Nếu UUID không có dấu - thì thêm vào
+        // Handle UUID không có dấu gạch - format thành UUID standard
         if (extractedId.length === 32 && !extractedId.includes('-')) {
-          // Convert từ "df2019b9d47c40de95f1fa8cfe16f138" thành "df2019b9-d47c-40de-95f1-fa8cfe16f138"
           extractedId = [
             extractedId.slice(0, 8),
             extractedId.slice(8, 12),
@@ -151,7 +157,7 @@ export class SepayProvider implements PaymentProvider {
         this.logger.log(`Extracted orderId from 'content': ${orderId}`);
       }
 
-      // Validate UUID format
+      // Validation: Ensure orderId is valid UUID format
       const uuidRegex =
         /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
       if (!uuidRegex.test(orderId)) {
@@ -161,14 +167,16 @@ export class SepayProvider implements PaymentProvider {
 
       const amount = transaction.transferAmount;
 
-      // Determine transaction status
+      // Determine transaction status based on SePay webhook data
       let status: 'success' | 'failed' | 'pending' = 'pending';
       let message = 'Transaction is being processed.';
 
+      // Success condition: transferType = 'in' (incoming) và amount > 0
       if (transaction.transferType === 'in' && amount > 0) {
         status = 'success';
         message = 'Payment completed successfully.';
       } else {
+        // Failed: không phải incoming payment hoặc amount <= 0
         status = 'failed';
         message = 'Transaction was not an incoming payment.';
       }
@@ -195,6 +203,12 @@ export class SepayProvider implements PaymentProvider {
     }
   }
 
+  /**
+   * Generate SePay QR URL theo format chuẩn
+   *
+   * Format: https://qr.sepay.vn/img?acc={account}&bank={code}&amount={amount}&des={content}
+   * Template compact để QR nhỏ gọn hơn
+   */
   private generateSepayQRUrl(params: {
     bankAccount: string;
     bankCode: string;
@@ -211,9 +225,10 @@ export class SepayProvider implements PaymentProvider {
       bank: bankCode,
       amount: amount.toString(),
       des: content,
-      template: 'compact',
+      template: 'compact', // QR template compact
     });
 
+    // Optional: thêm account name nếu có
     if (accountName) {
       queryParams.append('name', accountName);
     }
@@ -221,7 +236,11 @@ export class SepayProvider implements PaymentProvider {
     return `${baseUrl}?${queryParams.toString()}`;
   }
 
-  // Utility method for API calls to SePay
+  /**
+   * Lấy lịch sử giao dịch từ SePay API
+   *
+   * Note: SePay có rate limit 2 calls/second
+   */
   async getTransactionHistory(limit: number = 20): Promise<TransactionResult[]> {
     try {
       const apiKey = this.configService.get<string>('SEPAY_API_KEY');
@@ -234,7 +253,7 @@ export class SepayProvider implements PaymentProvider {
         throw new Error('SEPAY_API_KEY not configured');
       }
 
-      // Note: Rate limit 2 calls/second
+      // Apply rate limit để tránh bị SePay reject
       await this.rateLimit();
 
       const response: { data: { data: TransactionResult[] } } = await axios.get(
@@ -248,7 +267,7 @@ export class SepayProvider implements PaymentProvider {
             limit,
             offset: 0,
           },
-          timeout: 10000, // 10 seconds timeout
+          timeout: 10000, // 10s timeout
         },
       );
 
@@ -257,6 +276,7 @@ export class SepayProvider implements PaymentProvider {
     } catch (error) {
       this.logger.error('Error fetching transaction history:', error);
 
+      // Log detailed error cho SePay API responses
       if (error instanceof AxiosError) {
         this.logger.error(`SePay API Error: ${error.response?.status} - ${error.response?.data}`);
       }
@@ -267,6 +287,11 @@ export class SepayProvider implements PaymentProvider {
     }
   }
 
+  /**
+   * Lấy danh sách bank accounts từ SePay
+   *
+   * Dùng để validate bank account có tồn tại và active không
+   */
   async getBankAccounts(): Promise<TransactionResult[]> {
     try {
       const apiKey = this.configService.get<string>('SEPAY_API_KEY');
@@ -279,6 +304,7 @@ export class SepayProvider implements PaymentProvider {
         throw new Error('SEPAY_API_KEY not configured');
       }
 
+      // Apply rate limit
       await this.rateLimit();
 
       const response: { data: { data: TransactionResult[] } } = await axios.get(
@@ -301,6 +327,11 @@ export class SepayProvider implements PaymentProvider {
     }
   }
 
+  /**
+   * Rate limiting để tuân thủ SePay API limits
+   *
+   * SePay cho phép maximum 2 calls/second
+   */
   private async rateLimit(): Promise<void> {
     // SePay rate limit: 2 calls/second
     return new Promise((resolve) => setTimeout(resolve, 500));

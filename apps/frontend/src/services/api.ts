@@ -3,11 +3,15 @@ import axios, {
   type AxiosInstance,
   type AxiosResponse,
   type AxiosError,
+  InternalAxiosRequestConfig,
 } from "axios";
 import type { ApiError } from "@/types/api";
+import { LoginResponse } from "@/types/auth";
+import { authService } from "@/services/authService";
 
 class ApiClient {
   private readonly client: AxiosInstance;
+  private refreshTokenPromise: Promise<LoginResponse> | null = null;
 
   constructor() {
     this.client = axios.create({
@@ -38,18 +42,41 @@ class ApiClient {
     this.client.interceptors.response.use(
       (response: AxiosResponse) => response,
       async (error: AxiosError) => {
-        const originalRequest = error.config;
+        const originalRequest = error.config as InternalAxiosRequestConfig & {
+          _retry?: boolean;
+        };
 
         // Handle 401: token expired
-        if (error.response?.status === 401 && originalRequest) {
-          // Try refresh token logic here
-          // For now, just clear tokens and redirect
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("refreshToken");
+        if (
+          error.response?.status === 401 &&
+          originalRequest &&
+          !originalRequest._retry
+        ) {
+          originalRequest._retry = true; // Đánh dấu để tránh lặp vô hạn
+          if (!this.refreshTokenPromise) {
+            this.refreshTokenPromise = authService.refreshToken();
+          }
+          try {
+            const { accessToken } = await this.refreshTokenPromise;
 
-          console.warn("🚨 401 Unauthorized - Token cleared");
+            if (originalRequest.headers) {
+              originalRequest.headers["Authorization"] =
+                `Bearer ${accessToken}`;
+            }
+            return await this.client(originalRequest);
+          } catch (refreshError) {
+            console.error(
+              "Phiên làm việc hết hạn, đang đăng xuất.",
+              refreshError,
+            );
+            await authService.logout();
+            return Promise.reject(
+              this.transformError(refreshError as AxiosError),
+            );
+          } finally {
+            this.refreshTokenPromise = null;
+          }
         }
-
         return Promise.reject(this.transformError(error));
       },
     );

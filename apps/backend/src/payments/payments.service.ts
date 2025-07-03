@@ -1,24 +1,23 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common';
-import { PaymentMethodEnum } from '@/payments/enums/payment-method.enum';
+import { BadRequestException, forwardRef, Inject, Injectable, Logger } from '@nestjs/common';
+import { PaymentMethodEnum } from '@/payments/enums/payments-method.enum';
 import { PaymentProviderFactory } from './providers/payment-provider.factory';
 import {
   QRCodeResponse,
   TransactionResult,
   QRGenerationRequest,
 } from '@/payments/interfaces/payment-provider.interfaces';
+import { AdminOrdersService } from '@/orders/services/admin-orders.service';
+import { PaymentStatusEnum } from '@/orders/enums/payment-status.enum';
+import { WebhookResponse } from '@/payments/interfaces/webhook-response.interfaces';
+import { CreatePaymentDto } from '@/payments/dtos/create-payment.dto';
 
 interface IPaymentsService {
-  generateQRCode(
-    orderId: string,
-    amount: number,
-    paymentMethod: PaymentMethodEnum,
-    additionalInfo?: Partial<QRGenerationRequest>,
-  ): Promise<QRCodeResponse>;
+  generateQRCode(createPaymentDto: CreatePaymentDto): Promise<QRCodeResponse>;
   processWebhook(
     providerMethod: PaymentMethodEnum,
     payload: any,
     signature?: string,
-  ): Promise<TransactionResult>;
+  ): Promise<WebhookResponse>;
   getAvailablePaymentMethods(): PaymentMethodEnum[];
   isPaymentMethodSupported(method: PaymentMethodEnum): boolean;
   switchPaymentMethod(
@@ -33,20 +32,20 @@ interface IPaymentsService {
 export class PaymentsService implements IPaymentsService {
   private readonly logger = new Logger(PaymentsService.name);
 
-  constructor(private readonly paymentProviderFactory: PaymentProviderFactory) {}
+  constructor(
+    private readonly paymentProviderFactory: PaymentProviderFactory,
+    @Inject(forwardRef(() => AdminOrdersService))
+    private readonly adminOrdersService: AdminOrdersService,
+  ) {}
 
   /**
    * Tạo QR code thanh toán (được gọi bởi OrdersService)
    */
-  async generateQRCode(
-    orderId: string,
-    amount: number,
-    paymentMethod: PaymentMethodEnum,
-    additionalInfo?: Partial<QRGenerationRequest>,
-  ): Promise<QRCodeResponse> {
+  async generateQRCode(createPaymentDto: CreatePaymentDto): Promise<QRCodeResponse> {
+    const { orderId, amount, paymentMethod, bankAccount, expireMinutes } = createPaymentDto;
     try {
       if (!this.paymentProviderFactory.isProviderSupported(paymentMethod)) {
-        throw new BadRequestException(`Payment method ${paymentMethod} is not supported`);
+        throw new BadRequestException(`Phuong thuc thanh toan ${paymentMethod} khong duoc ho tro`);
       }
 
       const provider = this.paymentProviderFactory.getProvider(paymentMethod);
@@ -55,15 +54,16 @@ export class PaymentsService implements IPaymentsService {
         orderId,
         amount,
         content: `Thanh toan cho don hang ${orderId}`,
-        ...additionalInfo,
+        bankAccount,
+        expireMinutes,
       };
 
       const result = await provider.generateQRCode(qrRequest);
 
-      this.logger.log(`Generated QR code for order ${orderId} using ${paymentMethod}`);
+      this.logger.log(`Tao QR code thanh toan cho don hang ${orderId} thanh cong`);
       return result;
     } catch (error) {
-      this.logger.error(`Failed to generate QR code for order ${orderId}:`, error);
+      this.logger.error(`Tạo QR code thất bại cho đơn hàng ${orderId}:`, error);
       throw error;
     }
   }
@@ -75,46 +75,63 @@ export class PaymentsService implements IPaymentsService {
     providerMethod: PaymentMethodEnum,
     payload: any,
     signature?: string,
-  ): Promise<TransactionResult> {
+  ): Promise<WebhookResponse> {
     try {
       const provider = this.paymentProviderFactory.getProvider(providerMethod);
 
-      // Verify webhook
+      // Kiểm tra webhook
       if (!provider.verifyWebhook(payload, signature)) {
-        throw new BadRequestException('Invalid webhook signature or payload');
+        throw new BadRequestException('Webhook khong hop le');
       }
 
-      // Process transaction
+      // Xử lý giao dich
       const result = await provider.processTransaction(payload);
 
       this.logger.log(
         `Processed ${result.status} transaction ${result.transactionId} for order ${result.orderId}`,
       );
+      if (result.status === 'success') {
+        await this.adminOrdersService.updatePaymentStatus(
+          result.orderId,
+          result.transactionId,
+          PaymentStatusEnum.PAID,
+        );
+        this.logger.log(`Don hang ${result.orderId} thanh toan thanh cong`);
+      } else if (result.status === 'failed') {
+        await this.adminOrdersService.updatePaymentStatus(
+          result.orderId,
+          result.transactionId,
+          PaymentStatusEnum.FAILED,
+        );
+        this.logger.log(`Don hang ${result.orderId} thanh toan that bai`);
+      }
 
-      return result;
+      return {
+        success: true,
+        message: 'Webhook processed successfully',
+        transactionId: result.transactionId,
+        orderId: result.orderId,
+        status: result.status,
+      };
     } catch (error) {
       this.logger.error(`Failed to process webhook for ${providerMethod}:`, error);
-      throw error;
+
+      return {
+        success: false,
+        message: 'Webhook processing failed',
+        error: error instanceof Error ? error.message : 'Unknown error',
+      };
     }
   }
 
-  /**
-   * Lấy danh sách payment methods được hỗ trợ
-   */
   getAvailablePaymentMethods(): PaymentMethodEnum[] {
     return this.paymentProviderFactory.getAvailableProviders();
   }
 
-  /**
-   * Kiểm tra payment method có được hỗ trợ không
-   */
   isPaymentMethodSupported(method: PaymentMethodEnum): boolean {
     return this.paymentProviderFactory.isProviderSupported(method);
   }
 
-  /**
-   * Chuyển đổi payment provider cho đơn hàng (fallback mechanism)
-   */
   async switchPaymentMethod(
     orderId: string,
     amount: number,
@@ -123,16 +140,20 @@ export class PaymentsService implements IPaymentsService {
   ): Promise<QRCodeResponse> {
     try {
       if (!this.isPaymentMethodSupported(toMethod)) {
-        throw new BadRequestException(`Target payment method ${toMethod} is not supported`);
+        throw new BadRequestException(`Phuong thuc thanh toan ${toMethod} khong duoc ho tro`);
       }
 
       this.logger.log(
-        `Switching payment method for order ${orderId} from ${fromMethod} to ${toMethod}`,
+        `Chuyen doi phuong thuc thanh toan cho don hang ${orderId} tu ${fromMethod} sang ${toMethod}`,
       );
 
-      return await this.generateQRCode(orderId, amount, toMethod);
+      return await this.generateQRCode({
+        orderId,
+        amount,
+        paymentMethod: toMethod,
+      });
     } catch (error) {
-      this.logger.error(`Failed to switch payment method for order ${orderId}:`, error);
+      this.logger.error(`Chuyen phuong thuc thanh cho don hanh that bai ${orderId}:`, error);
       throw error;
     }
   }

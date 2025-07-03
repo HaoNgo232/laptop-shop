@@ -77,7 +77,10 @@ export class UsersOrdersService implements IUsersOrdersService {
   /**
    * Lấy danh sách đơn hàng của user
    */
-  async findAll(userId: string, query: PaginationQueryDto): Promise<PaginatedResponse<OrderDto>> {
+  async findAll(
+    userId: string,
+    query: PaginationQueryDto,
+  ): Promise<PaginatedResponse<OrderDto> & { message: string }> {
     try {
       this.logger.log(`📦 Lấy danh sách đơn hàng cho user: ${userId}, query:`, query);
 
@@ -98,7 +101,20 @@ export class UsersOrdersService implements IUsersOrdersService {
         meta: this.createPaginationMetaUseCase.execute(total, page, limit),
       };
 
-      return result;
+      // Tạo message phù hợp
+      let message: string;
+      if (result.meta.totalItems === 0) {
+        message = 'Bạn chưa có đơn hàng nào. Hãy bắt đầu mua sắm ngay!';
+      } else if (result.meta.totalItems === 1) {
+        message = 'Bạn có 1 đơn hàng.';
+      } else {
+        message = `Bạn có ${result.meta.totalItems} đơn hàng.`;
+      }
+
+      return {
+        ...result,
+        message,
+      };
     } catch (error) {
       this.logger.error(
         `PaymentsService Lỗi khi lấy danh sách đơn hàng cho user ${userId}:`,

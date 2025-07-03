@@ -32,19 +32,9 @@ export class OrdersController {
   ): Promise<PaginatedResponse<OrderDto> & { message: string }> {
     const result = await this.usersOrdersService.findAll(userId, query);
 
-    // Tạo message phù hợp
-    let message: string;
-    if (result.meta.totalItems === 0) {
-      message = 'Bạn chưa có đơn hàng nào. Hãy bắt đầu mua sắm ngay!';
-    } else if (result.meta.totalItems === 1) {
-      message = 'Bạn có 1 đơn hàng.';
-    } else {
-      message = `Bạn có ${result.meta.totalItems} đơn hàng.`;
-    }
-
     return {
       ...result,
-      message,
+      message: result.message,
     };
   }
 

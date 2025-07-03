@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { Order } from '@/orders/entities/order.entity';
-import { PaymentMethodEnum } from '@/payments/enums/payment-method.enum';
+import { PaymentMethodEnum } from '@/payments/enums/payments-method.enum';
 import { PaymentsService } from '@/payments/payments.service';
 import { QRCodeResponse } from '@/payments/interfaces/payment-provider.interfaces';
 
@@ -23,11 +23,12 @@ export class GeneratePaymentQrUseCase {
     }
 
     try {
-      const qrCode = await this.paymentsService.generateQRCode(
-        order.id,
-        Number(order.totalAmount),
+      const qrCode = await this.paymentsService.generateQRCode({
+        orderId: order.id,
+        amount: Number(order.totalAmount),
         paymentMethod,
-      );
+        expireMinutes: 15,
+      });
 
       this.logger.log(`QR code generated successfully for order ${order.id}`);
       return qrCode;

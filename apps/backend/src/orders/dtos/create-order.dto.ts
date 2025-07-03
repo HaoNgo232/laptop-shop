@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsOptional, IsString, MinLength, MaxLength, IsEnum } from 'class-validator';
-import { PaymentMethodEnum } from '@/payments/enums/payment-method.enum';
+import { PaymentMethodEnum } from '@/payments/enums/payments-method.enum';
 
 export class CreateOrderDto {
   @IsNotEmpty({ message: 'Địa chỉ giao hàng không được để trống' })

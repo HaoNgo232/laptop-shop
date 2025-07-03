@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { PaymentMethodEnum } from '@/payments/enums/payment-method.enum';
+import { PaymentMethodEnum } from '@/payments/enums/payments-method.enum';
 import {
   QRCodeResponse,
   QRGenerationRequest,
