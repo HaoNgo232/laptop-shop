@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { AdminLayout } from '@/components/admin/AdminLayout';
 import { useAdminCategoryStore } from '@/stores/admin/adminCategoryStore';
-import CategoryForm from '@/components/category/CategoryForm';
+import CategoryForm from '@/components/categorys/CategoryForm';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';

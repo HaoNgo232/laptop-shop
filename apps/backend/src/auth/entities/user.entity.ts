@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, OneToOne } from 'typeorm';
-import { IsEmail, IsString, MinLength } from 'class-validator';
+import { IsEmail, IsString, IsStrongPassword, MinLength } from 'class-validator';
 import { Cart } from '@/cart/entities/cart.entity';
 import { BaseEntity } from '@/common/entities/base.entity';
 import { UserRole } from '@/auth/enums/user-role.enum';
