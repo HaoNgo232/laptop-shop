@@ -15,8 +15,7 @@ import { UsersOrdersService } from '@/orders/services/users-orders.service';
 import { CreatePaginationMetaUseCase } from '@/orders/usecases/create-pagination-meta.usecase';
 import { CreateOrderTransactionUseCase } from '@/orders/usecases/create-order-transaction.usecase';
 import { GeneratePaymentQrUseCase } from '@/orders/usecases/generate-payment-qr.usecase';
-import { ValidateCartUseCase } from '@/orders/usecases/validate-cart.usecase';
-import { ValidateStockAndCalculateTotalUseCase } from '@/orders/usecases/validate-stock-and-calculate-total.usecase';
+import { ValidateStockUseCase } from '@/orders/usecases/validate-stock.usecase';
 
 @Module({
   imports: [
@@ -32,8 +31,7 @@ import { ValidateStockAndCalculateTotalUseCase } from '@/orders/usecases/validat
     OrdersProvider,
     OrderMapperProvider,
     CreatePaginationMetaUseCase,
-    ValidateCartUseCase,
-    ValidateStockAndCalculateTotalUseCase,
+    ValidateStockUseCase,
     CreateOrderTransactionUseCase,
     GeneratePaymentQrUseCase,
   ],

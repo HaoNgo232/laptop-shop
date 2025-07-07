@@ -13,7 +13,7 @@ import { Product } from '@/products/entities/product.entity';
   imports: [
     TypeOrmModule.forFeature([Cart, CartItem, User, Product]),
     forwardRef(() => AuthModule),
-    ProductsModule,
+    forwardRef(() => ProductsModule),
   ],
   controllers: [CartController],
   providers: [CartService],

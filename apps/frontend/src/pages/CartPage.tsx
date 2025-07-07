@@ -71,7 +71,7 @@ export function CartPage() {
         );
     }
 
-    // Nếu chưa login thì không render gì (đã redirect)
+    // Nếu chưa login thì không render gì
     if (!isAuthenticated) {
         return null;
     }

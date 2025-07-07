@@ -67,11 +67,6 @@ import { ReviewsModule } from './reviews/reviews.module';
       useClass: AuthenticationGuard,
     },
     AccessTokenGuard,
-    // Tạm thời comment out để handle lỗi manual
-    // {
-    //   provide: APP_FILTER,
-    //   useClass: GlobalExceptionFilter,
-    // },
   ],
 })
 export class AppModule {}

@@ -10,10 +10,10 @@ import { OrderDetailDto } from '@/orders/dtos/order-detail.dto';
 import { OrderMapperProvider } from '@/orders/providers/order-mapper.provider';
 import { QRCodeResponse } from '@/payments/interfaces/payment-provider.interfaces';
 import { CreatePaginationMetaUseCase } from '@/orders/usecases/create-pagination-meta.usecase';
-import { ValidateCartUseCase } from '@/orders/usecases/validate-cart.usecase';
-import { ValidateStockAndCalculateTotalUseCase } from '@/orders/usecases/validate-stock-and-calculate-total.usecase';
+import { ValidateStockUseCase } from '@/orders/usecases/validate-stock.usecase';
 import { CreateOrderTransactionUseCase } from '@/orders/usecases/create-order-transaction.usecase';
 import { GeneratePaymentQrUseCase } from '@/orders/usecases/generate-payment-qr.usecase';
+import { CartService } from '@/cart/cart.service';
 
 interface IUsersOrdersService {
   create(
@@ -34,10 +34,10 @@ export class UsersOrdersService implements IUsersOrdersService {
     private readonly orderMapperProvider: OrderMapperProvider,
     private readonly ordersProvider: OrdersProvider,
     private readonly createPaginationMetaUseCase: CreatePaginationMetaUseCase,
-    private readonly validateCartUseCase: ValidateCartUseCase,
-    private readonly validateStockAndCalculateTotalUseCase: ValidateStockAndCalculateTotalUseCase,
+    private readonly validateStockUseCase: ValidateStockUseCase,
     private readonly createOrderTransactionUseCase: CreateOrderTransactionUseCase,
     private readonly generatePaymentQrUseCase: GeneratePaymentQrUseCase,
+    private readonly cartService: CartService,
   ) {}
 
   /**
@@ -47,13 +47,11 @@ export class UsersOrdersService implements IUsersOrdersService {
     userId: string,
     createOrderDto: CreateOrderDto,
   ): Promise<{ order: OrderDto; qrCode?: QRCodeResponse }> {
-    // 1. Validate cart using use case
-    const cart = await this.validateCartUseCase.execute(userId);
+    // 1. Tìm cart của user
+    const cart = await this.cartService.findOneEntity(userId);
 
     // 2. Validate stock và calculate total using use case
-    const { orderItems, totalAmount } = await this.validateStockAndCalculateTotalUseCase.execute(
-      cart.cartItems,
-    );
+    const { orderItems, totalAmount } = await this.validateStockUseCase.execute(cart.cartItems);
 
     // 3. Create order in transaction using use case
     const order = await this.createOrderTransactionUseCase.execute({

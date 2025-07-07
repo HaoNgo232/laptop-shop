@@ -10,10 +10,6 @@ export default registerAs('database', () => ({
   synchronize: process.env.NODE_ENV !== 'production',
   // Chỉ xóa schema trong môi trường phát triển và test
   dropSchema: ['development', 'test'].includes(process.env.NODE_ENV ?? ''),
-  // Sử dụng logging chỉ trong môi trường phát triển
-  //   logging: process.env.NODE_ENV === 'development',
-  // logging: process.env.NODE_ENV === 'development' ? true : ['error', 'schema'],
-
   // Thêm cấu hình migrations
   migrationsRun: process.env.NODE_ENV === 'production',
   migrations: ['dist/migrations/**/*.js'],

@@ -11,7 +11,7 @@ export interface StockValidationResult {
 }
 
 @Injectable()
-export class ValidateStockAndCalculateTotalUseCase {
+export class ValidateStockUseCase {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
@@ -19,7 +19,6 @@ export class ValidateStockAndCalculateTotalUseCase {
 
   /**
    * Validate stock và tính tổng tiền
-   * Tuân thủ Single Responsibility Principle - chỉ lo validation stock và calculation
    */
   async execute(cartItems: CartItem[]): Promise<StockValidationResult> {
     let totalAmount = 0;
@@ -27,16 +26,16 @@ export class ValidateStockAndCalculateTotalUseCase {
 
     for (const cartItem of cartItems) {
       // Validate quantity
-      this.validateQuantity(cartItem.quantity);
+      this.checkQuantity(cartItem.quantity);
 
       // Lấy và validate product
-      const product = await this.getAndValidateProduct(cartItem.productId);
+      const product = await this.getProduct(cartItem.productId);
 
       // Validate stock availability
-      this.validateStockAvailability(product, cartItem.quantity);
+      this.checkStock(product, cartItem.quantity);
 
       // Validate price
-      this.validatePrice(product.price);
+      this.checkPrice(product.price);
 
       // Calculate item total
       const itemTotal = product.price * cartItem.quantity;
@@ -52,13 +51,13 @@ export class ValidateStockAndCalculateTotalUseCase {
     return { orderItems, totalAmount };
   }
 
-  private validateQuantity(quantity: number): void {
+  private checkQuantity(quantity: number): void {
     if (quantity <= 0) {
       throw new BadRequestException(`Số lượng sản phẩm phải lớn hơn 0, nhận được: ${quantity}`);
     }
   }
 
-  private async getAndValidateProduct(productId: string): Promise<Product> {
+  private async getProduct(productId: string): Promise<Product> {
     const product = await this.productRepository.findOne({
       where: { id: productId },
     });
@@ -70,7 +69,7 @@ export class ValidateStockAndCalculateTotalUseCase {
     return product;
   }
 
-  private validateStockAvailability(product: Product, requestedQuantity: number): void {
+  private checkStock(product: Product, requestedQuantity: number): void {
     if (product.stockQuantity < requestedQuantity) {
       throw new BadRequestException(
         `Sản phẩm "${product.name}" không đủ hàng. Còn lại: ${product.stockQuantity}, yêu cầu: ${requestedQuantity}`,
@@ -78,7 +77,7 @@ export class ValidateStockAndCalculateTotalUseCase {
     }
   }
 
-  private validatePrice(price: number): void {
+  private checkPrice(price: number): void {
     if (price < 0) {
       throw new BadRequestException(`Giá sản phẩm không hợp lệ: ${price}`);
     }

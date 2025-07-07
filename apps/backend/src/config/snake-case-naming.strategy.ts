@@ -1,6 +1,11 @@
 import { DefaultNamingStrategy, NamingStrategyInterface } from 'typeorm';
 import { snakeCase } from 'typeorm/util/StringUtils';
 
+/**
+ * Chức năng: Strategy đặt tên theo kiểu snake_case cho các bảng và cột trong cơ sở dữ liệu.
+ * Mục đích: Đảm bảo rằng tất cả các tên bảng và cột trong cơ sở dữ liệu đều được định dạng theo kiểu snake_case,
+ * giúp tăng tính nhất quán và dễ đọc trong mã nguồn.
+ */
 export class SnakeCaseNamingStrategy
   extends DefaultNamingStrategy
   implements NamingStrategyInterface

@@ -5,10 +5,10 @@ import { QRCodeResponse } from '@/payments/interfaces/payment-provider.interface
 import { OrderMapperProvider } from '@/orders/providers/order-mapper.provider';
 
 // Import các use cases
-import { ValidateCartUseCase } from './validate-cart.usecase';
-import { ValidateStockAndCalculateTotalUseCase } from './validate-stock-and-calculate-total.usecase';
+import { ValidateStockUseCase } from '@/orders/usecases/validate-stock.usecase';
 import { CreateOrderTransactionUseCase } from './create-order-transaction.usecase';
 import { GeneratePaymentQrUseCase } from './generate-payment-qr.usecase';
+import { CartService } from '@/cart/cart.service';
 
 export interface CreateOrderResult {
   order: OrderDto;
@@ -18,26 +18,22 @@ export interface CreateOrderResult {
 @Injectable()
 export class CreateOrderUseCase {
   constructor(
-    private readonly validateCartUseCase: ValidateCartUseCase,
-    private readonly validateStockAndCalculateTotalUseCase: ValidateStockAndCalculateTotalUseCase,
+    private readonly validateStockUseCase: ValidateStockUseCase,
     private readonly createOrderTransactionUseCase: CreateOrderTransactionUseCase,
     private readonly generatePaymentQrUseCase: GeneratePaymentQrUseCase,
     private readonly orderMapperProvider: OrderMapperProvider,
+    private readonly cartService: CartService,
   ) {}
 
   /**
    * Main orchestrator cho order creation
-   * Tuân thủ Single Responsibility Principle - chỉ orchestrate, không implement chi tiết
-   * Tuân thủ Dependency Inversion Principle - depend on abstractions (use cases)
    */
   async execute(userId: string, createOrderDto: CreateOrderDto): Promise<CreateOrderResult> {
-    // 1. Validate cart
-    const cart = await this.validateCartUseCase.execute(userId);
+    // 1. Tìm cart của user
+    const cart = await this.cartService.findOneEntity(userId);
 
     // 2. Validate stock và calculate total
-    const { orderItems, totalAmount } = await this.validateStockAndCalculateTotalUseCase.execute(
-      cart.cartItems,
-    );
+    const { orderItems, totalAmount } = await this.validateStockUseCase.execute(cart.cartItems);
 
     // 3. Create order in transaction
     const order = await this.createOrderTransactionUseCase.execute({

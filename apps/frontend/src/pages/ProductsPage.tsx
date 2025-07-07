@@ -158,7 +158,7 @@ export function ProductsPage() {
                     <div className="flex justify-between items-center mb-6">
                         <h2 className="text-xl font-semibold text-gray-900">
                             {currentCategory === 'all'
-                                ? `Tất cả sản phẩm (${products.length} sản phẩm)`
+                                ? `Tất cả sản phẩm`
                                 : `${categories.find(c => c.id === currentCategory)?.name ?? 'Danh mục'} (${products.length} sản phẩm)`
                             }
                         </h2>

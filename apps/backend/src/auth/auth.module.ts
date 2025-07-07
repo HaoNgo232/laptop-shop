@@ -19,12 +19,9 @@ import { TokenBlacklistProvider } from '@/auth/providers/token-blacklist.provide
 import { AuthenticationGuard } from '@/auth/guards/authentication/authentication.guard';
 import { GenerateTokensProvider } from '@/auth/providers/generate-tokens.provider';
 import { RolesGuard } from '@/auth/guards/authentication/roles.guard';
-import { CreateUserUseCase } from './use-cases/create-user.use-case';
-import { ValidateUserUseCase } from './use-cases/validate-user.use-case';
-import { ForgotPasswordUseCase } from './use-cases/forgot-password.use-case';
-import { ResetPasswordUseCase } from './use-cases/reset-password.use-case';
-import { RefreshTokenUseCase } from './use-cases/refresh-token.use-case';
-import { ChangePasswordUseCase } from './use-cases/change-password.use-case';
+import { CreateUserUseCase } from '@/auth/use-cases/create-user.use-case';
+import { ValidateUserUseCase } from '@/auth/use-cases/validate-user.use-case';
+import { RefreshTokenUseCase } from '@/auth/use-cases/refresh-token.use-case';
 
 @Module({
   imports: [
@@ -58,21 +55,8 @@ import { ChangePasswordUseCase } from './use-cases/change-password.use-case';
     RolesGuard,
     CreateUserUseCase,
     ValidateUserUseCase,
-    ForgotPasswordUseCase,
-    ResetPasswordUseCase,
     RefreshTokenUseCase,
-    ChangePasswordUseCase,
   ],
-  exports: [
-    UsersService,
-    JwtStrategy,
-    TokenBlacklistProvider,
-    BcryptProvider,
-    JwtModule,
-    GenerateTokensProvider,
-    AuthenticationGuard,
-    AccessTokenGuard,
-    RolesGuard,
-  ],
+  exports: [UsersService, AccessTokenGuard, RolesGuard],
 })
 export class AuthModule {}

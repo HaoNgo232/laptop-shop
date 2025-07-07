@@ -1,5 +1,4 @@
 import { LoginResponseDto } from '@/auth/dtos/login-response.dto';
-import { ResetPasswordDto } from '@/auth/dtos/reset-password.dto';
 import { RefreshTokenDto } from '@/auth/dtos/refresh-token.dto';
 import { Injectable } from '@nestjs/common';
 import { GenerateTokensProvider } from '@/auth/providers/generate-tokens.provider';
@@ -9,11 +8,7 @@ import { LoginUserDto } from '@/auth/dtos/login.dto';
 import { User } from '@/auth/entities/user.entity';
 import { CreateUserUseCase } from '@/auth/use-cases/create-user.use-case';
 import { ValidateUserUseCase } from '@/auth/use-cases/validate-user.use-case';
-import { ForgotPasswordUseCase } from '@/auth/use-cases/forgot-password.use-case';
-import { ResetPasswordUseCase } from '@/auth/use-cases/reset-password.use-case';
 import { RefreshTokenUseCase } from '@/auth/use-cases/refresh-token.use-case';
-import { ChangePasswordDto } from '../dtos/change-password.dto';
-import { ChangePasswordUseCase } from '../use-cases/change-password.use-case';
 
 interface IAuthService {
   register(registerUserDto: RegisterUserDto): Promise<User>;
@@ -25,12 +20,6 @@ interface IAuthService {
   refreshToken(refreshTokenDto: RefreshTokenDto): Promise<LoginResponseDto>;
   validateUser(email: string, password: string): Promise<User | null>;
   generateTokens(user: User): Promise<{ accessToken: string; refreshToken: string }>;
-  forgotPassword(email: string): Promise<void>;
-  resetPassword(resetPasswordDto: ResetPasswordDto): Promise<void>;
-  changePassword(
-    userId: string,
-    changePasswordDto: ChangePasswordDto,
-  ): Promise<{ message: string }>;
   logout(accessToken: string, refreshToken?: string): Promise<void>;
 }
 
@@ -41,10 +30,7 @@ export class AuthService implements IAuthService {
     private readonly tokenBlacklistProvider: TokenBlacklistProvider,
     private readonly createUserUseCase: CreateUserUseCase,
     private readonly validateUserUseCase: ValidateUserUseCase,
-    private readonly forgotPasswordUseCase: ForgotPasswordUseCase,
-    private readonly resetPasswordUseCase: ResetPasswordUseCase,
     private readonly refreshTokenUseCase: RefreshTokenUseCase,
-    private readonly changePasswordUseCase: ChangePasswordUseCase,
   ) {}
 
   /**
@@ -89,21 +75,6 @@ export class AuthService implements IAuthService {
   async generateTokens(user: User): Promise<{ accessToken: string; refreshToken: string }> {
     const tokens = await this.generateTokensProvider.generateTokens(user);
     return tokens;
-  }
-
-  async forgotPassword(email: string): Promise<void> {
-    return this.forgotPasswordUseCase.execute(email);
-  }
-
-  async resetPassword(resetPasswordDto: ResetPasswordDto): Promise<void> {
-    return this.resetPasswordUseCase.execute(resetPasswordDto);
-  }
-
-  async changePassword(
-    userId: string,
-    changePasswordDto: ChangePasswordDto,
-  ): Promise<{ message: string }> {
-    return this.changePasswordUseCase.execute(userId, changePasswordDto);
   }
 
   /**

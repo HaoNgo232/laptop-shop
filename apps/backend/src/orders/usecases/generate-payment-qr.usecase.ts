@@ -12,7 +12,6 @@ export class GeneratePaymentQrUseCase {
 
   /**
    * Tạo QR code cho payment nếu cần thiết
-   * Tuân thủ Single Responsibility Principle - chỉ lo QR generation
    */
   async execute(
     order: Order,
