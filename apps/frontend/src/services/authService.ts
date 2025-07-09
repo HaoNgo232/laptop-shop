@@ -66,7 +66,7 @@ class AuthService {
   // Get current user profile
   async getCurrentUser(): Promise<User> {
     try {
-      return await apiClient.get<User>("/api/auth/me");
+      return await apiClient.get<User>("/api/users/profile");
     } catch (error) {
       console.error("Get current user error:", error);
       throw error;

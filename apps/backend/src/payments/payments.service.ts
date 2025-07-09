@@ -87,22 +87,29 @@ export class PaymentsService implements IPaymentsService {
       // Xử lý giao dich
       const result = await provider.processTransaction(payload);
 
+      // Log thông tin giao dich
       this.logger.log(
         `Processed ${result.status} transaction ${result.transactionId} for order ${result.orderId}`,
       );
+
+      // Cập nhật trạng thái thanh toán
       if (result.status === 'success') {
+        // Cập nhật trạng thái thanh toán thành PAID
         await this.adminOrdersService.updatePaymentStatus(
           result.orderId,
           result.transactionId,
           PaymentStatusEnum.PAID,
         );
+
         this.logger.log(`Don hang ${result.orderId} thanh toan thanh cong`);
       } else if (result.status === 'failed') {
+        // Cập nhật trạng thái thanh toán thành FAILED
         await this.adminOrdersService.updatePaymentStatus(
           result.orderId,
           result.transactionId,
           PaymentStatusEnum.FAILED,
         );
+
         this.logger.log(`Don hang ${result.orderId} thanh toan that bai`);
       }
 

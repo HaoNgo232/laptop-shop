@@ -14,16 +14,6 @@ import { ProductsService } from '@/products/services/products.service';
 export class AdminProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @Get()
-  async findAll(@Query() query: QueryProductDto): Promise<PaginatedResponse<ProductDto>> {
-    return await this.productsService.findAll(query);
-  }
-
-  @Get(':id')
-  async findOne(@Param('id') id: string): Promise<ProductDto> {
-    return await this.productsService.findOne(id);
-  }
-
   @Post()
   async create(@Body() createProductDto: CreateProductDto): Promise<ProductDto> {
     const product = await this.productsService.create(createProductDto);

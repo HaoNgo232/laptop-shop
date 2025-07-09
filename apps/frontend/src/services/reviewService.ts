@@ -20,7 +20,7 @@ class ReviewService {
     if (query?.limit) params.append("limit", query.limit.toString());
 
     const queryString = params.toString();
-    const url = `/api/reviews/product/${productId}${queryString ? `?${queryString}` : ""}`;
+    const url = `/api/reviews/${productId}${queryString ? `?${queryString}` : ""}`;
 
     return apiClient.get<PaginatedResponse<ReviewWithUser>>(url);
   }
@@ -31,7 +31,7 @@ class ReviewService {
     reviewData: CreateReview,
   ): Promise<ReviewWithUser> {
     return apiClient.post<ReviewWithUser>(
-      `/api/reviews/product/${productId}`,
+      `/api/reviews/${productId}`,
       reviewData,
     );
   }
@@ -55,7 +55,7 @@ class ReviewService {
   async checkUserReview(productId: string): Promise<ReviewWithUser | null> {
     try {
       return apiClient.get<ReviewWithUser | null>(
-        `/api/reviews/product/${productId}/user-review`,
+        `/api/reviews/${productId}/user-review`,
       );
     } catch (error) {
       console.error("Error checking user review:", error);

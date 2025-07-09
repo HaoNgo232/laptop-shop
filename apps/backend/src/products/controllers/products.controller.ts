@@ -13,7 +13,6 @@ export class ProductsController {
 
   @Get()
   public findAll(@Query() query: QueryProductDto): Promise<PaginatedResponse<ProductDto>> {
-    console.log('Received query parameters:', query);
     return this.productsService.findAll(query);
   }
 

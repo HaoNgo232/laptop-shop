@@ -12,7 +12,7 @@ class AdminProductService {
   // Product APIs
   async getProducts(query?: AdminQuery): Promise<PaginatedResponse<Product>> {
     const response = await apiClient.get<PaginatedResponse<Product>>(
-      "/api/admin/products",
+      "/api/products",
       query,
     );
     return response;
@@ -20,7 +20,7 @@ class AdminProductService {
 
   async getProductById(productId: string): Promise<ProductDetail> {
     const response = await apiClient.get<ProductDetail>(
-      `/api/admin/products/${productId}`,
+      `/api/products/${productId}`,
     );
     return response;
   }

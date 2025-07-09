@@ -4,8 +4,8 @@ import { AdminDashboardController } from '@/admin/controllers/admin-dashboard.co
 import { AdminDashboardService } from '@/admin/services/admin-dashboard.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '@/auth/entities/user.entity';
-import { AdminUsersController } from './controllers/admin-users.controller';
-import { AdminUsersService } from '@/admin/services/admin-users.service';
+import { ManagerUsersController } from './controllers/manager-users.controller';
+import { ManagerUsersService } from '@/admin/services/manager-users.service';
 import { Product } from '@/products/entities/product.entity';
 import { Order } from '@/orders/entities/order.entity';
 import { ProductsModule } from '@/products/products.module';
@@ -20,8 +20,8 @@ import { ReviewsModule } from '@/reviews/reviews.module';
     ReviewsModule,
     TypeOrmModule.forFeature([User, Product, Order]),
   ],
-  controllers: [AdminDashboardController, AdminUsersController],
-  providers: [AdminDashboardService, AdminUsersService],
-  exports: [AdminDashboardService, AdminUsersService],
+  controllers: [AdminDashboardController, ManagerUsersController],
+  providers: [AdminDashboardService, ManagerUsersService],
+  exports: [AdminDashboardService, ManagerUsersService],
 })
 export class AdminModule {}

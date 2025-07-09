@@ -6,7 +6,7 @@ import { PaginatedResponse } from "@/types/api";
 class AdminUserService {
   async getUsers(query: AdminQuery): Promise<PaginatedResponse<AdminView>> {
     const response = await apiClient.get<PaginatedResponse<AdminView>>(
-      "/api/admin/users",
+      "/api/admin/manager-users",
       query,
     );
     return response;
@@ -14,7 +14,7 @@ class AdminUserService {
 
   async getUserById(userId: string): Promise<AdminDetail> {
     const response = await apiClient.get<AdminDetail>(
-      `/api/admin/users/${userId}`,
+      `/api/admin/manager-users/${userId}`,
     );
     return response;
   }
@@ -24,7 +24,7 @@ class AdminUserService {
     updateUserDto: UpdateByAdmin,
   ): Promise<AdminDetail> {
     const response = await apiClient.put<AdminDetail>(
-      `/api/admin/users/${userId}`,
+      `/api/admin/manager-users/${userId}`,
       updateUserDto,
     );
     return response;

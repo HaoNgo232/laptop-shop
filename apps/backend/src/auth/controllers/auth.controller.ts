@@ -1,14 +1,12 @@
 import { Auth } from '@/auth/decorators/auth.decorator';
-import { CurrentUser } from '@/auth/decorators/current-user.decorator';
 import { LoginResponseDto } from '@/auth/dtos/login-response.dto';
 import { LoginUserDto } from '@/auth/dtos/login.dto';
 import { RefreshTokenDto } from '@/auth/dtos/refresh-token.dto';
 import { RegisterUserDto } from '@/auth/dtos/register-user.dto';
-import { UserProfileDto } from '@/auth/dtos/user-profile.dto';
 import { User } from '@/auth/entities/user.entity';
 import { AuthType } from '@/auth/enums/auth-type.enum';
 import { AuthService } from '@/auth/services/auth.service';
-import { Body, Controller, Get, Headers, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, Headers, HttpCode, HttpStatus, Post } from '@nestjs/common';
 
 @Controller('api/auth')
 export class AuthController {
@@ -17,7 +15,7 @@ export class AuthController {
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
   @Auth(AuthType.None)
-  async register(@Body() registerUserDto: RegisterUserDto): Promise<UserProfileDto> {
+  async register(@Body() registerUserDto: RegisterUserDto): Promise<Omit<User, 'passwordHash'>> {
     return this.authService.register(registerUserDto);
   }
 
@@ -36,12 +34,6 @@ export class AuthController {
   ) {
     await this.authService.logout(authHeader, refreshTokenDto?.refreshToken);
     return { message: 'Đăng xuất thành công' };
-  }
-
-  @Get('me')
-  @HttpCode(HttpStatus.OK)
-  getProfile(@CurrentUser() user: Omit<User, 'password'>): Omit<User, 'password'> {
-    return user;
   }
 
   @Post('refresh-token')

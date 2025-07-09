@@ -12,7 +12,7 @@ import { Search, Plus, Filter } from 'lucide-react';
 import { UserRole } from '@web-ecom/shared-types/auth/enums';
 import { PaginationMeta } from '@/types/api';
 
-export function AdminUserPage() {
+export function AdminManagerUserPage() {
     const {
         users,
         selectedUser,

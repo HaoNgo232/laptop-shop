@@ -29,10 +29,7 @@
         "shared-types:build": "pnpm --filter @web-ecom/shared-types build",
         "shared-types:verify": "pnpm --filter @web-ecom/shared-types verify",
         "type-check": "pnpm --parallel --filter \"./apps/*\" type-check && pnpm --filter @web-ecom/shared-types type-check",
-        "lint:check": "pnpm --parallel --filter \"./apps/*\" lint",
-        "ci:install": "pnpm install --frozen-lockfile",
-        "ci:build": "pnpm run shared-types:verify && pnpm --filter \"./apps/*\" build",
-        "ci:test": "pnpm run shared-types:verify && pnpm --parallel --filter \"./apps/*\" test"
+        "lint:check": "pnpm --parallel --filter \"./apps/*\" lint"
     },
     "devDependencies": {
         "concurrently": "^9.1.2",

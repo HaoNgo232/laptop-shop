@@ -86,7 +86,7 @@ export class AdminDashboardService implements IAdminDashboardService {
    * Doanh thu theo tháng - cũng dựa trên payment status
    */
   async getStats(): Promise<DetailedStatsDto> {
-    const sixMonthsAgo = this.getDateDaysAgo(6 * 30);
+    const sixMonthsAgo = this.getDateDaysAgo(6 * 30); // 6 tháng trước
 
     const [ordersByStatus, revenueByMonth] = await Promise.all([
       // Order stats - theo order status
