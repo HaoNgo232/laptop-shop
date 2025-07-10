@@ -5,6 +5,7 @@ import { UserRole } from '@/auth/enums/user-role.enum';
 import { AUTH_TYPE_KEY } from '@/auth/constants/auth.constants';
 import { AuthenticationGuard } from '@/auth/guards/authentication/authentication.guard';
 import { ROLES_KEY, RolesGuard } from '@/auth/guards/authentication/roles.guard';
+import { AuthGuard } from '@nestjs/passport';
 
 /**
  * Decorator xác thực và phân quyền người dùng

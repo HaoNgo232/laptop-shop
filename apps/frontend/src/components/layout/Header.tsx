@@ -16,6 +16,8 @@ export function Header() {
             navigate('/');
         } catch (error) {
             console.error('Logout failed:', error);
+            // Navigate anyway since logout clears local state
+            navigate('/');
         }
     };
 

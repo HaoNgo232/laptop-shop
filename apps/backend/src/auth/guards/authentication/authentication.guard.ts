@@ -24,21 +24,23 @@ export class AuthenticationGuard implements CanActivate {
     };
   }
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    // authTypes from reflector
+    // Lấy authTypes từ reflector
     const authTypes = this.reflector.getAllAndOverride(AUTH_TYPE_KEY, [
       context.getHandler(),
       context.getClass(),
     ]) ?? [AuthenticationGuard.defaultAuthType];
 
-    // array of guards
+    // Mảng các guard
     const guards = authTypes.map((type) => this.authtypeGuardMap[type]).flat();
     const error = new UnauthorizedException('Không có quyền truy cập');
 
-    // Loop guards canActivate
+    // Loop qua các guard canActivate
     for (const instance of guards) {
+      // Kiểm tra xem guard có thể activate hay không bằng gọi canActivate từ guard tương ứng
       const canActivate = await Promise.resolve(instance.canActivate(context)).catch((err) => {
         throw new UnauthorizedException('Không có quyền truy cập', err);
       });
+      // Nếu token hợp lệ thì trả về true
       if (canActivate) {
         return true;
       }

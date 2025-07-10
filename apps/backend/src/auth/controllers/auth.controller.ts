@@ -28,6 +28,7 @@ export class AuthController {
 
   @Post('logout')
   @HttpCode(HttpStatus.OK)
+  @Auth(AuthType.None)
   async logout(
     @Headers('authorization') authHeader: string,
     @Body() refreshTokenDto?: RefreshTokenDto,

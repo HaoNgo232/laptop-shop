@@ -12,9 +12,9 @@ import { createParamDecorator, ExecutionContext } from '@nestjs/common';
  * getUserOrders(@CurrentUser('sub') userId: string) { ... }
  */
 export const CurrentUser = createParamDecorator(
-  (data: keyof JwtPayload | undefined, ctx: ExecutionContext) => {
+  (data: keyof JwtPayload | undefined, context: ExecutionContext) => {
     // Lấy request object từ execution context
-    const request = ctx.switchToHttp().getRequest<{ user?: JwtPayload }>();
+    const request = context.switchToHttp().getRequest<{ user?: JwtPayload }>();
 
     // User được inject bởi AuthenticationGuard sau khi verify JWT
     const user = request.user;

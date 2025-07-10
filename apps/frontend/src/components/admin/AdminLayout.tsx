@@ -63,8 +63,14 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     };
 
     const handleLogout = async () => {
-        await logout();
-        navigate('/login');
+        try {
+            await logout();
+            navigate('/login');
+        } catch (error) {
+            console.error('Logout failed:', error);
+            // Navigate anyway since logout clears local state
+            navigate('/login');
+        }
     };
 
     const toggleSidebar = () => {

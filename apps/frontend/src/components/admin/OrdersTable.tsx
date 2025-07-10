@@ -40,37 +40,39 @@ export function OrdersTable({
     onPageChange
 }: OrdersTableProps) {
     const getStatusBadge = (status: OrderStatusEnum) => {
+        // Phối màu badge cho dễ nhìn, phân biệt rõ trạng thái
+        // Thêm cả màu hover cho background và text cho badge trạng thái
         const statusConfig = {
             [OrderStatusEnum.PENDING]: {
-                variant: 'secondary' as const,
                 label: 'Chờ xử lý',
                 icon: null,
+                className: 'bg-yellow-100 text-yellow-800 border-yellow-200',
             },
             [OrderStatusEnum.PROCESSING]: {
-                variant: 'default' as const,
                 label: 'Đang xử lý',
                 icon: <CheckCircle className="h-3 w-3" />,
+                className: 'bg-blue-100 text-blue-800 border-blue-200',
             },
             [OrderStatusEnum.SHIPPED]: {
-                variant: 'default' as const,
                 label: 'Đang giao',
                 icon: <Truck className="h-3 w-3" />,
+                className: 'bg-purple-100 text-purple-800 border-purple-200',
             },
             [OrderStatusEnum.DELIVERED]: {
-                variant: 'default' as const,
                 label: 'Đã giao',
                 icon: <CheckCircle className="h-3 w-3" />,
+                className: 'bg-green-100 text-green-800 border-green-200',
             },
             [OrderStatusEnum.CANCELLED]: {
-                variant: 'destructive' as const,
                 label: 'Đã hủy',
                 icon: <XCircle className="h-3 w-3" />,
+                className: 'bg-rose-50 text-rose-700 border-rose-200',
             },
         };
 
         const config = statusConfig[status];
         return (
-            <Badge variant={config.variant} className="flex items-center gap-1">
+            <Badge variant="outline" className={cn("flex items-center gap-1", config.className)}>
                 {config.icon}
                 {config.label}
             </Badge>

@@ -50,16 +50,23 @@ class AuthService {
     try {
       const refreshToken = localStorage.getItem("refreshToken");
 
-      // Call backend logout API
       await apiClient.post("/api/auth/logout", {
         refreshToken: refreshToken || undefined,
       });
     } catch (error) {
-      console.error("Logout error:", error);
+      console.error("Logout error (ignored):", error);
       // Continue with local logout even if API fails
     } finally {
       // Always clear local storage
       this.clearTokens();
+
+      // Redirect to login
+      if (
+        typeof window !== "undefined" &&
+        window.location.pathname !== "/login"
+      ) {
+        window.location.href = "/login";
+      }
     }
   }
 
@@ -83,9 +90,7 @@ class AuthService {
 
       const response = await apiClient.post<LoginResponse>(
         "/api/auth/refresh-token",
-        {
-          refreshToken,
-        },
+        { refreshToken },
       );
 
       // Update stored tokens

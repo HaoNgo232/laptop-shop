@@ -46,16 +46,23 @@ class ApiClient {
           _retry?: boolean;
         };
 
+        //  Bỏ qua interceptor cho logout (ngăn vòng lặp)
+        if (originalRequest.url?.includes("/api/auth/logout")) {
+          return Promise.reject(this.transformError(error));
+        }
+
         // Handle 401: token expired
         if (
           error.response?.status === 401 &&
           originalRequest &&
           !originalRequest._retry
         ) {
-          originalRequest._retry = true; // Đánh dấu để tránh lặp vô hạn
+          originalRequest._retry = true;
+
           if (!this.refreshTokenPromise) {
             this.refreshTokenPromise = authService.refreshToken();
           }
+
           try {
             const { accessToken } = await this.refreshTokenPromise;
 
@@ -65,10 +72,8 @@ class ApiClient {
             }
             return await this.client(originalRequest);
           } catch (refreshError) {
-            console.error(
-              "Phiên làm việc hết hạn, đang đăng xuất.",
-              refreshError,
-            );
+            console.error("Token hết hạn, đang logout...");
+            // Logout khi refresh thất bại
             await authService.logout();
             return Promise.reject(
               this.transformError(refreshError as AxiosError),

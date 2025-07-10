@@ -272,11 +272,12 @@ export class SepayProvider implements PaymentProvider {
       );
 
       this.logger.log(`Fetched ${response.data?.data?.length || 0} transactions from SePay`);
+
       return response.data?.data || [];
     } catch (error) {
       this.logger.error('Error fetching transaction history:', error);
 
-      // Log detailed error cho SePay API responses
+      // Log chi tiết lỗi cho SePay API responses
       if (error instanceof AxiosError) {
         this.logger.error(`SePay API Error: ${error.response?.status} - ${error.response?.data}`);
       }

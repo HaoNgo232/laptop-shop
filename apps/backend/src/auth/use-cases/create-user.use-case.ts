@@ -54,6 +54,7 @@ export class CreateUserUseCase {
       await this.cartService.findOneEntity(newUser.id);
 
       try {
+        // Gửi email chào mừng
         await this.mailService.sendUserWelcomeEmail(newUser);
       } catch (error) {
         throw new RequestTimeoutException(error);

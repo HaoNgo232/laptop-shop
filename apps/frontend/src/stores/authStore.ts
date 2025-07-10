@@ -77,16 +77,25 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   logout: async () => {
     try {
+      set({ isLoading: true });
+
       await authService.logout();
     } catch (error) {
-      console.error(error);
+      console.error("Logout error:", error);
     } finally {
+      // Clear local state
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+
       set({
         user: null,
         isAuthenticated: false,
         error: null,
         isLoading: false,
       });
+
+      // Clear cart state
+      useCartStore.setState({ cart: null, error: null });
     }
   },
 

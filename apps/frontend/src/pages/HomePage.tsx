@@ -14,11 +14,15 @@ import {
     Tag, Search, Phone,
     ShoppingCart
 } from 'lucide-react';
+import { useCartStore } from '@/stores/cartStore';
+import { motion } from 'framer-motion';
+import { Product } from '@/types/product';
 
 export function HomePage() {
     const navigate = useNavigate();
     const { user, isAuthenticated, isLoading: authLoading } = useAuthStore();
     const { products, categories, fetchProducts, fetchCategories } = useProductStore();
+    const { addToCart } = useCartStore();
 
     // Stats từ database thực tế (có thể lấy từ API)
     const [stats] = useState({
@@ -32,8 +36,11 @@ export function HomePage() {
     const [currentSlide, setCurrentSlide] = useState(0);
     const featuredProducts = products.slice(0, 8);
 
+    // Hero products - sản phẩm hot nhất
+    const [heroProducts, setHeroProducts] = useState([]);
+
     useEffect(() => {
-        fetchProducts({ limit: 8 });
+        fetchProducts({ limit: 12 });
         fetchCategories();
     }, []);
 
@@ -58,113 +65,151 @@ export function HomePage() {
         );
     }
 
+    const handleQuickAddToCart = async (product: Product, e: React.MouseEvent<HTMLButtonElement>) => {
+        e.stopPropagation();
+        await addToCart(product.id, 1);
+        // Toast notification có thể thêm ở đây
+    };
+
     return (
         <div className="min-h-screen bg-gray-50">
             <Header />
 
-            {/* Hero Background cho tất cả users */}
-            <MinimalBackground theme="dark"
-                showCTA={!isAuthenticated}
-                onCTAClick={() => navigate('/products')}
-            >
-                {/* Welcome Section cho User đã đăng nhập */}
-                {isAuthenticated && user && (
-                    <div className="mt-8 max-w-4xl mx-auto">
-                        <Card className="bg-gray-800/90 backdrop-blur-md border border-gray-700/50 shadow-xl text-white">
-                            <CardHeader className="pb-4">
-                                <div className="flex items-center justify-between">
-                                    <div>
-                                        <CardTitle className="text-xl font-semibold text-white">
-                                            Xin chào, {user.username}! 👋
-                                        </CardTitle>
-                                        <CardDescription className="text-gray-300 mt-1">
-                                            Chúc bạn có một ngày mua sắm vui vẻ
-                                        </CardDescription>
-                                    </div>
-                                    <Badge variant="outline" className="hidden sm:block border-gray-600 bg-gray-700/50 text-gray-200">
-                                        {user.role === 'admin' ? 'Quản trị viên' : 'Khách hàng'}
-                                    </Badge>
-                                </div>
-                            </CardHeader>
-                            <CardContent>
-                                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                                    <Button
-                                        variant="outline"
-                                        className="h-auto py-3 flex-col space-y-1 bg-gray-700/30 border-gray-600 text-gray-100 hover:bg-gray-600/50 hover:border-gray-500"
-                                        onClick={() => navigate('/products')}
-                                    >
-                                        <ShoppingBag className="h-5 w-5" />
-                                        <span className="text-sm">Sản phẩm</span>
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        className="h-auto py-3 flex-col space-y-1 bg-gray-700/30 border-gray-600 text-gray-100 hover:bg-gray-600/50 hover:border-gray-500"
-                                        onClick={() => navigate('/orders')}
-                                    >
-                                        <Package className="h-5 w-5" />
-                                        <span className="text-sm">Đơn hàng</span>
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        className="h-auto py-3 flex-col space-y-1 bg-gray-700/30 border-gray-600 text-gray-100 hover:bg-gray-600/50 hover:border-gray-500"
-                                        onClick={() => navigate('/profile')}
-                                    >
-                                        <User className="h-5 w-5" />
-                                        <span className="text-sm">Tài khoản</span>
-                                    </Button>
-                                    <Button
-                                        variant="outline"
-                                        className="h-auto py-3 flex-col space-y-1 bg-gray-700/30 border-gray-600 text-gray-100 hover:bg-gray-600/50 hover:border-gray-500"
-                                        onClick={() => navigate('/cart')}
-                                    >
-                                        <ShoppingCart className="h-5 w-5" />
-                                        <span className="text-sm">Giỏ hàng</span>
-                                    </Button>
-                                </div>
-                            </CardContent>
-                        </Card>
+            {/* HERO: Products-First Approach */}
+            <section className="relative bg-gradient-to-br from-blue-50 via-white to-purple-50 pt-16 pb-8">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    {/* Hero Headline */}
+                    <motion.div
+                        className="text-center mb-8"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.6 }}
+                    >
+                        <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-gray-900 mb-4">
+                            Khám phá sản phẩm{' '}
+                            <span className="text-gray-900">hot nhất</span> tuần này
+                        </h1>
+                        <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+                            Hàng ngàn sản phẩm chất lượng, giao hàng nhanh chóng
+                        </p>
+                    </motion.div>
+
+                    {/* Hero Products Grid - Sản phẩm ngay trong hero */}
+                    {products.length > 0 && (
+                        <motion.div
+                            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.3, duration: 0.6 }}
+                        >
+                            {products.slice(0, 8).map((product, index) => (
+                                <motion.div
+                                    key={product.id}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: index * 0.1, duration: 0.5 }}
+                                >
+                                    <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer bg-white border-0 shadow-sm hover:scale-[1.02]">
+                                        <CardContent className="p-3">
+                                            <div
+                                                className="aspect-square bg-gray-100 rounded-lg mb-3 overflow-hidden relative"
+                                                onClick={() => navigate(`/products/${product.id}`)}
+                                            >
+                                                <img
+                                                    src={product.imageUrl || '/placeholder-product.png'}
+                                                    alt={product.name}
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                                                />
+                                                {/* Quick Add Overlay */}
+                                                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                                    <Button
+                                                        size="sm"
+                                                        className="bg-white text-gray-900 hover:bg-gray-100"
+                                                        onClick={(e) => handleQuickAddToCart(product, e)}
+                                                    >
+                                                        <ShoppingCart className="h-4 w-4 mr-1" />
+                                                        Thêm vào giỏ
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                            <h3 className="font-medium text-sm text-gray-900 mb-2 line-clamp-2">
+                                                {product.name}
+                                            </h3>
+                                            <div className="flex items-center justify-between">
+                                                <p className="text-lg font-bold text-gray-900">
+                                                    {product.price.toLocaleString('vi-VN')}đ
+                                                </p>
+                                                <Badge variant="secondary" className="text-xs">
+                                                    {product.category.name}
+                                                </Badge>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                </motion.div>
+                            ))}
+                        </motion.div>
+                    )}
+
+                    {/* CTA buttons */}
+                    <div className="text-center">
+                        <Button
+                            size="lg"
+                            className="bg-gray-900 hover:bg-gray-700 text-white px-8 py-3 text-lg mr-4"
+                            onClick={() => navigate('/products')}
+                        >
+                            Xem tất cả sản phẩm
+                        </Button>
+                        {!isAuthenticated && (
+                            <Button
+                                variant="outline"
+                                size="lg"
+                                className="px-8 py-3 text-lg"
+                                onClick={() => navigate('/register')}
+                            >
+                                Đăng ký ngay
+                            </Button>
+                        )}
                     </div>
-                )}
-            </MinimalBackground>
+                </div>
+            </section>
 
-            <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-                <div className="px-4 sm:px-0 space-y-8">
 
-                    {/* Categories Grid */}
+            <main className="max-w-7xl mx-auto py-8 sm:px-6 lg:px-8">
+                <div className="px-4 sm:px-0 space-y-12">
+
+                    {/* Quick Category Navigation */}
                     {categories.length > 0 && (
-                        <div className="space-y-4">
-                            <div className="flex items-center justify-between">
-                                <h2 className="text-xl font-semibold text-gray-900">Danh mục sản phẩm</h2>
-                                <Button variant="ghost" onClick={() => navigate('/categories')}>
-                                    Xem tất cả <ArrowRight className="ml-1 h-4 w-4" />
-                                </Button>
+                        <section className="space-y-6">
+                            <div className="text-center">
+                                <h2 className="text-2xl font-bold text-gray-900 mb-2">Mua sắm theo danh mục</h2>
+                                <p className="text-gray-600">Tìm kiếm sản phẩm theo sở thích của bạn</p>
                             </div>
-                            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                                {categories.slice(0, 12).map((category) => (
+                            <div className="grid grid-cols-3 md:grid-cols-6 lg:grid-cols-8 gap-4">
+                                {categories.slice(0, 16).map((category) => (
                                     <Card
                                         key={category.id}
-                                        className="hover:shadow-md transition-shadow cursor-pointer bg-white border hover:bg-gray-400 hover:text-white border-gray-200"
+                                        className="hover:shadow-md hover:scale-105 transition-all duration-200 cursor-pointer bg-white border border-gray-200"
                                         onClick={() => navigate(`/products?category=${category.id}`)}
                                     >
                                         <CardContent className="p-4 text-center">
-                                            <div className="w-12 h-12 bg-gray-100 rounded-lg flex items-center justify-center mb-3 mx-auto">
-                                                <Tag className="h-6 w-6 text-gray-600" />
+                                            <div className="w-10 h-10 bg-gradient-to-br from-blue-100 to-purple-100 rounded-lg flex items-center justify-center mb-2 mx-auto">
+                                                <Tag className="h-5 w-5 text-blue-600" />
                                             </div>
-                                            <h3 className="font-medium text-sm text-gray-900 transition-colors">
+                                            <h3 className="font-medium text-xs text-gray-900">
                                                 {category.name}
                                             </h3>
                                         </CardContent>
                                     </Card>
                                 ))}
                             </div>
-                        </div>
+                        </section>
                     )}
 
-                    {/* Featured Products */}
-                    {featuredProducts.length > 0 && (
-                        <div className="space-y-4">
+                    {/* More Products Carousel - nếu cần */}
+                    {products.length > 8 && (
+                        <section className="space-y-6">
                             <div className="flex items-center justify-between">
-                                <h2 className="text-xl font-semibold text-gray-900">Sản phẩm nổi bật</h2>
+                                <h2 className="text-2xl font-bold text-gray-900">Sản phẩm bán chạy</h2>
                                 <Button variant="ghost" onClick={() => navigate('/products')}>
                                     Xem tất cả <ArrowRight className="ml-1 h-4 w-4" />
                                 </Button>
@@ -235,7 +280,7 @@ export function HomePage() {
                                     </>
                                 )}
                             </div>
-                        </div>
+                        </section>
                     )}
 
                     {/* Service Features */}
@@ -288,7 +333,7 @@ export function HomePage() {
                                     placeholder="Email của bạn"
                                     className="flex-1 px-3 py-2 rounded bg-gray-800/50 border border-gray-700 text-white placeholder-gray-400 focus:border-gray-600 focus:outline-none"
                                 />
-                                <Button className="bg-blue-600 hover:bg-blue-700 text-white mt-0.5">
+                                <Button className="bg-white text-gray-900 hover:bg-gray-300 mt-0.5">
                                     Đăng ký
                                 </Button>
                             </div>
