@@ -12,14 +12,18 @@ import { PaymentMethodEnum } from '@/payments/enums/payments-method.enum';
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
 
-  // Endpoint dùng để tạo QR code cho thanh toán
+  /**
+   * Endpoint dùng để tạo QR code cho thanh toán
+   */
   @Post('create')
   @Auth(AuthType.Bearer)
   async createPayment(@Body() createPaymentDto: CreatePaymentDto): Promise<QRCodeResponse> {
     return await this.paymentsService.generateQRCode(createPaymentDto);
   }
 
-  // Endpoint chỉ dùng để nhận webhook sepay
+  /**
+   * Endpoint chỉ dùng để nhận webhook sepay
+   */
   @Post('webhook/sepay')
   @Auth(AuthType.None)
   @HttpCode(HttpStatus.OK)
@@ -34,7 +38,9 @@ export class PaymentsController {
     );
   }
 
-  // Endpoint dùng để lấy danh sách các phương thức thanh toán
+  /**
+   * Endpoint dùng để lấy danh sách các phương thức thanh toán
+   */
   @Get('methods')
   @Auth(AuthType.None)
   getPaymentMethods(): { methods: PaymentMethodEnum[] } {
@@ -43,7 +49,9 @@ export class PaymentsController {
     };
   }
 
-  // Endpoint dùng để chuyển đổi phương thức thanh toán
+  /**
+   * Endpoint dùng để chuyển đổi phương thức thanh toán
+   */
   @Post('switch/:orderId')
   @Auth(AuthType.Bearer)
   async switchPaymentMethod(

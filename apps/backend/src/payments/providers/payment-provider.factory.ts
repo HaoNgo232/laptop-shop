@@ -13,7 +13,9 @@ export interface PaymentProvider {
   verifyWebhook(payload: any, signature?: string): boolean;
   processTransaction(transaction: any): Promise<TransactionResult>;
 }
-
+/**
+ * Factory để tạo và quản lý các provider thanh toán
+ */
 @Injectable()
 export class PaymentProviderFactory {
   private readonly logger = new Logger(PaymentProviderFactory.name);

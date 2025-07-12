@@ -8,6 +8,9 @@ import { SepayProvider } from './providers/sepay.provider';
 import { PaymentsService } from './payments.service';
 import sepayConfig from '@/config/sepay.config';
 
+/**
+ * Module để quản lý thanh toán
+ */
 @Module({
   imports: [ConfigModule.forFeature(sepayConfig), forwardRef(() => OrdersModule), AuthModule],
   controllers: [PaymentsController],

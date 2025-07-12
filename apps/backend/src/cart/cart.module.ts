@@ -8,7 +8,9 @@ import { AuthModule } from '@/auth/auth.module';
 import { ProductsModule } from '@/products/products.module';
 import { User } from '@/auth/entities/user.entity';
 import { Product } from '@/products/entities/product.entity';
-
+/**
+ * Module để quản lý giỏ hàng của người dùng
+ */
 @Module({
   imports: [
     TypeOrmModule.forFeature([Cart, CartItem, User, Product]),

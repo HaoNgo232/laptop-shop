@@ -24,14 +24,6 @@ export function HomePage() {
     const { products, categories, fetchProducts, fetchCategories } = useProductStore();
     const { addToCart } = useCartStore();
 
-    // Stats từ database thực tế (có thể lấy từ API)
-    const [stats] = useState({
-        totalUsers: 12340,
-        totalProducts: 1250,
-        totalOrders: 5680,
-        satisfaction: 4.7
-    });
-
     // Featured products
     const [currentSlide, setCurrentSlide] = useState(0);
     const featuredProducts = products.slice(0, 8);

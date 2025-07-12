@@ -8,6 +8,9 @@ import { OrdersModule } from '@/orders/orders.module';
 import { AuthModule } from '@/auth/auth.module';
 import { CheckExistingReviewUseCase } from './use-cases/check-existing-review.use-case';
 
+/**
+ * Module để quản lý đánh giá sản phẩm
+ */
 @Module({
   imports: [TypeOrmModule.forFeature([Review, Product]), OrdersModule, AuthModule],
   controllers: [ReviewsController],

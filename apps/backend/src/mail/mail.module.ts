@@ -3,11 +3,15 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import { join } from 'path';
-import { MailService } from './mail.service';
+import { MailService } from '@/mail/mail.service';
 
+/**
+ * Module để gửi email
+ */
 @Global()
 @Module({
   imports: [
+    // Cấu hình MailerModule
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -36,7 +40,10 @@ import { MailService } from './mail.service';
       }),
     }),
   ],
-  providers: [MailService],
+  providers: [
+    // Services
+    MailService,
+  ],
   exports: [MailService],
 })
 export class MailModule {}

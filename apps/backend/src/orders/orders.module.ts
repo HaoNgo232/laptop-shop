@@ -17,6 +17,9 @@ import { CreateOrderTransactionUseCase } from '@/orders/usecases/create-order-tr
 import { GeneratePaymentQrUseCase } from '@/orders/usecases/generate-payment-qr.usecase';
 import { ValidateStockUseCase } from '@/orders/usecases/validate-stock.usecase';
 
+/**
+ * Module để quản lý đơn hàng
+ */
 @Module({
   imports: [
     TypeOrmModule.forFeature([Order, OrderItem, Product]),

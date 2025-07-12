@@ -99,7 +99,7 @@ export function CategoriesPage() {
                                     <CardContent>
                                         <Button
                                             variant="outline"
-                                            className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                                            className="w-full hover:bg-gray-400 hover:text-white"
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 handleCategoryClick(category.id, category.name);

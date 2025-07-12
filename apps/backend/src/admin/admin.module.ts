@@ -12,6 +12,9 @@ import { ProductsModule } from '@/products/products.module';
 import { OrdersModule } from '@/orders/orders.module';
 import { ReviewsModule } from '@/reviews/reviews.module';
 
+/**
+ * Module đặc biệt dành cho admin
+ */
 @Module({
   imports: [
     AuthModule,

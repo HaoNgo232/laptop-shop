@@ -22,6 +22,9 @@ import { AccessTokenGuard } from '@/auth/guards/access-token/access-token.guard'
 import { AdminModule } from '@/admin/admin.module';
 import { ReviewsModule } from './reviews/reviews.module';
 
+/**
+ * Module chính của ứng dụng
+ */
 @Module({
   imports: [
     // Cấu hình ConfigModule

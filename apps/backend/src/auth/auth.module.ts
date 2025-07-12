@@ -23,9 +23,14 @@ import { CreateUserUseCase } from '@/auth/use-cases/create-user.use-case';
 import { ValidateUserUseCase } from '@/auth/use-cases/validate-user.use-case';
 import { RefreshTokenUseCase } from '@/auth/use-cases/refresh-token.use-case';
 
+/**
+ * Module để quản lý đăng nhập, đăng ký, và xác thực người dùng
+ */
 @Module({
   imports: [
+    // Cấu hình TypeOrmModule
     TypeOrmModule.forFeature([TokenBlacklist, User]),
+    // Cấu hình JwtModule
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -36,27 +41,34 @@ import { RefreshTokenUseCase } from '@/auth/use-cases/refresh-token.use-case';
         },
       }),
     }),
+    // Import CartModule
     forwardRef(() => CartModule),
   ],
   controllers: [AuthController, UsersController],
   providers: [
-    AccessTokenGuard,
+    // Services
     AuthService,
+    UsersService,
+    // Providers
     {
       provide: HashingProvider,
       useClass: BcryptProvider,
     },
-    UsersService,
-    JwtStrategy,
-    TokenBlacklistProvider,
     BcryptProvider,
+    TokenBlacklistProvider,
     GenerateTokensProvider,
+    // Guards
+    AccessTokenGuard,
     AuthenticationGuard,
     RolesGuard,
+    // Strategies
+    JwtStrategy,
+    // Use Cases
     CreateUserUseCase,
     ValidateUserUseCase,
     RefreshTokenUseCase,
   ],
+  // Exports cho các module khác sử dụng
   exports: [UsersService, AccessTokenGuard, RolesGuard],
 })
 export class AuthModule {}

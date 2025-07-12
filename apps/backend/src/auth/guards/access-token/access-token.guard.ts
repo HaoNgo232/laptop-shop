@@ -12,7 +12,9 @@ import type { ConfigType } from '@nestjs/config';
 import { Request } from 'express';
 import { REQUEST_USER_KEY } from '@/auth/constants/auth.constants';
 import { JwtPayload } from '@/auth/interfaces/jwt-payload.interface';
-
+/**
+ * Guard để kiểm tra token truyền vào
+ */
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
   constructor(
