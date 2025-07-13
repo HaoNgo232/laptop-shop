@@ -19,12 +19,12 @@ import { JwtPayload } from '@/auth/interfaces/jwt-payload.interface';
 export class AccessTokenGuard implements CanActivate {
   constructor(
     /**
-     * JwtService để kiểm tra token.
+     * Inject JwtService để kiểm tra token.
      */
     private readonly jwtService: JwtService,
 
     /**
-     * Cấu hình Jwt.
+     * Inject cấu hình Jwt.
      */
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
@@ -34,16 +34,23 @@ export class AccessTokenGuard implements CanActivate {
    * Kiểm tra xem token có hợp lệ hay không.
    */
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    // Lấy request từ context
     const request: Request = context.switchToHttp().getRequest();
+    // Lấy token từ headers
     const token = this.extractRequestFromHeaders(request);
+    // Nếu không tìm thấy token thì throw exception
     if (!token) {
       throw new UnauthorizedException('Không tìm thấy token');
     }
 
+    // Kiểm tra token
     try {
+      // Verify token
       const payload: JwtPayload = await this.jwtService.verifyAsync(token, this.jwtConfiguration);
 
+      // Lưu payload vào request
       request[REQUEST_USER_KEY] = payload;
+      // Trả về true để cho phép request đi tiếp
       return true;
     } catch {
       throw new UnauthorizedException('Token không hợp lệ');

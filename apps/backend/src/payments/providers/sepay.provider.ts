@@ -121,27 +121,12 @@ export class SepayProvider implements PaymentProvider {
 
       let orderId: string;
 
-      // Strategy 1: Extract từ field 'code' (ưu tiên cao nhất)
-      if (transaction.code) {
-        if (transaction.code.startsWith('DH')) {
-          // Remove prefix DH để lấy pure orderId
-          orderId = transaction.code.replace(/^DH/, '');
-        } else {
-          orderId = transaction.code;
-        }
-        this.logger.log(`Extracted orderId from 'code': ${orderId}`);
-      } else {
-        // Strategy 2: Extract từ content bằng regex pattern
-        const orderMatch = transaction.content.match(/DH([a-f0-9-]{32,36})/i);
-        if (!orderMatch || !orderMatch[1]) {
-          throw new Error(
-            `Invalid transaction content format - DH{UUID} not found in: ${transaction.content}`,
-          );
-        }
-
+      // Strategy 1: Thử tìm từ content trước
+      const orderMatch = transaction.content.match(/DH([a-f0-9-]{32,36})/i);
+      if (orderMatch && orderMatch[1]) {
         let extractedId = orderMatch[1];
 
-        // Handle UUID không có dấu gạch - format thành UUID standard
+        // Handle UUID không có dấu gạch
         if (extractedId.length === 32 && !extractedId.includes('-')) {
           extractedId = [
             extractedId.slice(0, 8),
@@ -150,11 +135,16 @@ export class SepayProvider implements PaymentProvider {
             extractedId.slice(16, 20),
             extractedId.slice(20, 32),
           ].join('-');
-          this.logger.log(`Formatted UUID: ${extractedId}`);
         }
 
         orderId = extractedId;
         this.logger.log(`Extracted orderId from 'content': ${orderId}`);
+      } else if (transaction.code && transaction.code.startsWith('DH')) {
+        // Fallback: nếu content không có thì mới dùng code
+        orderId = transaction.code.replace(/^DH/, '');
+        this.logger.log(`Extracted orderId from 'code': ${orderId}`);
+      } else {
+        throw new Error('Cannot extract orderId from transaction');
       }
 
       // Validation: Ensure orderId is valid UUID format

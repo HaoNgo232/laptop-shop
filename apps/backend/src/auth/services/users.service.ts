@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateUserDto } from '@/auth/dtos/create-user.dto';
@@ -18,9 +18,12 @@ export class UsersService implements IUsersService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
+  /**
+   * Tìm user theo ID
+   */
   async findById(userId: string): Promise<User> {
     if (!userId) {
-      throw new Error('User ID is required');
+      throw new BadRequestException('User ID là bắt buộc');
     }
 
     const user = await this.userRepository.findOne({
@@ -28,38 +31,47 @@ export class UsersService implements IUsersService {
     });
 
     if (!user) {
-      throw new Error('User not found');
+      throw new NotFoundException('Không tìm thấy user');
     }
 
     return user;
   }
 
+  /**
+   * Tìm user theo email
+   */
   async findByEmail(email: string): Promise<User> {
     if (!email) {
-      throw new Error('Email is required');
+      throw new BadRequestException('Email là bắt buộc');
     }
     const user = await this.userRepository.findOne({
       where: { email },
     });
     if (!user) {
-      throw new Error('User not found');
+      throw new NotFoundException('Không tìm thấy user');
     }
 
     return user;
   }
 
+  /**
+   * Tạo user mới
+   */
   async create(createUserDto: CreateUserDto): Promise<User> {
     const user = this.userRepository.create(createUserDto);
     return await this.userRepository.save(user);
   }
 
+  /**
+   * Cập nhật user
+   */
   async update(userId: string, updateUserDto: UpdateUserProfileDto): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
     });
 
     if (!user) {
-      throw new Error('User not found');
+      throw new NotFoundException('Không tìm thấy user');
     }
 
     const updatedUser = { id: user.id, ...updateUserDto };

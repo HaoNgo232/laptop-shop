@@ -26,18 +26,23 @@ export class RolesGuard implements CanActivate {
    * Kiểm tra xem user có quyền truy cập hay không.
    */
   canActivate(context: ExecutionContext): boolean {
+    // Lấy thông tin roles từ metadata
     const requiredRoles = this.reflector.getAllAndOverride<UserRole[]>(ROLES_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
 
+    // Nếu không có roles thì trả về true
     if (!requiredRoles) {
       return true;
     }
 
+    // Lấy request từ context
     const request: Request & { user: User } = context.switchToHttp().getRequest();
+    // Lấy user từ request
     const user = request[REQUEST_USER_KEY];
 
+    // Kiểm tra xem user có quyền truy cập hay không
     return requiredRoles.some((role) => user.role === role);
   }
 }

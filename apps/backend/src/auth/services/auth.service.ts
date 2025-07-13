@@ -55,6 +55,7 @@ export class AuthService implements IAuthService {
     try {
       // Kiểm tra email đã tồn tại chưa
       await this.checkEmail(registerUserDto.email);
+
       // Mã hóa mật khẩu
       const hashedPassword = await this.hashUserPassword(registerUserDto.password);
 
@@ -162,7 +163,7 @@ export class AuthService implements IAuthService {
     try {
       await this.mailService.sendUserWelcomeEmail(user);
     } catch (error) {
-      throw new RequestTimeoutException(error);
+      throw new RequestTimeoutException(error, 'Gửi email chào mừng thất bại');
     }
   }
 

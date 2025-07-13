@@ -20,6 +20,9 @@ export class CheckExistingReviewUseCase {
     private readonly reviewRepository: Repository<Review>,
   ) {}
 
+  /**
+   * Kiểm tra review đã tồn tại hay chưa
+   */
   async execute(input: CheckExistingReviewInput): Promise<CheckExistingReviewOutput> {
     const { userId, productId } = input;
 

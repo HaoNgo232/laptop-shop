@@ -40,7 +40,7 @@ export class SepayWebhookDto {
 
   @IsOptional()
   @IsString()
-  code?: string; // This is the order ID parsed by SePay
+  code?: string;
 
   @IsString()
   @IsNotEmpty()

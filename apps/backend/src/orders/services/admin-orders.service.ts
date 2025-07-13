@@ -1,4 +1,4 @@
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, EntityManager, Repository } from 'typeorm';
 import { Order } from '@/orders/entities/order.entity';
 import { OrdersProvider } from '@/orders/providers/order.provider';
 import { Product } from '@/products/entities/product.entity';
@@ -68,79 +68,140 @@ export class AdminOrdersService implements IAdminOrdersService {
     return order;
   }
 
-  // Method để cập nhật order khi nhận webhook với transaction handling
+  /**
+   * Cập nhật trạng thái thanh toán đơn hàng
+   */
   async updatePaymentStatus(
     orderId: string,
     transactionId: string,
     paymentStatus: PaymentStatusEnum,
   ): Promise<Order> {
     return await this.dataSource.transaction(async (manager) => {
-      const order = await manager.findOne(Order, {
-        where: { id: orderId },
-        lock: { mode: 'pessimistic_write' },
-      });
+      // Tìm đơn hàng
+      const order = await this.findOrderById(orderId, manager);
 
-      if (!order) {
-        throw new NotFoundException(`Order with ID ${orderId} not found`);
-      }
-
-      // Chỉ cập nhật nếu đang PENDING payment
-      if (order.paymentStatus !== PaymentStatusEnum.PENDING) {
-        this.logger.warn(
-          `Attempted to update payment status for order ${orderId} ` +
-            `but current status is ${order.paymentStatus}`,
-        );
+      // Kiểm tra điều kiện cập nhật
+      if (!this.canUpdatePaymentStatus(order, orderId, transactionId)) {
         return order;
       }
 
-      // Kiểm tra duplicate transaction
-      if (order.transactionId && order.transactionId === transactionId) {
-        this.logger.warn(`Duplicate transaction ${transactionId} for order ${orderId}`);
-        return order;
-      }
+      // Cập nhật payment status và transaction ID
+      this.updateOrderPaymentInfo(order, paymentStatus, transactionId);
 
-      // Cập nhật payment status
-      order.paymentStatus = paymentStatus;
-      order.transactionId = transactionId;
+      // Xử lý logic theo trạng thái thanh toán
+      await this.handlePaymentStatusChange(order, paymentStatus, orderId, manager);
 
-      // Nếu thanh toán thành công, chuyển order status
-      if (paymentStatus === PaymentStatusEnum.PAID) {
-        // Khi thanh toán thành công, chuyển order status sang PROCESSING
-        order.status = OrderStatusEnum.PROCESSING;
-      } else if (paymentStatus === PaymentStatusEnum.FAILED) {
-        order.status = OrderStatusEnum.CANCELLED;
-
-        // Hoàn trả stock nếu thanh toán thất bại
-        const orderWithItems = await manager.findOne(Order, {
-          where: { id: orderId },
-          relations: ['items'],
-        });
-
-        if (orderWithItems?.items) {
-          for (const item of orderWithItems.items) {
-            await manager.increment(
-              Product,
-              { id: item.productId },
-              'stockQuantity',
-              item.quantity,
-            );
-          }
-        }
-      }
-
-      // PaymentStatusEnum.WAITING -> order status vẫn PENDING
-      // PaymentStatusEnum.CANCELLED -> order status chuyển sang CANCELLED
-
+      // Lưu đơn hàng
       const savedOrder = await manager.save(order);
-      this.logger.log(
-        `Order ${orderId} payment status updated: ${paymentStatus}, ` +
-          `order status: ${savedOrder.status}`,
-      );
+      this.logPaymentStatusUpdate(orderId, paymentStatus, savedOrder.status);
 
       return savedOrder;
     });
   }
 
+  /**
+   * Kiểm tra xem có thể cập nhật payment status hay không
+   */
+  private canUpdatePaymentStatus(order: Order, orderId: string, transactionId: string): boolean {
+    // Chỉ cập nhật nếu đang PENDING payment
+    if (order.paymentStatus !== PaymentStatusEnum.PENDING) {
+      this.logger.warn(
+        `Attempted to update payment status for order ${orderId} ` +
+          `but current status is ${order.paymentStatus}`,
+      );
+      return false;
+    }
+
+    // Kiểm tra duplicate transaction
+    if (order.transactionId && order.transactionId === transactionId) {
+      this.logger.warn(`Duplicate transaction ${transactionId} for order ${orderId}`);
+      return false;
+    }
+
+    return true;
+  }
+
+  /**
+   * Cập nhật thông tin thanh toán của đơn hàng
+   */
+  private updateOrderPaymentInfo(
+    order: Order,
+    paymentStatus: PaymentStatusEnum,
+    transactionId: string,
+  ): void {
+    order.paymentStatus = paymentStatus;
+    order.transactionId = transactionId;
+  }
+
+  /**
+   * Xử lý logic thay đổi theo trạng thái thanh toán
+   */
+  private async handlePaymentStatusChange(
+    order: Order,
+    paymentStatus: PaymentStatusEnum,
+    orderId: string,
+    manager: EntityManager,
+  ): Promise<void> {
+    if (paymentStatus === PaymentStatusEnum.PAID) {
+      order.status = OrderStatusEnum.PROCESSING;
+    } else if (paymentStatus === PaymentStatusEnum.FAILED) {
+      await this.handleFailedPayment(order, orderId, manager);
+    }
+  }
+
+  /**
+   * Xử lý khi thanh toán thất bại
+   */
+  private async handleFailedPayment(
+    order: Order,
+    orderId: string,
+    manager: EntityManager,
+  ): Promise<void> {
+    // Khi thanh toán thất bại, chuyển order status sang CANCELLED
+    order.status = OrderStatusEnum.CANCELLED;
+
+    // Hoàn trả stock
+    await this.restoreStockForFailedPayment(orderId, manager);
+  }
+
+  /**
+   * Hoàn trả stock khi thanh toán thất bại
+   */
+  private async restoreStockForFailedPayment(
+    orderId: string,
+    manager: EntityManager,
+  ): Promise<void> {
+    // Tìm đơn hàng với items
+    const orderWithItems = await manager.findOne(Order, {
+      where: { id: orderId },
+      relations: ['items'],
+    });
+
+    // Hoàn trả stock nếu thanh toán thất bại
+    if (orderWithItems?.items) {
+      for (const item of orderWithItems.items) {
+        await manager.increment(Product, { id: item.productId }, 'stockQuantity', item.quantity);
+      }
+    }
+  }
+
+  /**
+   * Log thông tin cập nhật payment status
+   */
+  private logPaymentStatusUpdate(
+    orderId: string,
+    paymentStatus: PaymentStatusEnum,
+    orderStatus: OrderStatusEnum,
+  ): void {
+    this.logger.log(
+      `Order ${orderId} payment status updated: ${paymentStatus}, ` +
+        `order status: ${orderStatus}`,
+    );
+  }
+
+  /**
+   * Kiểm tra xem user đã mua sản phẩm hay chưa
+   */
   async hasPurchasedProduct(userId: string, productId: string): Promise<boolean> {
     const count = await this.orderRepository
       .createQueryBuilder('order')
@@ -150,5 +211,18 @@ export class AdminOrdersService implements IAdminOrdersService {
       .andWhere('order.status = :status', { status: OrderStatusEnum.DELIVERED })
       .getCount();
     return count > 0;
+  }
+
+  private async findOrderById(orderId: string, manager: EntityManager): Promise<Order> {
+    const order = await manager.findOne(Order, {
+      where: { id: orderId },
+      lock: { mode: 'pessimistic_write' },
+    });
+
+    if (!order) {
+      throw new NotFoundException(`Không tìm thấy đơn hàng với ID ${orderId}`);
+    }
+
+    return order;
   }
 }
