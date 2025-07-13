@@ -15,18 +15,23 @@ interface ITokenBlacklistProvider {
 @Injectable()
 export class TokenBlacklistProvider implements ITokenBlacklistProvider {
   constructor(
+    /**
+     * Repository để lưu trữ token blacklist.
+     */
     @InjectRepository(TokenBlacklist)
     private readonly tokenBlacklistRepository: Repository<TokenBlacklist>,
+
+    /**
+     * JwtService để giải mã token.
+     */
     private readonly jwtService: JwtService,
   ) {
-    // Đặt lịch tự động xóa các token hết hạn mỗi ngày
+    // Đặt lịch tự động xóa các token hết hạn mỗi ngày (24 giờ)
     setInterval(() => this.removeExpiredTokens(), 24 * 60 * 60 * 1000);
   }
 
   /**
    * Thêm token vào blacklist
-   * @param token Token cần thêm vào blacklist
-   * @param type Loại token (access/refresh)
    */
   async addToBlacklist(token: string, type: 'access' | 'refresh'): Promise<void> {
     try {
@@ -53,8 +58,6 @@ export class TokenBlacklistProvider implements ITokenBlacklistProvider {
 
   /**
    * Kiểm tra token có trong blacklist không
-   * @param token Token cần kiểm tra
-   * @returns true nếu token có trong blacklist, false nếu không
    */
   async isBlacklisted(token: string): Promise<boolean> {
     const count = await this.tokenBlacklistRepository.count({
@@ -64,7 +67,7 @@ export class TokenBlacklistProvider implements ITokenBlacklistProvider {
   }
 
   /**
-   * Xóa các token đã hết hạn khỏi blacklist
+   * Xóa các token đã hết hạn khỏi blacklist (24 giờ)
    */
   async removeExpiredTokens(): Promise<void> {
     const now = new Date();

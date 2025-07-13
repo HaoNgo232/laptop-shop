@@ -19,9 +19,6 @@ import { TokenBlacklistProvider } from '@/auth/providers/token-blacklist.provide
 import { AuthenticationGuard } from '@/auth/guards/authentication/authentication.guard';
 import { GenerateTokensProvider } from '@/auth/providers/generate-tokens.provider';
 import { RolesGuard } from '@/auth/guards/authentication/roles.guard';
-import { CreateUserUseCase } from '@/auth/use-cases/create-user.use-case';
-import { ValidateUserUseCase } from '@/auth/use-cases/validate-user.use-case';
-import { RefreshTokenUseCase } from '@/auth/use-cases/refresh-token.use-case';
 
 /**
  * Module để quản lý đăng nhập, đăng ký, và xác thực người dùng
@@ -57,16 +54,10 @@ import { RefreshTokenUseCase } from '@/auth/use-cases/refresh-token.use-case';
     BcryptProvider,
     TokenBlacklistProvider,
     GenerateTokensProvider,
-    // Guards
     AccessTokenGuard,
     AuthenticationGuard,
-    RolesGuard,
-    // Strategies
-    JwtStrategy,
-    // Use Cases
-    CreateUserUseCase,
-    ValidateUserUseCase,
-    RefreshTokenUseCase,
+    RolesGuard, // Strategies
+    JwtStrategy, // Strategies
   ],
   // Exports cho các module khác sử dụng
   exports: [UsersService, AccessTokenGuard, RolesGuard],

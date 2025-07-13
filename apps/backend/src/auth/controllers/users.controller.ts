@@ -6,13 +6,24 @@ import { Body, Controller, Get, Put } from '@nestjs/common';
 
 @Controller('api/users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    /**
+     * Service để xử lý logic liên quan đến người dùng.
+     */
+    private readonly usersService: UsersService,
+  ) {}
 
+  /**
+   * Lấy thông tin người dùng.
+   */
   @Get('profile')
   async getUserProfile(@CurrentUser('sub') userId: string): Promise<Omit<User, 'passwordHash'>> {
     return this.usersService.findById(userId);
   }
 
+  /**
+   * Cập nhật thông tin người dùng.
+   */
   @Put('profile')
   async updateUserProfile(
     @CurrentUser('sub') userId: string,

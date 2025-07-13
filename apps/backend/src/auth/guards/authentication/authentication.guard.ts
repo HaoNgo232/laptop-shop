@@ -15,7 +15,14 @@ export class AuthenticationGuard implements CanActivate {
   private readonly authtypeGuardMap: Record<AuthType, CanActivate | CanActivate[]>;
 
   constructor(
+    /**
+     * Reflector để lấy thông tin auth type từ metadata.
+     */
     private readonly reflector: Reflector,
+
+    /**
+     * Guard để kiểm tra access token.
+     */
     private readonly accessTokenGuard: AccessTokenGuard,
   ) {
     this.authtypeGuardMap = {
@@ -23,6 +30,10 @@ export class AuthenticationGuard implements CanActivate {
       [AuthType.None]: { canActivate: () => true },
     };
   }
+
+  /**
+   * Kiểm tra xem request có được phép truy cập hay không.
+   */
   async canActivate(context: ExecutionContext): Promise<boolean> {
     // Lấy authTypes từ reflector
     const authTypes = this.reflector.getAllAndOverride(AUTH_TYPE_KEY, [

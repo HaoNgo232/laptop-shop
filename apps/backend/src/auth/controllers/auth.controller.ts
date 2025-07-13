@@ -10,8 +10,16 @@ import { Body, Controller, Headers, HttpCode, HttpStatus, Post } from '@nestjs/c
 
 @Controller('api/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    /**
+     * Service để xử lý logic liên quan đến xác thực.
+     */
+    private readonly authService: AuthService,
+  ) {}
 
+  /**
+   * Đăng ký người dùng mới.
+   */
   @Post('register')
   @HttpCode(HttpStatus.CREATED)
   @Auth(AuthType.None)
@@ -19,6 +27,9 @@ export class AuthController {
     return this.authService.register(registerUserDto);
   }
 
+  /**
+   * Đăng nhập người dùng.
+   */
   @Post('login')
   @HttpCode(HttpStatus.OK)
   @Auth(AuthType.None)
@@ -26,6 +37,9 @@ export class AuthController {
     return this.authService.login(loginUserDto);
   }
 
+  /**
+   * Đăng xuất người dùng.
+   */
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   @Auth(AuthType.None)
@@ -37,6 +51,9 @@ export class AuthController {
     return { message: 'Đăng xuất thành công' };
   }
 
+  /**
+   * Làm mới access token bằng refresh token.
+   */
   @Post('refresh-token')
   @HttpCode(HttpStatus.OK)
   @Auth(AuthType.None)

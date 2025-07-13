@@ -13,15 +13,24 @@ interface IGenerateTokensProvider {
 @Injectable()
 export class GenerateTokensProvider implements IGenerateTokensProvider {
   constructor(
+    /**
+     * JwtService để tạo token.
+     */
     private readonly jwtService: JwtService,
 
+    /**
+     * Cấu hình Jwt.
+     */
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
   ) {}
 
+  /**
+   * Tạo token cho user.
+   */
   public async signToken<T>(
     userId: string,
-    expiresIn: string | number, // Can be string (e.g., '7d') or number (seconds)
+    expiresIn: string | number, // Có thể là string (ví dụ: '7d') hoặc number (giây)
     payload?: T,
   ) {
     const signOptions = {
@@ -38,6 +47,9 @@ export class GenerateTokensProvider implements IGenerateTokensProvider {
     );
   }
 
+  /**
+   * Tạo token cho user.
+   */
   public async generateTokens(user: User): Promise<{ accessToken: string; refreshToken: string }> {
     const payload: JwtPayload = {
       sub: user.id,
@@ -45,20 +57,20 @@ export class GenerateTokensProvider implements IGenerateTokensProvider {
       role: user.role,
     };
 
-    // Access token uses the string expirationTime with time unit (e.g. "1h")
+    // Access token sử dụng string expirationTime với đơn vị thời gian (ví dụ: "1h")
     const accessTokenExpiresIn = this.jwtConfiguration.expirationTime;
-    // Refresh token uses the string refreshExpirationTime (e.g., '7d')
+    // Refresh token sử dụng string refreshExpirationTime (ví dụ: '7d')
     const refreshTokenExpiresIn = this.jwtConfiguration.refreshExpirationTime;
 
     const [accessToken, refreshToken] = await Promise.all([
       this.signToken<JwtPayload>(
         user.id,
-        accessTokenExpiresIn, // Pass string with time unit (e.g., "1h")
+        accessTokenExpiresIn, // Truyền string với đơn vị thời gian (ví dụ: "1h")
         payload,
       ),
       this.signToken<JwtPayload>(
         user.id,
-        refreshTokenExpiresIn, // Pass string (e.g., '7d')
+        refreshTokenExpiresIn, // Truyền string (ví dụ: '7d')
         payload,
       ),
     ]);

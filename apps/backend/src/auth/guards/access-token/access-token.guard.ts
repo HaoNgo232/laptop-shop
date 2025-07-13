@@ -18,11 +18,21 @@ import { JwtPayload } from '@/auth/interfaces/jwt-payload.interface';
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
   constructor(
+    /**
+     * JwtService để kiểm tra token.
+     */
     private readonly jwtService: JwtService,
 
+    /**
+     * Cấu hình Jwt.
+     */
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
   ) {}
+
+  /**
+   * Kiểm tra xem token có hợp lệ hay không.
+   */
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request: Request = context.switchToHttp().getRequest();
     const token = this.extractRequestFromHeaders(request);
@@ -40,6 +50,9 @@ export class AccessTokenGuard implements CanActivate {
     }
   }
 
+  /**
+   * Lấy token từ headers.
+   */
   private extractRequestFromHeaders(request: Request): string | undefined {
     const [_, token] = request.headers.authorization?.split(' ') ?? [];
     return token;

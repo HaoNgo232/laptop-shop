@@ -8,12 +8,27 @@ import { TokenBlacklistProvider } from '@/auth/providers/token-blacklist.provide
 import { User } from '@/auth/entities/user.entity';
 import { Request } from 'express';
 
+/**
+ * Strategy để xác thực token JWT.
+ * Hiện tại chưa sử dụng service này, đang dùng jwtService trong authService để thay thế.
+ */
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(
+    /**
+     * ConfigService để lấy secret key từ configuration.
+     */
     private readonly configService: ConfigService,
+
+    /**
+     * Repository để lấy thông tin user từ database.
+     */
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
+    /**
+     * Provider để kiểm tra token có nằm trong blacklist không.
+     */
     private readonly tokenBlacklistProvider: TokenBlacklistProvider,
   ) {
     const jwtSecret = configService.get<string>('jwt.secret');
@@ -30,6 +45,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
+  /**
+   * Validate payload từ token.
+   */
   async validate(req: Request, payload: { sub: string; email: string }) {
     // Kiểm tra token có nằm trong blacklist không
     const authHeader = req.headers.authorization;
