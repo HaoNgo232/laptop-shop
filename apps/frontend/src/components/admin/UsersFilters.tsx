@@ -17,9 +17,8 @@ export interface UsersFiltersProps {
 }
 
 /**
- * Component filters cho users management
- * Tách riêng để có thể tái sử dụng và test dễ dàng
- * Tương tự ProductsFilters nhưng có thêm role filter
+ * Search và filter component cho users
+ * Bao gồm search text, role filter, Enter key support
  */
 export const UsersFilters: React.FC<UsersFiltersProps> = ({
     searchTerm,

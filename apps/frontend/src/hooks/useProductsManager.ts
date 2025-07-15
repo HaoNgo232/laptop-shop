@@ -7,9 +7,8 @@ import { Product, CreateProduct, UpdateProduct } from "@/types/product";
 import { AdminQuery } from "@/types/admin";
 
 /**
- * Custom hook quản lý products management
- * Tách business logic khỏi UI component để dễ test và maintain
- * Tuân thủ Single Responsibility Principle
+ * Hook xử lý logic quản lý sản phẩm
+ * Bao gồm CRUD operations, search, pagination
  */
 export const useProductsManager = () => {
   const navigate = useNavigate();
@@ -29,7 +28,7 @@ export const useProductsManager = () => {
 
   const { categories, fetchCategories } = useAdminCategoryStore();
 
-  // Local states - quản lý UI state
+  // UI state management
   const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
@@ -40,16 +39,17 @@ export const useProductsManager = () => {
     limit: 10,
   });
 
-  // Load dữ liệu ban đầu
+  // Load data khi component khởi tạo
   useEffect(() => {
     const loadInitialData = async () => {
+      // Load song song để giảm thời gian chờ
       await Promise.all([fetchProducts(currentQuery), fetchCategories()]);
     };
 
     loadInitialData();
   }, []);
 
-  // Hiển thị lỗi qua toast
+  // Xử lý hiển thị lỗi
   useEffect(() => {
     if (error) {
       toast.error(error);
@@ -57,10 +57,8 @@ export const useProductsManager = () => {
     }
   }, [error, clearError]);
 
-  /**
-   * Handle search với debounce logic có thể thêm sau
-   */
   const handleSearch = async () => {
+    // Reset về trang 1 khi search mới
     const query: AdminQuery = {
       page: 1,
       limit: 10,
@@ -70,9 +68,6 @@ export const useProductsManager = () => {
     await fetchProducts(query);
   };
 
-  /**
-   * Handle pagination change
-   */
   const handlePageChange = async (page: number) => {
     const query: AdminQuery = {
       ...currentQuery,
@@ -82,47 +77,33 @@ export const useProductsManager = () => {
     await fetchProducts(query);
   };
 
-  /**
-   * Handle refresh data
-   */
   const handleRefresh = async () => {
     await fetchProducts(currentQuery);
     toast.success("Dữ liệu đã được làm mới");
   };
 
-  /**
-   * Handle create new product
-   */
   const handleCreateProduct = () => {
     setEditingProduct(null);
     setIsFormDialogOpen(true);
   };
 
-  /**
-   * Handle edit existing product
-   */
   const handleEditProduct = (product: Product) => {
     setEditingProduct(product);
     setIsFormDialogOpen(true);
   };
 
-  /**
-   * Handle view product detail - navigate to product page
-   */
   const handleViewProduct = (product: Product) => {
     navigate(`/products/${product.id}`);
   };
 
-  /**
-   * Handle delete product - show confirmation dialog
-   */
   const handleDeleteProduct = (product: Product) => {
     setProductToDelete(product);
     setIsDeleteDialogOpen(true);
   };
 
   /**
-   * Handle form submit (create/update)
+   * Xử lý submit form tạo/sửa sản phẩm
+   * Logic phức tạp: phân biệt create vs update, reload data sau khi thành công
    */
   const handleFormSubmit = async (data: CreateProduct | UpdateProduct) => {
     try {
@@ -134,11 +115,11 @@ export const useProductsManager = () => {
         toast.success("Thêm sản phẩm thành công");
       }
 
-      // Close dialog và reset state
+      // Reset UI state sau khi thành công
       setIsFormDialogOpen(false);
       setEditingProduct(null);
 
-      // Refresh lại danh sách
+      // Reload để cập nhật danh sách
       await fetchProducts(currentQuery);
     } catch (error) {
       console.error("Lỗi khi xử lý form:", error);
@@ -146,7 +127,8 @@ export const useProductsManager = () => {
   };
 
   /**
-   * Handle confirm delete product
+   * Xác nhận xóa sản phẩm
+   * Cần reload danh sách và reset state sau khi xóa
    */
   const handleConfirmDelete = async () => {
     if (!productToDelete) return;
@@ -155,28 +137,22 @@ export const useProductsManager = () => {
       const message = await deleteProduct(productToDelete.id);
       toast.success(message);
 
-      // Close dialog và reset state
+      // Reset state
       setIsDeleteDialogOpen(false);
       setProductToDelete(null);
 
-      // Refresh lại danh sách
+      // Reload danh sách
       await fetchProducts(currentQuery);
     } catch (error) {
       console.error("Lỗi khi xóa sản phẩm:", error);
     }
   };
 
-  /**
-   * Handle cancel form
-   */
   const handleFormCancel = () => {
     setIsFormDialogOpen(false);
     setEditingProduct(null);
   };
 
-  /**
-   * Handle cancel delete
-   */
   const handleCancelDelete = () => {
     setIsDeleteDialogOpen(false);
     setProductToDelete(null);

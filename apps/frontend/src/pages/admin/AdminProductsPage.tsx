@@ -25,12 +25,11 @@ import { AdminLayout } from '@/components/admin/AdminLayout';
 import { useProductsManager } from '@/hooks/useProductsManager';
 
 /**
- * AdminProductsPage - Trang quản lý sản phẩm
- * Sử dụng useProductsManager hook để tách business logic
- * Sử dụng ProductsFilters component để tái sử dụng
+ * Trang quản lý sản phẩm
+ * Bao gồm CRUD, search, pagination
  */
 export default function AdminProductsPage() {
-    // Sử dụng custom hook để quản lý products logic
+    // Hook xử lý logic quản lý products
     const {
         // Data
         products,
@@ -88,7 +87,7 @@ export default function AdminProductsPage() {
                     isLoading={isLoading}
                 />
 
-                {/*  Products Table */}
+                {/* Products Table */}
                 <ProductsTable
                     products={products}
                     pagination={pagination}

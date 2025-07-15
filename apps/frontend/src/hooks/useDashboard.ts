@@ -2,8 +2,8 @@ import { useEffect } from "react";
 import { useAdminDashboardStore } from "@/stores/admin/adminDashboardStore";
 
 /**
- * Custom hook quản lý dashboard data và business logic
- * Tách business logic khỏi UI component để dễ test và maintain
+ * Hook quản lý dashboard data và logic
+ * Xử lý loading data, error handling, refresh
  */
 export const useDashboard = () => {
   const {
@@ -22,7 +22,8 @@ export const useDashboard = () => {
   }, []);
 
   /**
-   * Load tất cả dashboard data song song để tối ưu performance
+   * Load tất cả dashboard data song song
+   * Tối ưu performance bằng cách gọi API đồng thời
    */
   const loadDashboardData = async () => {
     try {
@@ -32,9 +33,6 @@ export const useDashboard = () => {
     }
   };
 
-  /**
-   * Handle refresh data với error clearing
-   */
   const handleRefresh = () => {
     clearError();
     loadDashboardData();

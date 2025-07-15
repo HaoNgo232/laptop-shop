@@ -12,8 +12,8 @@ export interface ProductsFiltersProps {
 }
 
 /**
- * Component filters cho products management
- * Tách riêng để có thể tái sử dụng và test dễ dàng
+ * Search và filter component cho products
+ * Hỗ trợ tìm kiếm theo tên sản phẩm, Enter key, loading states
  */
 export const ProductsFilters: React.FC<ProductsFiltersProps> = ({
     searchQuery,
@@ -23,7 +23,7 @@ export const ProductsFilters: React.FC<ProductsFiltersProps> = ({
     isLoading = false
 }) => {
     /**
-     * Handle Enter key press để search
+     * Handle Enter key để search nhanh
      */
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {

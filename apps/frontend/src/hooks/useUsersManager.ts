@@ -5,9 +5,8 @@ import { PaginationMeta } from "@/types/api";
 import { UserRole } from "@web-ecom/shared-types/auth/enums";
 
 /**
- * Custom hook quản lý users management
- * Tách business logic khỏi UI component để dễ test và maintain
- * Tuân thủ Single Responsibility Principle
+ * Hook xử lý logic quản lý người dùng
+ * Bao gồm search, filter role, pagination, user CRUD
  */
 export const useUsersManager = () => {
   // Store states
@@ -23,7 +22,7 @@ export const useUsersManager = () => {
     clearSelectedUser,
   } = useAdminUserStore();
 
-  // Local states - quản lý UI state và pagination
+  // UI state và query management
   const [query, setQuery] = useState<AdminQuery>({
     page: 1,
     limit: 10,
@@ -33,7 +32,7 @@ export const useUsersManager = () => {
   const [selectedRole, setSelectedRole] = useState<string>("all");
   const [showModal, setShowModal] = useState(false);
 
-  // Mock pagination data - trong thực tế sẽ lấy từ API response
+  // Pagination state - cần tách riêng vì API response structure
   const [pagination, setPagination] = useState<PaginationMeta>({
     currentPage: 1,
     totalPages: 1,
@@ -43,18 +42,19 @@ export const useUsersManager = () => {
     hasNextPage: false,
   });
 
-  // Load users khi query thay đổi
+  // Auto-load khi query thay đổi
   useEffect(() => {
     loadUsers();
   }, [query]);
 
   /**
-   * Load danh sách users và update pagination
+   * Load danh sách users và cập nhật pagination
+   * Logic phức tạp: cần sync pagination state với API response
    */
   const loadUsers = async () => {
     try {
       await fetchUsers(query);
-      // Update pagination từ API response
+      // Update pagination từ API response nếu có
       if (users.meta) {
         setPagination(users.meta);
       }
@@ -63,19 +63,18 @@ export const useUsersManager = () => {
     }
   };
 
-  /**
-   * Handle search với reset về trang đầu
-   */
   const handleSearch = () => {
+    // Reset về trang 1 khi search mới
     setQuery((prev) => ({
       ...prev,
       search: searchTerm.trim() || undefined,
-      page: 1, // Reset về trang đầu khi search
+      page: 1,
     }));
   };
 
   /**
-   * Handle role filter với reset về trang đầu
+   * Xử lý filter theo role
+   * Logic: convert 'all' thành undefined cho API
    */
   const handleRoleFilter = (role: string) => {
     setSelectedRole(role);
@@ -86,9 +85,6 @@ export const useUsersManager = () => {
     }));
   };
 
-  /**
-   * Handle pagination change
-   */
   const handlePageChange = (page: number) => {
     setQuery((prev) => ({
       ...prev,
@@ -97,7 +93,8 @@ export const useUsersManager = () => {
   };
 
   /**
-   * Handle edit user - fetch detail và show modal
+   * Mở modal edit user
+   * Cần fetch detail trước khi hiển thị modal
    */
   const handleUserEdit = async (userId: string) => {
     try {
@@ -109,40 +106,32 @@ export const useUsersManager = () => {
   };
 
   /**
-   * Handle update user thông tin
+   * Update user và reload danh sách
+   * Logic phức tạp: update + close modal + clear state + reload
    */
   const handleUserUpdate = async (userId: string, data: any) => {
     try {
       await updateUser(userId, data);
       setShowModal(false);
       clearSelectedUser();
-      // Reload danh sách để cập nhật thay đổi
+      // Reload để cập nhật danh sách
       await loadUsers();
     } catch (error) {
       console.error("Lỗi khi cập nhật người dùng:", error);
     }
   };
 
-  /**
-   * Handle đóng modal và clear selected user
-   */
   const handleCloseModal = () => {
     setShowModal(false);
     clearSelectedUser();
   };
 
-  /**
-   * Handle search khi nhấn Enter
-   */
   const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       handleSearch();
     }
   };
 
-  /**
-   * Handle refresh data - reload với query hiện tại
-   */
   const handleRefresh = async () => {
     await loadUsers();
   };

@@ -13,8 +13,8 @@ export interface SummaryCardProps {
 }
 
 /**
- * Component hiển thị summary card với icon, value và optional trend
- * Tái sử dụng được cho dashboard và các trang khác
+ * Card component hiển thị summary data
+ * Hỗ trợ icon, trend arrows, description text
  */
 export const SummaryCard: React.FC<SummaryCardProps> = ({
     title,
@@ -34,7 +34,7 @@ export const SummaryCard: React.FC<SummaryCardProps> = ({
             <CardContent>
                 <div className="text-2xl font-bold">{value}</div>
 
-                {/* Hiển thị trend nếu có */}
+                {/* Hiển thị trend với arrow direction */}
                 {trend && trendValue && (
                     <div className={cn(
                         "flex items-center text-xs mt-1",
@@ -48,7 +48,6 @@ export const SummaryCard: React.FC<SummaryCardProps> = ({
                     </div>
                 )}
 
-                {/* Hiển thị description nếu có */}
                 {description && (
                     <p className="text-xs text-muted-foreground mt-1">
                         {description}
