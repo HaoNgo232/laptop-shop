@@ -23,22 +23,19 @@ import type { CreateReview, UpdateReview, ReviewWithUser } from '@/types/review'
 interface ReviewFormProps {
     productId: string;
     existingReview?: ReviewWithUser | null;
-    onSuccess?: () => void;
-    onCancel?: () => void;
+    onCancel?: () => void; // Chỉ cần onCancel để đóng modal
     className?: string;
 }
 
 export function ReviewForm({
     productId,
     existingReview,
-    onSuccess,
     onCancel,
     className
 }: ReviewFormProps) {
     const [selectedRating, setSelectedRating] = useState(existingReview?.rating || 0);
     const [hoverRating, setHoverRating] = useState(0);
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-    const [isDeleting, setIsDeleting] = useState(false);
 
     const { createReview, updateReview, deleteReview, isSubmitting, error, clearError } = useReviewStore();
 
@@ -85,10 +82,12 @@ export function ReviewForm({
                 await createReview(productId, data as CreateReview);
             }
 
+            // Reset form và đóng modal
             reset();
             setSelectedRating(0);
-            onSuccess?.();
+            onCancel?.(); // Store tự động reload rồi, chỉ cần đóng modal
         } catch (error) {
+            // Lỗi đã handle ở store rồi
             console.error('Review submission failed:', error);
         }
     };
@@ -97,16 +96,16 @@ export function ReviewForm({
         if (!existingReview) return;
 
         try {
-            setIsDeleting(true);
             await deleteReview(existingReview.id);
+
+            // Đóng dialog và reset form
             setShowDeleteDialog(false);
             reset();
             setSelectedRating(0);
-            onSuccess?.(); // Reload data sau khi xóa
+            onCancel?.(); // Đóng modal thôi, store tự reload
         } catch (error) {
+            // Lỗi đã handle ở store rồi
             console.error('Delete review failed:', error);
-        } finally {
-            setIsDeleting(false);
         }
     };
 
@@ -199,7 +198,7 @@ export function ReviewForm({
                     <div className="flex space-x-3">
                         <Button
                             type="submit"
-                            disabled={isSubmitting || selectedRating === 0 || isDeleting}
+                            disabled={isSubmitting || selectedRating === 0}
                             className="flex-1"
                         >
                             {isSubmitting ? (
@@ -217,7 +216,7 @@ export function ReviewForm({
                                 type="button"
                                 variant="destructive"
                                 onClick={() => setShowDeleteDialog(true)}
-                                disabled={isSubmitting || isDeleting}
+                                disabled={isSubmitting}
                                 className="flex items-center space-x-2"
                             >
                                 <Trash2 className="h-4 w-4" />
@@ -238,15 +237,15 @@ export function ReviewForm({
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                        <AlertDialogCancel disabled={isDeleting}>
+                        <AlertDialogCancel disabled={isSubmitting}>
                             Hủy
                         </AlertDialogCancel>
                         <AlertDialogAction
                             onClick={handleDeleteReview}
-                            disabled={isDeleting}
+                            disabled={isSubmitting}
                             className="bg-red-600 hover:bg-red-700"
                         >
-                            {isDeleting ? 'Đang xóa...' : 'Xóa đánh giá'}
+                            {isSubmitting ? 'Đang xóa...' : 'Xóa đánh giá'}
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

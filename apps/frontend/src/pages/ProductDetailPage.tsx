@@ -30,7 +30,6 @@ export function ProductDetailPage() {
         handleAddToCart,
         handleBack,
         handleRetry,
-        handleReviewSuccess,
         openReviewModal,
         closeReviewModal,
         navigate,
@@ -164,7 +163,7 @@ export function ProductDetailPage() {
                             <h2 className="text-2xl font-bold">Đánh giá sản phẩm</h2>
                             {isAuthenticated && (
                                 <Button
-                                    onClick={() => openReviewModal(currentUserReview)}
+                                    onClick={() => openReviewModal(currentUserReview || undefined)}
                                     className="flex items-center space-x-2"
                                     variant={currentUserReview ? "outline" : "default"}
                                 >
@@ -186,7 +185,7 @@ export function ProductDetailPage() {
                         {/* Review List */}
                         <ReviewList
                             productId={product.id}
-                            onEditReview={openReviewModal}
+                            openReviewModal={openReviewModal}
                         />
                     </div>
 
@@ -196,7 +195,6 @@ export function ProductDetailPage() {
                         existingReview={editingReview}
                         isOpen={isReviewModalOpen}
                         onClose={closeReviewModal}
-                        onSuccess={handleReviewSuccess}
                     />
                 </div>
             </main>

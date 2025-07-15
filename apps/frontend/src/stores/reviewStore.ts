@@ -12,6 +12,7 @@ interface ReviewState {
   // State
   reviews: ReviewWithUser[];
   currentUserReview: ReviewWithUser | null;
+  currentProductId: string | null; // Lưu ID sản phẩm hiện tại
   isLoading: boolean;
   isSubmitting: boolean;
   error: string | null;
@@ -34,15 +35,16 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
   // Initial state
   reviews: [],
   currentUserReview: null,
+  currentProductId: null,
   isLoading: false,
   isSubmitting: false,
   error: null,
   pagination: null,
 
-  //  Fetch reviews cho một sản phẩm
+  // Lấy danh sách đánh giá của sản phẩm
   fetchProductReviews: async (productId: string, query?: ReviewQuery) => {
     try {
-      set({ isLoading: true, error: null });
+      set({ isLoading: true, error: null, currentProductId: productId });
 
       const response = await reviewService.getProductReviews(productId, query);
 
@@ -59,28 +61,31 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
     }
   },
 
-  //  Tạo review mới
+  // Tạo đánh giá mới
   createReview: async (productId: string, reviewData: CreateReview) => {
     try {
       set({ isSubmitting: true, error: null });
 
       const newReview = await reviewService.createReview(productId, reviewData);
 
-      set((state) => ({
-        reviews: [newReview, ...state.reviews],
+      // Reload lại list để cập nhật
+      await get().fetchProductReviews(productId);
+
+      // Cập nhật review của user
+      set({
         currentUserReview: newReview,
         isSubmitting: false,
-      }));
+      });
     } catch (error: any) {
       set({
         error: error?.message || "Không thể tạo đánh giá",
         isSubmitting: false,
       });
-      throw error; // Re-throw để component có thể handle
+      throw error; // Throw lại để component biết có lỗi
     }
   },
 
-  // Cập nhật review
+  // Sửa đánh giá
   updateReview: async (reviewId: string, reviewData: UpdateReview) => {
     try {
       set({ isSubmitting: true, error: null });
@@ -90,10 +95,14 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
         reviewData,
       );
 
+      // Reload lại list sau khi sửa
+      const currentProductId = get().currentProductId;
+      if (currentProductId) {
+        await get().fetchProductReviews(currentProductId);
+      }
+
+      // Cập nhật review của user nếu đúng là review này
       set((state) => ({
-        reviews: state.reviews.map((review) =>
-          review.id === reviewId ? updatedReview : review,
-        ),
         currentUserReview:
           state.currentUserReview?.id === reviewId
             ? updatedReview
@@ -109,15 +118,21 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
     }
   },
 
-  //  Xóa review
+  // Xóa đánh giá
   deleteReview: async (reviewId: string) => {
     try {
       set({ isSubmitting: true, error: null });
 
       await reviewService.deleteReview(reviewId);
 
+      // Reload lại list sau khi xóa
+      const currentProductId = get().currentProductId;
+      if (currentProductId) {
+        await get().fetchProductReviews(currentProductId);
+      }
+
+      // Xóa review của user nếu đúng là review này
       set((state) => ({
-        reviews: state.reviews.filter((review) => review.id !== reviewId),
         currentUserReview:
           state.currentUserReview?.id === reviewId
             ? null
@@ -133,7 +148,7 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
     }
   },
 
-  //  Kiểm tra review của user hiện tại
+  // Kiểm tra user đã review chưa
   checkUserReview: async (productId: string) => {
     try {
       const userReview = await reviewService.checkUserReview(productId);
@@ -144,14 +159,15 @@ export const useReviewStore = create<ReviewState>((set, get) => ({
     }
   },
 
-  // Clear error
+  // Xóa lỗi
   clearError: () => set({ error: null }),
 
-  //  Clear reviews (khi chuyển sản phẩm)
+  // Reset về ban đầu (khi chuyển sản phẩm)
   clearReviews: () =>
     set({
       reviews: [],
       currentUserReview: null,
+      currentProductId: null,
       pagination: null,
       error: null,
     }),

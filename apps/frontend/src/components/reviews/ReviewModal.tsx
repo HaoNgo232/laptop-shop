@@ -13,22 +13,15 @@ interface ReviewModalProps {
     existingReview?: ReviewWithUser | null;
     isOpen: boolean;
     onClose: () => void;
-    onSuccess?: () => void;
 }
 
 export function ReviewModal({
     productId,
     existingReview,
     isOpen,
-    onClose,
-    onSuccess
+    onClose
 }: ReviewModalProps) {
     const isEditing = !!existingReview;
-
-    const handleSuccess = () => {
-        onClose();
-        onSuccess?.();
-    };
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
@@ -53,7 +46,6 @@ export function ReviewModal({
                     <ReviewForm
                         productId={productId}
                         existingReview={existingReview}
-                        onSuccess={handleSuccess}
                         onCancel={onClose}
                         className="border-0 shadow-none p-0"
                     />

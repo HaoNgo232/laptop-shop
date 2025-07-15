@@ -11,7 +11,7 @@ export function useProductDetail() {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuthStore();
 
-  // Store hooks
+  // Store hooks (lấy dữ liệu từ store)
   const {
     selectedProduct: product,
     isLoading,
@@ -36,7 +36,7 @@ export function useProductDetail() {
   );
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
-  // Load product khi mount
+  // Load product khi mount (khi chuyển sản phẩm)
   useEffect(() => {
     if (id) {
       fetchProductById(id);
@@ -44,14 +44,14 @@ export function useProductDetail() {
     }
   }, [id, fetchProductById, clearReviews]);
 
-  // Check user review khi có product và user đã login
+  // Kiểm tra user đã review chưa
   useEffect(() => {
     if (product && isAuthenticated) {
       checkUserReview(product.id);
     }
   }, [product, isAuthenticated, checkUserReview]);
 
-  // Handle quantity change
+  // Xử lý số lượng
   const handleQuantityChange = (change: number) => {
     const newQuantity = quantity + change;
     if (newQuantity >= 1 && newQuantity <= (product?.stockQuantity || 1)) {
@@ -59,48 +59,38 @@ export function useProductDetail() {
     }
   };
 
-  // Handle add to cart
+  // Xử lý thêm vào giỏ hàng
   const handleAddToCart = async () => {
-    if (!product || !isAuthenticated) return;
+    if (!product) return;
 
     try {
       setIsAddingToCart(true);
       await addToCart(product.id, quantity);
-      console.log("🛒 Added to cart successfully");
+      // Có thể thêm thông báo thành công ở đây
     } catch (error) {
-      console.error("Failed to add to cart:", error);
+      console.error("Add to cart failed:", error);
     } finally {
       setIsAddingToCart(false);
     }
   };
 
-  // Handle back navigation
+  // Xử lý back navigation
   const handleBack = () => {
     navigate(-1);
   };
 
-  // Handle retry
+  // Xử lý retry
   const handleRetry = () => {
-    clearError();
     if (id) fetchProductById(id);
   };
 
-  // Handle review success
-  const handleReviewSuccess = () => {
-    if (product) {
-      checkUserReview(product.id);
-      fetchProductReviews(product.id);
-      setEditingReview(null);
-      console.log("Review submitted successfully!");
-    }
-  };
-
-  // Modal handlers
-  const openReviewModal = (review?: ReviewWithUser | null) => {
+  // Xử lý modal review
+  const openReviewModal = (review?: ReviewWithUser) => {
     setEditingReview(review || null);
     setIsReviewModalOpen(true);
   };
 
+  // Xử lý đóng modal review
   const closeReviewModal = () => {
     setIsReviewModalOpen(false);
     setEditingReview(null);
@@ -127,8 +117,6 @@ export function useProductDetail() {
     handleAddToCart,
     handleBack,
     handleRetry,
-    handleReviewSuccess,
-    setEditingReview,
     openReviewModal,
     closeReviewModal,
     navigate,

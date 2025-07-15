@@ -21,10 +21,10 @@ import { ReviewForm } from '@/components/reviews/ReviewForm';
 interface ReviewListProps {
     productId: string;
     className?: string;
-    onEditReview?: (review: ReviewWithUser) => void;
+    openReviewModal?: (review: ReviewWithUser) => void;
 }
 
-export function ReviewList({ productId, className, onEditReview }: ReviewListProps) {
+export function ReviewList({ productId, className, openReviewModal }: ReviewListProps) {
     const [reviewToDelete, setReviewToDelete] = useState<ReviewWithUser | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
@@ -148,7 +148,7 @@ export function ReviewList({ productId, className, onEditReview }: ReviewListPro
                                             <Button
                                                 variant="ghost"
                                                 size="sm"
-                                                onClick={() => onEditReview?.(review)}
+                                                onClick={() => openReviewModal?.(review)}
                                                 className="h-8 px-2 text-xs"
                                             >
                                                 <Edit2 className="mr-1 h-3 w-3" />
