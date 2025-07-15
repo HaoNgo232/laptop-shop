@@ -48,9 +48,14 @@ export function AdminSidebar({
                 {/* Logo/Brand */}
                 <div className="flex items-center justify-between p-4 border-b border-gray-200">
                     {!sidebarCollapsed && (
-                        <h1 className="text-xl font-bold text-gray-900">
-                            Admin Panel
-                        </h1>
+                        <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => onNavigate('/')}
+                        >
+                            <Home className="mr-2 h-4 w-4" />
+                            Về trang chủ
+                        </Button>
                     )}
                     <Button
                         variant="ghost"

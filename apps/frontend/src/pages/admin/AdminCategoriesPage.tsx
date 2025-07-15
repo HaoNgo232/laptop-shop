@@ -1,5 +1,5 @@
 import React from 'react';
-import { AdminLayout } from '@/components/admin/AdminLayout';
+import { AdminLayout } from '@/components/layout/AdminLayout';
 import { CategoriesTable } from '@/components/admin/CategoriesTable';
 import { useCategoriesManager } from '@/hooks/useCategoriesManager';
 import CategoryForm from '@/components/categorys/CategoryForm';

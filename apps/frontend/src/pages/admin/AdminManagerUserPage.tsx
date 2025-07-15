@@ -1,4 +1,4 @@
-import { AdminLayout } from '@/components/admin/AdminLayout';
+import { AdminLayout } from '@/components/layout/AdminLayout';
 import { AdminTable } from '@/components/admin/AdminTable';
 import { UserDetailModal } from '@/components/admin/UserDetailModal';
 import { UsersFilters } from '@/components/admin/UsersFilters';

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { AdminLayout } from '@/components/admin/AdminLayout';
+import { AdminLayout } from '@/components/layout/AdminLayout';
 import { OrdersTable } from '@/components/admin/OrdersTable';
 import { OrderDetailModal } from '@/components/admin/OrderDetailModal';
 import { OrderStatsCards } from '@/components/admin/OrderStatsCards';

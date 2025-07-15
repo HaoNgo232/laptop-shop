@@ -28,19 +28,6 @@ export function AdminHeader({
                         {currentPageTitle}
                     </h2>
                 </div>
-
-                {/* Header actions */}
-                <div className="flex items-center gap-2">
-                    <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => onNavigate('/')}
-                        className="hidden sm:flex"
-                    >
-                        <Home className="mr-2 h-4 w-4" />
-                        Trang chủ
-                    </Button>
-                </div>
             </div>
         </header>
     );

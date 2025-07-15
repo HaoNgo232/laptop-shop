@@ -1,5 +1,5 @@
-import { AdminSidebar } from './AdminSidebar';
-import { AdminHeader } from './AdminHeader';
+import { AdminSidebar } from '../admin/AdminSidebar';
+import { AdminHeader } from '../admin/AdminHeader';
 import { useAdminLayout } from '@/hooks/useAdminLayout';
 
 interface AdminLayoutProps {
