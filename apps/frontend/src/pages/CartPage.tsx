@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { CartItemComponent } from '@/components/cart/CartItem';
 import { CartSummary } from '@/components/cart/CartSummary';
-import { useCartStore } from '@/stores/cartStore'; // Thay đổi import
+import { useCartStore } from '@/stores/cartStore';
 import { useAuthStore } from '@/stores/authStore';
 
 export function CartPage() {

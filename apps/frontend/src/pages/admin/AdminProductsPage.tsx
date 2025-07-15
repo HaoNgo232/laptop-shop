@@ -1,11 +1,8 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from 'react';
-import { useAdminProductStore } from '@/stores/admin/adminProductStore';
+import React from 'react';
 import { ProductsTable } from '@/components/admin/ProductsTable';
+import { ProductsFilters } from '@/components/admin/ProductsFilters';
 import ProductForm from '@/components/products/ProductForm';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
     Dialog,
     DialogContent,
@@ -23,146 +20,47 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Plus, Search, RefreshCw } from 'lucide-react';
-import { toast } from 'sonner';
-import { Product, CreateProduct, UpdateProduct } from '@/types/product';
-import { AdminQuery } from '@/types/admin';
-import { useAdminCategoryStore } from '@/stores/admin/adminCategoryStore';
+import { Plus } from 'lucide-react';
 import { AdminLayout } from '@/components/admin/AdminLayout';
-import { useNavigate } from 'react-router-dom';
+import { useProductsManager } from '@/hooks/useProductsManager';
 
+/**
+ * AdminProductsPage - Trang quản lý sản phẩm
+ * Sử dụng useProductsManager hook để tách business logic
+ * Sử dụng ProductsFilters component để tái sử dụng
+ */
 export default function AdminProductsPage() {
-    const navigate = useNavigate();
-
+    // Sử dụng custom hook để quản lý products logic
     const {
+        // Data
         products,
+        categories,
         pagination,
+
+        // States
         isLoading,
-        error,
-        fetchProducts,
-        createProduct,
-        updateProduct,
-        deleteProduct,
-        clearError,
-    } = useAdminProductStore();
+        isFormDialogOpen,
+        isDeleteDialogOpen,
+        productToDelete,
+        editingProduct,
+        searchQuery,
 
-    const { categories, fetchCategories } = useAdminCategoryStore();
+        // Search handlers
+        setSearchQuery,
+        handleSearch,
+        handleRefresh,
+        handlePageChange,
 
-    //  Local state
-    const [isFormDialogOpen, setIsFormDialogOpen] = useState(false);
-    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-    const [productToDelete, setProductToDelete] = useState<Product | null>(null);
-    const [editingProduct, setEditingProduct] = useState<Product | null>(null);
-    const [searchQuery, setSearchQuery] = useState('');
-    const [currentQuery, setCurrentQuery] = useState<AdminQuery>({
-        page: 1,
-        limit: 10,
-    });
-
-    //  Load dữ liệu ban đầu
-    useEffect(() => {
-        const loadInitialData = async () => {
-            await Promise.all([
-                fetchProducts(currentQuery),
-                fetchCategories(),
-            ]);
-        };
-
-        loadInitialData();
-    }, []);
-
-    //  Hiển thị lỗi
-    useEffect(() => {
-        if (error) {
-            toast.error(error);
-            clearError();
-        }
-    }, [error]);
-
-    //  Handlers
-    const handleSearch = async () => {
-        const query: AdminQuery = {
-            page: 1,
-            limit: 10,
-            search: searchQuery || undefined,
-        };
-        setCurrentQuery(query);
-        await fetchProducts(query);
-    };
-
-    const handlePageChange = async (page: number) => {
-        const query: AdminQuery = {
-            ...currentQuery,
-            page,
-        };
-        setCurrentQuery(query);
-        await fetchProducts(query);
-    };
-
-    const handleRefresh = async () => {
-        await fetchProducts(currentQuery);
-        toast.success('Dữ liệu đã được làm mới');
-    };
-
-    const handleCreateProduct = () => {
-        setEditingProduct(null);
-        setIsFormDialogOpen(true);
-    };
-
-    const handleEditProduct = (product: Product) => {
-        setEditingProduct(product);
-        setIsFormDialogOpen(true);
-    };
-
-    const handleViewProduct = (product: Product) => {
-        navigate(`/products/${product.id}`);
-    };
-
-    const handleDeleteProduct = (product: Product) => {
-        setProductToDelete(product);
-        setIsDeleteDialogOpen(true);
-    };
-
-    const handleFormSubmit = async (data: CreateProduct | UpdateProduct) => {
-        try {
-            if (editingProduct) {
-                await updateProduct(editingProduct.id, data as UpdateProduct);
-                toast.success('Cập nhật sản phẩm thành công');
-            } else {
-                await createProduct(data as CreateProduct);
-                toast.success('Thêm sản phẩm thành công');
-            }
-            setIsFormDialogOpen(false);
-            setEditingProduct(null);
-
-            // Refresh lại danh sách
-            await fetchProducts(currentQuery);
-        } catch (error) {
-            console.error('Lỗi khi xử lý form:', error);
-        }
-    };
-
-    const handleConfirmDelete = async () => {
-        if (!productToDelete) return;
-
-        try {
-            const message = await deleteProduct(productToDelete.id);
-            toast.success(message);
-            setIsDeleteDialogOpen(false);
-            setProductToDelete(null);
-
-            // Refresh lại danh sách
-            await fetchProducts(currentQuery);
-        } catch (error) {
-            // Lỗi đã được store xử lý và hiển thị qua useEffect
-            console.error('Lỗi khi xóa sản phẩm:', error);
-        }
-    };
-
-    const handleFormCancel = () => {
-        setIsFormDialogOpen(false);
-        setEditingProduct(null);
-    };
+        // CRUD handlers
+        handleCreateProduct,
+        handleEditProduct,
+        handleViewProduct,
+        handleDeleteProduct,
+        handleFormSubmit,
+        handleConfirmDelete,
+        handleFormCancel,
+        handleCancelDelete,
+    } = useProductsManager();
 
     return (
         <AdminLayout>
@@ -182,37 +80,13 @@ export default function AdminProductsPage() {
                 </div>
 
                 {/* Search & Filters */}
-                <Card>
-                    <CardHeader>
-                        <CardTitle>Tìm Kiếm & Lọc</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="flex flex-col sm:flex-row gap-4">
-                            <div className="flex-1">
-                                <div className="relative">
-                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                                    <Input
-                                        placeholder="Tìm kiếm theo tên sản phẩm..."
-                                        value={searchQuery}
-                                        onChange={(e) => setSearchQuery(e.target.value)}
-                                        onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                                        className="pl-10"
-                                    />
-                                </div>
-                            </div>
-                            <div className="flex gap-2">
-                                <Button onClick={handleSearch} variant="outline">
-                                    <Search className="h-4 w-4 mr-2" />
-                                    Tìm Kiếm
-                                </Button>
-                                <Button onClick={handleRefresh} variant="outline">
-                                    <RefreshCw className="h-4 w-4 mr-2" />
-                                    Làm Mới
-                                </Button>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
+                <ProductsFilters
+                    searchQuery={searchQuery}
+                    onSearchQueryChange={setSearchQuery}
+                    onSearch={handleSearch}
+                    onRefresh={handleRefresh}
+                    isLoading={isLoading}
+                />
 
                 {/*  Products Table */}
                 <ProductsTable
@@ -226,7 +100,7 @@ export default function AdminProductsPage() {
                 />
 
                 {/* Product Form Dialog */}
-                <Dialog open={isFormDialogOpen} onOpenChange={setIsFormDialogOpen}>
+                <Dialog open={isFormDialogOpen} onOpenChange={() => handleFormCancel()}>
                     <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
                         <DialogHeader>
                             <DialogTitle>
@@ -250,7 +124,7 @@ export default function AdminProductsPage() {
                 </Dialog>
 
                 {/* Delete Confirmation Dialog */}
-                <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+                <AlertDialog open={isDeleteDialogOpen} onOpenChange={() => handleCancelDelete()}>
                     <AlertDialogContent>
                         <AlertDialogHeader>
                             <AlertDialogTitle>Xác Nhận Xóa Sản Phẩm</AlertDialogTitle>
@@ -264,10 +138,7 @@ export default function AdminProductsPage() {
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                             <AlertDialogCancel
-                                onClick={() => {
-                                    setIsDeleteDialogOpen(false);
-                                    setProductToDelete(null);
-                                }}
+                                onClick={handleCancelDelete}
                             >
                                 Hủy
                             </AlertDialogCancel>

@@ -1,118 +1,49 @@
-import { useEffect, useState } from 'react';
 import { AdminLayout } from '@/components/admin/AdminLayout';
-import { useAdminUserStore } from '@/stores/admin/adminUserStore';
-import type { AdminQuery } from '@/types/admin';
 import { AdminTable } from '@/components/admin/AdminTable';
 import { UserDetailModal } from '@/components/admin/UserDetailModal';
+import { UsersFilters } from '@/components/admin/UsersFilters';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent } from '@/components/ui/card';
-import { Search, Plus, Filter } from 'lucide-react';
-import { UserRole } from '@web-ecom/shared-types/auth/enums';
-import { PaginationMeta } from '@/types/api';
+import { Plus } from 'lucide-react';
+import { useUsersManager } from '@/hooks/useUsersManager';
 
+/**
+ * AdminManagerUserPage - Trang quản lý người dùng
+ * Sử dụng useUsersManager hook để tách business logic
+ * Sử dụng UsersFilters component để tái sử dụng pattern
+ */
 export function AdminManagerUserPage() {
+    // Sử dụng custom hook để quản lý users logic
     const {
+        // Data
         users,
         selectedUser,
+        pagination,
+
+        // States
         isLoading,
         error,
-        fetchUsers,
-        fetchUserById,
-        updateUser,
+        searchTerm,
+        selectedRole,
+        showModal,
+
+        // Search & Filter handlers
+        setSearchTerm,
+        handleSearch,
+        handleSearchKeyDown,
+        handleRoleFilter,
+        handleRefresh,
+
+        // Pagination handler
+        handlePageChange,
+
+        // User CRUD handlers
+        handleUserEdit,
+        handleUserUpdate,
+        handleCloseModal,
+
+        // Error handler
         clearError,
-        clearSelectedUser
-    } = useAdminUserStore();
-
-    const [query, setQuery] = useState<AdminQuery>({
-        page: 1,
-        limit: 10
-    });
-
-    const [searchTerm, setSearchTerm] = useState('');
-    const [selectedRole, setSelectedRole] = useState<string>('all');
-    const [showModal, setShowModal] = useState(false);
-
-    // Mock pagination data - trong thực tế sẽ lấy từ API response
-    const [pagination, setPagination] = useState<PaginationMeta>({
-        currentPage: 1,
-        totalPages: 1,
-        totalItems: 0,
-        itemsPerPage: 10,
-        hasPreviousPage: false,
-        hasNextPage: false
-    });
-
-
-
-    useEffect(() => {
-        loadUsers();
-    }, [query]);
-
-    const loadUsers = async () => {
-        try {
-            await fetchUsers(query);
-            setPagination(users.meta);
-        } catch (error) {
-            console.error('Lỗi khi tải danh sách người dùng:', error);
-        }
-    };
-
-    const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') {
-            handleSearch();
-        }
-    };
-
-    const handleSearch = () => {
-        setQuery(prev => ({
-            ...prev,
-            search: searchTerm.trim() || undefined,
-            page: 1 // Reset về trang đầu khi search
-        }));
-    };
-
-    const handleRoleFilter = (role: string) => {
-        setSelectedRole(role);
-        setQuery(prev => ({
-            ...prev,
-            role: role === 'all' ? undefined : role as UserRole,
-            page: 1
-        }));
-    };
-
-    const handlePageChange = (page: number) => {
-        setQuery(prev => ({
-            ...prev,
-            page
-        }));
-    };
-
-    const handleUserEdit = async (userId: string) => {
-        try {
-            await fetchUserById(userId);
-            setShowModal(true);
-        } catch (error) {
-            console.error('Lỗi khi tải thông tin người dùng:', error);
-        }
-    };
-
-    const handleUserUpdate = async (userId: string, data: any) => {
-        try {
-            await updateUser(userId, data);
-            setShowModal(false);
-            clearSelectedUser();
-            loadUsers(); // Reload danh sách
-        } catch (error) {
-            console.error('Lỗi khi cập nhật người dùng:', error);
-        }
-    };
-
-    const handleCloseModal = () => {
-        setShowModal(false);
-        clearSelectedUser();
-    };
+    } = useUsersManager();
 
     return (
         <AdminLayout>
@@ -134,48 +65,21 @@ export function AdminManagerUserPage() {
                 </div>
 
                 {/* Search and Filter Bar */}
-                <Card>
-                    <CardContent className="p-4">
-                        <div className="flex flex-col md:flex-row gap-4">
-                            <div className="flex-1 relative">
-                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                                <Input
-                                    placeholder="Tìm kiếm theo email hoặc tên người dùng..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    onKeyDown={handleSearchKeyDown}
-                                    className="pl-10"
-                                />
-                            </div>
-                            <div className="flex gap-2">
-                                <Button
-                                    variant="outline"
-                                    onClick={handleSearch}
-                                    className="whitespace-nowrap"
-                                >
-                                    <Search className="mr-2 h-4 w-4" />
-                                    Tìm kiếm
-                                </Button>
-                                <Select value={selectedRole} onValueChange={handleRoleFilter}>
-                                    <SelectTrigger className="w-40">
-                                        <Filter className="mr-2 h-4 w-4" />
-                                        <SelectValue placeholder="Vai trò" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="all">Tất cả</SelectItem>
-                                        <SelectItem value={UserRole.ADMIN}>Quản trị</SelectItem>
-                                        <SelectItem value={UserRole.USER}>Người dùng</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
-                        </div>
-                    </CardContent>
-                </Card>
+                <UsersFilters
+                    searchTerm={searchTerm}
+                    selectedRole={selectedRole}
+                    onSearchTermChange={setSearchTerm}
+                    onSearch={handleSearch}
+                    onSearchKeyDown={handleSearchKeyDown}
+                    onRoleFilter={handleRoleFilter}
+                    onRefresh={handleRefresh}
+                    isLoading={isLoading}
+                />
             </div>
 
             {/* Users Table */}
             <AdminTable
-                users={users.data}
+                users={users}
                 pagination={pagination}
                 isLoading={isLoading}
                 onUserEdit={handleUserEdit}

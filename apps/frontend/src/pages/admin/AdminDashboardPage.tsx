@@ -1,102 +1,34 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AdminLayout } from '@/components/admin/AdminLayout';
+import { SummaryCard } from '@/components/admin/SummaryCard';
 import {
     Users,
     ShoppingBag,
     DollarSign,
     Package,
-    TrendingUp,
     RefreshCw,
     AlertCircle
 } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useAdminDashboardStore } from '@/stores/admin/adminDashboardStore';
+import { useDashboard } from '@/hooks/useDashboard';
+import { formatCurrency } from '@/utils/formatters';
 import { getOrderStatusLabel } from '@/utils/orderStatus';
 import { OrderStatusEnum } from '@web-ecom/shared-types';
 
+/**
+ * AdminDashboardPage - Trang dashboard cho admin
+ * Sử dụng useDashboard hook để tách business logic
+ * Sử dụng SummaryCard component để tái sử dụng
+ */
 export function AdminDashboardPage() {
+    // Sử dụng custom hook để quản lý dashboard logic
     const {
         dashboardSummary,
         detailedStats,
         isLoading,
         error,
-        fetchDashboardSummary,
-        fetchDetailedStats,
-        clearError
-    } = useAdminDashboardStore();
-
-    useEffect(() => {
-        loadDashboardData();
-    }, []);
-
-    const loadDashboardData = async () => {
-        try {
-            await Promise.all([
-                fetchDashboardSummary(),
-                fetchDetailedStats()
-            ]);
-        } catch (error) {
-            console.error('Lỗi khi tải dữ liệu dashboard:', error);
-        }
-    };
-
-    const handleRefresh = () => {
-        clearError();
-        loadDashboardData();
-    };
-
-    const formatCurrency = (amount: number) => {
-        return new Intl.NumberFormat('vi-VN', {
-            style: 'currency',
-            currency: 'VND'
-        }).format(amount);
-    };
-
-    const SummaryCard = ({
-        title,
-        value,
-        icon: Icon,
-        trend,
-        trendValue,
-        description
-    }: {
-        title: string;
-        value: string | number;
-        icon: React.ComponentType<{ className?: string }>;
-        trend?: 'up' | 'down';
-        trendValue?: string;
-        description?: string;
-    }) => (
-        <Card>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">{title}</CardTitle>
-                <Icon className="h-4 w-4 text-muted-foreground" />
-            </CardHeader>
-            <CardContent>
-                <div className="text-2xl font-bold">{value}</div>
-                {trend && trendValue && (
-                    <div className={cn(
-                        "flex items-center text-xs",
-                        trend === 'up' ? "text-green-600" : "text-red-600"
-                    )}>
-                        <TrendingUp className={cn(
-                            "mr-1 h-3 w-3",
-                            trend === 'down' && "rotate-180"
-                        )} />
-                        {trendValue}
-                    </div>
-                )}
-                {description && (
-                    <p className="text-xs text-muted-foreground mt-1">
-                        {description}
-                    </p>
-                )}
-            </CardContent>
-        </Card>
-    );
+        handleRefresh
+    } = useDashboard();
 
     const LoadingSkeleton = () => (
         <div className="space-y-6">
@@ -234,7 +166,7 @@ export function AdminDashboardPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
-                            {detailedStats?.ordersByStatus?.map((item, index) => (
+                            {detailedStats?.ordersByStatus?.map((item: any, index: number) => (
                                 <div key={index} className="flex items-center justify-between">
                                     <span className="text-sm font-medium">{getOrderStatusLabel(item.status as OrderStatusEnum)}</span>
                                     <span className="text-2xl font-bold">{item.count}</span>
@@ -255,7 +187,7 @@ export function AdminDashboardPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
-                            {detailedStats?.revenueByMonth?.map((item, index) => (
+                            {detailedStats?.revenueByMonth?.map((item: any, index: number) => (
                                 <div key={index} className="flex items-center justify-between">
                                     <span className="text-sm font-medium">{item.month}</span>
                                     <span className="text-lg font-bold">
