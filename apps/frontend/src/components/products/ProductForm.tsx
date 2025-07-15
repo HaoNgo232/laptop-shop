@@ -115,7 +115,7 @@ const ProductForm = ({
     };
 
     const selectedCategoryId = watch('categoryId');
-
+    const watchedImageUrl = watch('imageUrl');
     return (
         <Card className="w-full max-w-2xl mx-auto">
             <CardHeader>
@@ -197,6 +197,32 @@ const ProductForm = ({
                         />
                         {errors.imageUrl && (
                             <p className="text-sm text-red-600">{errors.imageUrl.message}</p>
+                        )}
+
+                        {/* Preview hình ảnh hiện tại */}
+                        {watchedImageUrl && (
+                            <div className="mt-3">
+                                <Label className="text-sm text-gray-600">Preview:</Label>
+                                <div className="mt-2 border rounded-lg overflow-hidden">
+                                    <img
+                                        src={watchedImageUrl}
+                                        alt="Product preview"
+                                        className="w-full h-48 object-cover"
+                                        onError={(e) => {
+                                            e.currentTarget.style.display = 'none';
+                                            e.currentTarget.nextElementSibling?.classList.remove('hidden');
+                                        }}
+                                        onLoad={(e) => {
+                                            e.currentTarget.style.display = 'block';
+                                            e.currentTarget.nextElementSibling?.classList.add('hidden');
+                                        }}
+                                    />
+                                    <div className="hidden p-4 text-center text-gray-500 bg-gray-50">
+                                        <p className="text-sm">Không thể tải hình ảnh</p>
+                                        <p className="text-xs">Vui lòng kiểm tra URL</p>
+                                    </div>
+                                </div>
+                            </div>
                         )}
                     </div>
 

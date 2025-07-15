@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Package, TrendingUp, Clock, CheckCircle } from 'lucide-react';
+import { Package, TrendingUp, Clock, CheckCircle, Truck, X } from 'lucide-react';
 import { OrderStatusEnum } from '@web-ecom/shared-types/orders/enums';
 
 interface OrderStats {
@@ -9,7 +9,7 @@ interface OrderStats {
     pending: number;
     processing: number;
     shipped: number;
-    delivered: number;
+    DELIVERED: number;
     cancelled: number;
 }
 
@@ -81,17 +81,51 @@ export function OrderStatsCards({
 
             <Card className="cursor-pointer hover:shadow-md transition-shadow">
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Đã Giao</CardTitle>
+                    <CardTitle className="text-sm font-medium">Đã Giao Cho Vận Chuyển</CardTitle>
+                    <Truck className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                    <div className="text-2xl font-bold text-blue-600">{stats.shipped}</div>
+                    <Button
+                        variant={statusFilter === OrderStatusEnum.SHIPPED ? "default" : "outline"}
+                        className="mt-2"
+                        onClick={() => onFilterByStatus(OrderStatusEnum.SHIPPED)}
+                    >
+                        {statusFilter === OrderStatusEnum.SHIPPED ? 'Đang Xem' : 'Xem Danh Sách'}
+                    </Button>
+                </CardContent>
+            </Card>
+
+            <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Khách Đã Nhận Hàng</CardTitle>
                     <CheckCircle className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold text-green-600">{stats.delivered}</div>
+                    <div className="text-2xl font-bold text-green-600">{stats.DELIVERED}</div>
                     <Button
                         variant={statusFilter === OrderStatusEnum.DELIVERED ? "default" : "outline"}
                         className="mt-2"
                         onClick={() => onFilterByStatus(OrderStatusEnum.DELIVERED)}
                     >
                         {statusFilter === OrderStatusEnum.DELIVERED ? 'Đang Xem' : 'Xem Danh Sách'}
+                    </Button>
+                </CardContent>
+            </Card>
+
+            <Card className="cursor-pointer hover:shadow-md transition-shadow">
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                    <CardTitle className="text-sm font-medium">Đã Hủy</CardTitle>
+                    <X className="h-4 w-4 text-muted-foreground" />
+                </CardHeader>
+                <CardContent>
+                    <div className="text-2xl font-bold text-red-600">{stats.cancelled}</div>
+                    <Button
+                        variant={statusFilter === OrderStatusEnum.CANCELLED ? "default" : "outline"}
+                        className="mt-2"
+                        onClick={() => onFilterByStatus(OrderStatusEnum.CANCELLED)}
+                    >
+                        {statusFilter === OrderStatusEnum.CANCELLED ? 'Đang Xem' : 'Xem Danh Sách'}
                     </Button>
                 </CardContent>
             </Card>

@@ -18,7 +18,6 @@ import { AdminDashboardPage } from '@/pages/admin/AdminDashboardPage';
 import { AdminManagerUserPage } from '@/pages/admin/AdminManagerUserPage';
 import AdminProductsPage from '@/pages/admin/AdminProductsPage';
 import AdminOrdersPage from '@/pages/admin/AdminOrdersPage';
-import AdminSettingPage from '@/pages/admin/AdminSettingPage';
 import { useAppLoading } from '@/hooks/useAppLoading';
 import LoadingScreen from '@/components/LoadingScreen';
 import { AnimatePresence } from 'framer-motion';

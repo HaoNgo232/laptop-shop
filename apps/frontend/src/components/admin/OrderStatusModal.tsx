@@ -43,8 +43,8 @@ export function OrderStatusModal({
                             <SelectContent>
                                 <SelectItem value={OrderStatusEnum.PENDING}>Chờ xử lý</SelectItem>
                                 <SelectItem value={OrderStatusEnum.PROCESSING}>Đang xử lý</SelectItem>
-                                <SelectItem value={OrderStatusEnum.SHIPPED}>Đang giao</SelectItem>
-                                <SelectItem value={OrderStatusEnum.DELIVERED}>Đã giao</SelectItem>
+                                <SelectItem value={OrderStatusEnum.SHIPPED}>Đã giao cho vận chuyển</SelectItem>
+                                <SelectItem value={OrderStatusEnum.DELIVERED}>Khách đã nhận hàng</SelectItem>
                                 <SelectItem value={OrderStatusEnum.CANCELLED}>Đã hủy</SelectItem>
                             </SelectContent>
                         </Select>

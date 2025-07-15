@@ -2,7 +2,7 @@
 export enum PaymentStatus {
   PENDING = "pending",
   PROCESSING = "processing",
-  COMPLETED = "completed",
+  DELIVERED = "DELIVERED",
   FAILED = "failed",
   REFUNDED = "refunded",
 }

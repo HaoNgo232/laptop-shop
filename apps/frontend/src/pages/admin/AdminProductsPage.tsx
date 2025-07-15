@@ -100,7 +100,7 @@ export default function AdminProductsPage() {
 
                 {/* Product Form Dialog */}
                 <Dialog open={isFormDialogOpen} onOpenChange={() => handleFormCancel()}>
-                    <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+                    <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                         <DialogHeader>
                             <DialogTitle>
                                 {editingProduct ? 'Cập Nhật Sản Phẩm' : 'Thêm Sản Phẩm Mới'}

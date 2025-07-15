@@ -81,7 +81,7 @@ export function useOrdersFilter() {
       shipped: orders.filter(
         (order) => order.status === OrderStatusEnum.SHIPPED,
       ).length,
-      delivered: orders.filter(
+      DELIVERED: orders.filter(
         (order) => order.status === OrderStatusEnum.DELIVERED,
       ).length,
       cancelled: orders.filter(

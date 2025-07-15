@@ -54,12 +54,12 @@ export function OrdersTable({
                 className: 'bg-blue-100 text-blue-800 border-blue-200',
             },
             [OrderStatusEnum.SHIPPED]: {
-                label: 'Đang giao',
+                label: 'Đã giao cho vận chuyển',
                 icon: <Truck className="h-3 w-3" />,
                 className: 'bg-purple-100 text-purple-800 border-purple-200',
             },
             [OrderStatusEnum.DELIVERED]: {
-                label: 'Đã giao',
+                label: 'Khách đã nhận hàng',
                 icon: <CheckCircle className="h-3 w-3" />,
                 className: 'bg-green-100 text-green-800 border-green-200',
             },
