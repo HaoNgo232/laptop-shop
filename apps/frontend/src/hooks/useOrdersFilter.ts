@@ -36,7 +36,7 @@ export function useOrdersFilter() {
     return () => clearInterval(interval);
   }, [fetchOrders]);
 
-  // Client-side filtering và search - tuân thủ Pure Function principle
+  // Filter và search orders ở client-side
   const filteredOrders = useMemo(() => {
     let filtered = [...orders];
 

@@ -28,8 +28,7 @@ export class SepayProvider implements PaymentProvider {
       const bankCode = this.configService.get<string>('SEPAY_BANK_CODE');
       const accountName = this.configService.get<string>('SEPAY_ACCOUNT_NAME');
 
-      // Format content với order ID để dễ tracking theo format của Sepay: DH{orderId}
-      // Pattern này sẽ được dùng để extract orderId trong webhook
+      // Format content với order ID để dễ tracking: DH{orderId}
       const content = `DH${orderInfo.orderId}`;
 
       // Validation required fields

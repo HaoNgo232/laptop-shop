@@ -1,6 +1,5 @@
 /**
  * Utility functions cho formatting data
- * Tách ra để dễ test và reuse trong nhiều components
  */
 
 /**

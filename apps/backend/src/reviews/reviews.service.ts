@@ -248,8 +248,7 @@ export class ReviewsService implements IReviewsService {
    * Kiểm tra review đã tồn tại
    */
   async checkExistingReview(userId: string, productId: string) {
-    // Delegate việc kiểm tra existing review cho use case
-    // Tuân thủ Single Responsibility Principle
+    // Sử dụng use case để kiểm tra review đã tồn tại
     return this.checkExistingReviewUseCase.execute({ userId, productId });
   }
 

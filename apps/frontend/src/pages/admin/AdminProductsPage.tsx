@@ -29,7 +29,7 @@ import { useProductsManager } from '@/hooks/useProductsManager';
  * Bao gồm CRUD, search, pagination
  */
 export default function AdminProductsPage() {
-    // Hook xử lý logic quản lý products
+    // Hook xử lý data và logic cho products
     const {
         // Data
         products,

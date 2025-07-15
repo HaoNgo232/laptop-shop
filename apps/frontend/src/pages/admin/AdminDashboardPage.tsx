@@ -17,11 +17,9 @@ import { OrderStatusEnum } from '@web-ecom/shared-types';
 
 /**
  * AdminDashboardPage - Trang dashboard cho admin
- * Sử dụng useDashboard hook để tách business logic
- * Sử dụng SummaryCard component để tái sử dụng
  */
 export function AdminDashboardPage() {
-    // Sử dụng custom hook để quản lý dashboard logic
+    // Hook xử lý data và logic cho dashboard
     const {
         dashboardSummary,
         detailedStats,

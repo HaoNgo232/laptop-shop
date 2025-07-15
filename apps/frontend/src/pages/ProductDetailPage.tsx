@@ -1,83 +1,37 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, ShoppingCart, Plus, Minus, Star, Package, Truck, Shield } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { useProductStore } from '@/stores/productStore';
-import { useCartStore } from '@/stores/cartStore';
-import { useAuthStore } from '@/stores/authStore';
-import { useReviewStore } from '@/stores/reviewStore';
-import { formatCurrency } from '@/utils/currency';
-import { formatRating, getRatingStars } from '@/utils/rating';
+import { Card, CardContent } from '@/components/ui/card';
 import { ReviewList } from '@/components/reviews/ReviewList';
 import { ReviewForm } from '@/components/reviews/ReviewForm';
-import type { ReviewWithUser } from '@/types/review';
+import { ProductNavigation } from '@/components/products/ProductNavigation';
+import { ProductInfo } from '@/components/products/ProductInfo';
+import { ProductFeatures } from '@/components/products/ProductFeatures';
+import { useProductDetail } from '@/hooks/useProductDetail';
 
 export function ProductDetailPage() {
-    const { id } = useParams<{ id: string }>();
-    const navigate = useNavigate();
-    const { isAuthenticated } = useAuthStore();
     const {
-        selectedProduct: product,
+        // Data
+        product,
+        currentUserReview,
+        quantity,
+        editingReview,
+        cartSummary,
+
+        // States
         isLoading,
         error,
-        fetchProductById,
-        clearError
-    } = useProductStore();
-    const { addToCart, cartSummary } = useCartStore();
-    const { currentUserReview, checkUserReview, clearReviews, fetchProductReviews } = useReviewStore();
+        isAddingToCart,
+        isAuthenticated,
 
-    const [quantity, setQuantity] = useState(1);
-    const [isAddingToCart, setIsAddingToCart] = useState(false);
-    const [editingReview, setEditingReview] = useState<ReviewWithUser | null>(null);
-
-    // Load product detail khi component mount
-    useEffect(() => {
-        if (id) {
-            fetchProductById(id);
-            // Clear reviews khi chuyển sản phẩm khác
-            clearReviews();
-        }
-    }, [id, fetchProductById, clearReviews]);
-
-    // Check user review khi product loaded và user authenticated
-    useEffect(() => {
-        if (product && isAuthenticated) {
-            checkUserReview(product.id);
-        }
-    }, [product, isAuthenticated, checkUserReview]);
-
-    // Handle quantity change
-    const handleQuantityChange = (change: number) => {
-        const newQuantity = quantity + change;
-        if (newQuantity >= 1 && newQuantity <= (product?.stockQuantity || 1)) {
-            setQuantity(newQuantity);
-        }
-    };
-
-    // Handle add to cart
-    const handleAddToCart = async () => {
-        if (!product || !isAuthenticated) return;
-
-        try {
-            setIsAddingToCart(true);
-            await addToCart(product.id, quantity);
-
-            // Show success message hoặc redirect
-            console.log('🛒 Added to cart successfully');
-        } catch (error) {
-            console.error('Failed to add to cart:', error);
-        } finally {
-            setIsAddingToCart(false);
-        }
-    };
-
-    // Handle back navigation
-    const handleBack = () => {
-        navigate(-1); // Go back to previous page
-    };
+        // Actions
+        handleQuantityChange,
+        handleAddToCart,
+        handleBack,
+        handleRetry,
+        handleReviewSuccess,
+        setEditingReview,
+        navigate,
+    } = useProductDetail();
 
     // Loading state
     if (isLoading) {
@@ -118,10 +72,7 @@ export function ProductDetailPage() {
                                     <Button onClick={handleBack} variant="outline">
                                         Quay lại
                                     </Button>
-                                    <Button onClick={() => {
-                                        clearError();
-                                        if (id) fetchProductById(id);
-                                    }}>
+                                    <Button onClick={handleRetry}>
                                         Thử lại
                                     </Button>
                                 </div>
@@ -166,28 +117,12 @@ export function ProductDetailPage() {
 
             <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
                 <div className="px-4 py-6 sm:px-0">
-                    {/* Breadcrumb */}
-                    <div className="flex items-center space-x-2 text-sm text-gray-600 mb-6">
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={handleBack}
-                            className="flex items-center space-x-1 p-0 h-auto"
-                        >
-                            <ArrowLeft className="h-4 w-4" />
-                            <span>Quay lại</span>
-                        </Button>
-                        <span>/</span>
-                        <span onClick={() => navigate('/products')} className="hover:text-primary cursor-pointer">
-                            Sản phẩm
-                        </span>
-                        <span>/</span>
-                        <span onClick={() => navigate(`/products?category=${product.category.id}`)} className="hover:text-primary cursor-pointer">
-                            {product.category.name}
-                        </span>
-                        <span>/</span>
-                        <span className="text-gray-900 font-medium">{product.name}</span>
-                    </div>
+                    {/* Navigation */}
+                    <ProductNavigation
+                        product={product}
+                        onBack={handleBack}
+                        onNavigate={navigate}
+                    />
 
                     {/* Product Details */}
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
@@ -204,200 +139,20 @@ export function ProductDetailPage() {
                         </div>
 
                         {/* Product Info */}
-                        <div className="space-y-6">
-                            {/* Title and Category */}
-                            <div>
-                                <Badge variant="secondary" className="mb-2">
-                                    {product.category.name}
-                                </Badge>
-                                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                                    {product.name}
-                                </h1>
-                                <div className="flex items-center space-x-2">
-                                    <div className="flex items-center space-x-1">
-                                        {Array.from({ length: 5 }).map((_, i) => (
-                                            <Star
-                                                key={i}
-                                                className={`h-4 w-4 ${i < getRatingStars(product?.averageRating ?? 0)
-                                                    ? 'text-yellow-400 fill-current'
-                                                    : 'text-gray-300'
-                                                    }`}
-                                            />
-                                        ))}
-                                    </div>
-                                    <span className="text-sm text-gray-600">
-                                        ({formatRating(product?.averageRating ?? 0, product?.reviewCount ?? 0)})
-                                    </span>
-                                </div>
-                            </div>
-
-                            {/* Price */}
-                            <div className="border-b pb-6">
-                                <div className="flex items-center space-x-4">
-                                    <span className="text-3xl font-bold text-primary">
-                                        {formatCurrency(product.price)}
-                                    </span>
-                                    <Badge variant={product.stockQuantity > 0 ? "default" : "destructive"}>
-                                        {product.stockQuantity > 0 ? `Còn ${product.stockQuantity} sản phẩm` : 'Hết hàng'}
-                                    </Badge>
-                                </div>
-                            </div>
-
-                            {/* Description */}
-                            <div>
-                                <h3 className="text-lg font-semibold text-gray-900 mb-2">Mô tả sản phẩm</h3>
-                                <p className="text-gray-600 leading-relaxed">
-                                    {product.description}
-                                </p>
-                            </div>
-
-                            {/* Quantity and Add to Cart */}
-                            {product.stockQuantity > 0 && (
-                                <div className="border-t pt-6 space-y-4">
-                                    <div className="flex items-center space-x-4">
-                                        <span className="text-sm font-medium text-gray-900">Số lượng:</span>
-                                        <div className="flex items-center border rounded-md">
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={() => handleQuantityChange(-1)}
-                                                disabled={quantity <= 1}
-                                                className="h-10 w-10 p-0"
-                                            >
-                                                <Minus className="h-4 w-4" />
-                                            </Button>
-                                            <span className="w-12 text-center font-medium">{quantity}</span>
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={() => handleQuantityChange(1)}
-                                                disabled={quantity >= product.stockQuantity}
-                                                className="h-10 w-10 p-0"
-                                            >
-                                                <Plus className="h-4 w-4" />
-                                            </Button>
-                                        </div>
-                                        <span className="text-sm text-gray-600">
-                                            (Tối đa {product.stockQuantity} sản phẩm)
-                                        </span>
-                                    </div>
-
-                                    <div className="flex space-x-3">
-                                        {isAuthenticated ? (
-                                            <>
-                                                <Button
-                                                    onClick={handleAddToCart}
-                                                    disabled={isAddingToCart}
-                                                    className="flex-1 flex items-center space-x-2"
-                                                >
-                                                    <ShoppingCart className="h-4 w-4" />
-                                                    <span>
-                                                        {isAddingToCart ? 'Đang thêm...' : 'Thêm vào giỏ hàng'}
-                                                    </span>
-                                                </Button>
-                                                <Button
-                                                    variant="outline"
-                                                    onClick={() => navigate('/cart')}
-                                                    className="flex items-center space-x-2"
-                                                >
-                                                    <span>Giỏ hàng ({cartSummary.totalItems})</span>
-                                                </Button>
-                                            </>
-                                        ) : (
-                                            <div className="w-full">
-                                                <Button
-                                                    onClick={() => navigate('/login')}
-                                                    className="w-full flex items-center space-x-2"
-                                                >
-                                                    <span>Đăng nhập để mua hàng</span>
-                                                </Button>
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            )}
-                        </div>
+                        <ProductInfo
+                            product={product}
+                            quantity={quantity}
+                            isAddingToCart={isAddingToCart}
+                            isAuthenticated={isAuthenticated}
+                            cartSummary={cartSummary}
+                            onQuantityChange={handleQuantityChange}
+                            onAddToCart={handleAddToCart}
+                            onNavigate={navigate}
+                        />
                     </div>
 
-                    {/* Features */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                        <Card>
-                            <CardContent className="flex items-center space-x-3 p-6">
-                                <div className="p-2 bg-primary/10 rounded-full">
-                                    <Truck className="h-6 w-6 text-primary" />
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold">Miễn phí vận chuyển</h4>
-                                    <p className="text-sm text-gray-600">Cho đơn hàng trên 500.000đ</p>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        <Card>
-                            <CardContent className="flex items-center space-x-3 p-6">
-                                <div className="p-2 bg-primary/10 rounded-full">
-                                    <Shield className="h-6 w-6 text-primary" />
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold">Bảo hành chính hãng</h4>
-                                    <p className="text-sm text-gray-600">12 tháng toàn quốc</p>
-                                </div>
-                            </CardContent>
-                        </Card>
-
-                        <Card>
-                            <CardContent className="flex items-center space-x-3 p-6">
-                                <div className="p-2 bg-primary/10 rounded-full">
-                                    <Package className="h-6 w-6 text-primary" />
-                                </div>
-                                <div>
-                                    <h4 className="font-semibold">Đổi trả 7 ngày</h4>
-                                    <p className="text-sm text-gray-600">Miễn phí đổi trả</p>
-                                </div>
-                            </CardContent>
-                        </Card>
-                    </div>
-
-                    {/* Product Specifications */}
-                    <Card className="mb-12">
-                        <CardHeader>
-                            <CardTitle>Thông tin chi tiết</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="space-y-2">
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-600">Mã sản phẩm:</span>
-                                        <span className="font-medium">{product.id.slice(0, 8).toUpperCase()}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-600">Danh mục:</span>
-                                        <span className="font-medium">{product.category.name}</span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-600">Tình trạng:</span>
-                                        <span className="font-medium">
-                                            {product.stockQuantity > 0 ? 'Còn hàng' : 'Hết hàng'}
-                                        </span>
-                                    </div>
-                                </div>
-                                <div className="space-y-2">
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-600">Ngày tạo:</span>
-                                        <span className="font-medium">
-                                            {new Date(product.createdAt).toLocaleDateString('vi-VN')}
-                                        </span>
-                                    </div>
-                                    <div className="flex justify-between">
-                                        <span className="text-gray-600">Cập nhật:</span>
-                                        <span className="font-medium">
-                                            {new Date(product.updatedAt).toLocaleDateString('vi-VN')}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
+                    {/* Features and Specifications */}
+                    <ProductFeatures product={product} />
 
                     {/* Reviews Section */}
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
@@ -407,13 +162,7 @@ export function ProductDetailPage() {
                                 <ReviewForm
                                     productId={product.id}
                                     existingReview={editingReview || currentUserReview}
-                                    onSuccess={() => {
-                                        // Reload user review và review list sau khi success
-                                        checkUserReview(product.id);
-                                        fetchProductReviews(product.id);
-                                        setEditingReview(null);
-                                        console.log('Review submitted successfully!');
-                                    }}
+                                    onSuccess={handleReviewSuccess}
                                     onCancel={() => setEditingReview(null)}
                                 />
                             </div>

@@ -428,7 +428,7 @@ async function seedData() {
       await findOrCreateProduct(productData);
     }
 
-    // Tương tự cho users - áp dụng Single Responsibility Principle
+    // Xử lý users với helper function tương tự
     const userRepo = dataSource.getRepository(User);
 
     const findOrCreateUser = async (userData: any) => {

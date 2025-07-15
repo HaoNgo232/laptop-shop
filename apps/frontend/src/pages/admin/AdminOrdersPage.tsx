@@ -50,7 +50,7 @@ function AdminOrdersPage() {
     const [orderToUpdate, setOrderToUpdate] = useState<Order | null>(null);
     const [newStatus, setNewStatus] = useState<OrderStatusEnum>(OrderStatusEnum.PENDING);
 
-    // Modal handlers - theo SOLID Principle, mỗi function có 1 responsibility
+    // Handlers cho các modal operations
     const handleViewOrder = async (order: Order) => {
         await fetchOrderById(order.id);
         setIsDetailModalOpen(true);

@@ -49,8 +49,7 @@ export interface IAdminReviewQuery extends IReviewQuery {
 export interface IReviewListResponse
   extends IPaginatedResponse<IReviewWithUser> {}
 
-//  Extract types - đây là pattern để đồng bộ type safety
-// Backend entities sẽ extend từ đây, Frontend sẽ import trực tiếp
+// Extract common fields để đồng bộ giữa backend và frontend
 export type ReviewEntityFields = Pick<
   IReview,
   "id" | "rating" | "comment" | "createdAt" | "updatedAt"

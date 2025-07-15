@@ -8,11 +8,9 @@ import { useUsersManager } from '@/hooks/useUsersManager';
 
 /**
  * AdminManagerUserPage - Trang quản lý người dùng
- * Sử dụng useUsersManager hook để tách business logic
- * Sử dụng UsersFilters component để tái sử dụng pattern
  */
 export function AdminManagerUserPage() {
-    // Sử dụng custom hook để quản lý users logic
+    // Hook xử lý data và logic cho users
     const {
         // Data
         users,
