@@ -60,11 +60,4 @@ export class ReviewsController {
   ) {
     return this.reviewsService.findByProductId(productId, query);
   }
-
-  // Lấy review của user cho sản phẩm
-  @Get('/:productId/user-review')
-  async getUserReview(@CurrentUser() user: JwtPayload, @Param('productId') productId: string) {
-    const { existingReview } = await this.reviewsService.checkExistingReview(user.sub, productId);
-    return existingReview || null;
-  }
 }

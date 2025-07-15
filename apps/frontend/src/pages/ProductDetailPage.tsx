@@ -2,11 +2,12 @@ import { Header } from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ReviewList } from '@/components/reviews/ReviewList';
-import { ReviewForm } from '@/components/reviews/ReviewForm';
+import { ReviewModal } from '@/components/reviews/ReviewModal';
 import { ProductNavigation } from '@/components/products/ProductNavigation';
 import { ProductInfo } from '@/components/products/ProductInfo';
 import { ProductFeatures } from '@/components/products/ProductFeatures';
 import { useProductDetail } from '@/hooks/useProductDetail';
+import { Star, Plus } from 'lucide-react';
 
 export function ProductDetailPage() {
     const {
@@ -22,6 +23,7 @@ export function ProductDetailPage() {
         error,
         isAddingToCart,
         isAuthenticated,
+        isReviewModalOpen,
 
         // Actions
         handleQuantityChange,
@@ -29,7 +31,8 @@ export function ProductDetailPage() {
         handleBack,
         handleRetry,
         handleReviewSuccess,
-        setEditingReview,
+        openReviewModal,
+        closeReviewModal,
         navigate,
     } = useProductDetail();
 
@@ -155,27 +158,46 @@ export function ProductDetailPage() {
                     <ProductFeatures product={product} />
 
                     {/* Reviews Section */}
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
-                        {/* Review Form - chỉ hiển thị khi user đã đăng nhập */}
-                        {isAuthenticated && (
-                            <div className="lg:col-span-1">
-                                <ReviewForm
-                                    productId={product.id}
-                                    existingReview={editingReview || currentUserReview}
-                                    onSuccess={handleReviewSuccess}
-                                    onCancel={() => setEditingReview(null)}
-                                />
-                            </div>
-                        )}
+                    <div className="mb-12">
+                        {/* Review Header với nút thêm đánh giá */}
+                        <div className="flex items-center justify-between mb-6">
+                            <h2 className="text-2xl font-bold">Đánh giá sản phẩm</h2>
+                            {isAuthenticated && (
+                                <Button
+                                    onClick={() => openReviewModal(currentUserReview)}
+                                    className="flex items-center space-x-2"
+                                    variant={currentUserReview ? "outline" : "default"}
+                                >
+                                    {currentUserReview ? (
+                                        <>
+                                            <Star className="h-4 w-4" />
+                                            <span>Sửa đánh giá</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Plus className="h-4 w-4" />
+                                            <span>Viết đánh giá</span>
+                                        </>
+                                    )}
+                                </Button>
+                            )}
+                        </div>
 
                         {/* Review List */}
-                        <div className={isAuthenticated ? "lg:col-span-2" : "lg:col-span-3"}>
-                            <ReviewList
-                                productId={product.id}
-                                onEditReview={setEditingReview}
-                            />
-                        </div>
+                        <ReviewList
+                            productId={product.id}
+                            onEditReview={openReviewModal}
+                        />
                     </div>
+
+                    {/* Review Modal */}
+                    <ReviewModal
+                        productId={product.id}
+                        existingReview={editingReview}
+                        isOpen={isReviewModalOpen}
+                        onClose={closeReviewModal}
+                        onSuccess={handleReviewSuccess}
+                    />
                 </div>
             </main>
         </div>

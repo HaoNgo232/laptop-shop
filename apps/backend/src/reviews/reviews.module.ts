@@ -6,7 +6,6 @@ import { Review } from '@/reviews/entities/review.entity';
 import { Product } from '@/products/entities/product.entity';
 import { OrdersModule } from '@/orders/orders.module';
 import { AuthModule } from '@/auth/auth.module';
-import { CheckExistingReviewUseCase } from './use-cases/check-existing-review.use-case';
 
 /**
  * Module để quản lý đánh giá sản phẩm
@@ -14,6 +13,6 @@ import { CheckExistingReviewUseCase } from './use-cases/check-existing-review.us
 @Module({
   imports: [TypeOrmModule.forFeature([Review, Product]), OrdersModule, AuthModule],
   controllers: [ReviewsController],
-  providers: [ReviewsService, CheckExistingReviewUseCase],
+  providers: [ReviewsService],
 })
 export class ReviewsModule {}

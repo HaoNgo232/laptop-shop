@@ -34,6 +34,7 @@ export function useProductDetail() {
   const [editingReview, setEditingReview] = useState<ReviewWithUser | null>(
     null,
   );
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
 
   // Load product khi mount
   useEffect(() => {
@@ -94,6 +95,17 @@ export function useProductDetail() {
     }
   };
 
+  // Modal handlers
+  const openReviewModal = (review?: ReviewWithUser | null) => {
+    setEditingReview(review || null);
+    setIsReviewModalOpen(true);
+  };
+
+  const closeReviewModal = () => {
+    setIsReviewModalOpen(false);
+    setEditingReview(null);
+  };
+
   return {
     // Data
     id,
@@ -108,6 +120,7 @@ export function useProductDetail() {
     error,
     isAddingToCart,
     isAuthenticated,
+    isReviewModalOpen,
 
     // Actions
     handleQuantityChange,
@@ -116,6 +129,8 @@ export function useProductDetail() {
     handleRetry,
     handleReviewSuccess,
     setEditingReview,
+    openReviewModal,
+    closeReviewModal,
     navigate,
   };
 }
