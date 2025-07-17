@@ -5,6 +5,7 @@ import { BaseEntity } from '@/common/entities/base.entity';
 import { UserRole } from '@/auth/enums/user-role.enum';
 import { Order } from '@/orders/entities/order.entity';
 import { Review } from '@/reviews/entities/review.entity';
+import { UserRankEnum } from '@/orders/enums/user-rank.enum';
 
 @Entity()
 export class User extends BaseEntity {
@@ -33,6 +34,18 @@ export class User extends BaseEntity {
 
   @Column({ nullable: true })
   avatarUrl?: string;
+
+  @Column({ type: 'enum', enum: UserRankEnum, default: UserRankEnum.BRONZE })
+  rank: UserRankEnum;
+
+  @Column({
+    type: 'decimal',
+    precision: 12, // 10 chữ số
+    scale: 2, // 2 chữ số sau dấu phẩy
+    default: 0,
+    comment: 'Tổng số tiền đã chi tiêu (VND)',
+  })
+  totalSpent: number;
 
   // Relationships
   @OneToMany(() => Order, (order) => order.user)

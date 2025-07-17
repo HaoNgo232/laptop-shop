@@ -3,6 +3,8 @@ import { Badge } from '@/components/ui/badge';
 import { formatCurrency } from '@/utils/currency';
 import { Package } from 'lucide-react';
 import { useCartStore } from '@/stores/cartStore';
+import { useAuthStore } from '@/stores/authStore';
+import { calculateDiscount } from '@/helpers/discount.helpers';
 
 interface OrderSummaryProps {
     className?: string;
@@ -10,6 +12,7 @@ interface OrderSummaryProps {
 
 export function OrderSummary({ className }: OrderSummaryProps) {
     const { cart } = useCartStore();
+    const { user } = useAuthStore();
 
     if (!cart || cart.items.length === 0) {
         return (
@@ -21,9 +24,14 @@ export function OrderSummary({ className }: OrderSummaryProps) {
         );
     }
 
+    // Tính discount ở frontend
+    const discountInfo = user && cart
+        ? calculateDiscount(cart.totalPrice, user.rank)
+        : null;
+
     const shippingFee = 0;
     const tax = 0;
-    const finalTotal = cart.totalPrice + shippingFee + tax;
+    const finalTotal = discountInfo?.finalAmount || cart.totalPrice;
 
     return (
         <Card className={className}>
@@ -79,11 +87,34 @@ export function OrderSummary({ className }: OrderSummaryProps) {
                         <span>VAT:</span>
                         <span>Đã bao gồm</span>
                     </div>
+
+                    {/* Hiển thị discount nếu có */}
+                    {discountInfo && discountInfo.discountAmount > 0 && (
+                        <div className="flex justify-between text-sm text-green-600">
+                            <span>Giảm giá (Hạng {discountInfo.userRank}):</span>
+                            <span className="font-medium">
+                                -{formatCurrency(discountInfo.discountAmount)}
+                                <span className="ml-1">
+                                    ({(discountInfo.discountPercentage * 100).toFixed(0)}%)
+                                </span>
+                            </span>
+                        </div>
+                    )}
+
                     <hr />
                     <div className="flex justify-between text-lg font-bold">
                         <span>Tổng cộng:</span>
                         <span className="text-primary">{formatCurrency(finalTotal)}</span>
                     </div>
+
+                    {/* Badge hiển thị rank nếu có discount */}
+                    {discountInfo && discountInfo.discountAmount > 0 && (
+                        <div className="text-center mt-2">
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                🎉 Bạn tiết kiệm được {formatCurrency(discountInfo.discountAmount)}
+                            </span>
+                        </div>
+                    )}
                 </div>
 
                 {/* Notes */}

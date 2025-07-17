@@ -14,12 +14,14 @@ import { ValidateStockUseCase } from '@/orders/usecases/validate-stock.usecase';
 import { CreateOrderTransactionUseCase } from '@/orders/usecases/create-order-transaction.usecase';
 import { GeneratePaymentQrUseCase } from '@/orders/usecases/generate-payment-qr.usecase';
 import { CartService } from '@/cart/cart.service';
+import { DiscountService } from '@/orders/services/discount.service';
+import { DiscountCalculation } from '@/orders/interfaces/discount-caculation.interface';
 
 interface IUsersOrdersService {
   create(
     userId: string,
     createOrderDto: CreateOrderDto,
-  ): Promise<{ order: OrderDto; qrCode?: QRCodeResponse }>;
+  ): Promise<{ order: OrderDto; qrCode?: QRCodeResponse; discountInfo: DiscountCalculation }>;
   findAll(userId: string, query: PaginationQueryDto): Promise<PaginatedResponse<OrderDto>>;
   findOne(userId: string, orderId: string): Promise<OrderDetailDto>;
   cancel(userId: string, orderId: string): Promise<OrderDto>;
@@ -38,6 +40,7 @@ export class UsersOrdersService implements IUsersOrdersService {
     private readonly createOrderTransactionUseCase: CreateOrderTransactionUseCase,
     private readonly generatePaymentQrUseCase: GeneratePaymentQrUseCase,
     private readonly cartService: CartService,
+    private readonly discountService: DiscountService,
   ) {}
 
   /**
@@ -46,27 +49,34 @@ export class UsersOrdersService implements IUsersOrdersService {
   async create(
     userId: string,
     createOrderDto: CreateOrderDto,
-  ): Promise<{ order: OrderDto; qrCode?: QRCodeResponse }> {
+  ): Promise<{ order: OrderDto; qrCode?: QRCodeResponse; discountInfo: DiscountCalculation }> {
     // 1. Tìm cart của user
     const cart = await this.cartService.findOneEntity(userId);
 
-    // 2. Validate stock và calculate total using use case
-    const { orderItems, totalAmount } = await this.validateStockUseCase.execute(cart.cartItems);
+    // 2. Validate stock và calculate total (chưa áp dụng discount)
+    const { orderItems, totalAmount: originalAmount } = await this.validateStockUseCase.execute(
+      cart.cartItems,
+    );
 
-    // 3. Create order in transaction using use case
+    // 3. Tính toán discount dựa trên rank của user
+    const discountInfo = await this.discountService.calculateDiscount(userId, originalAmount);
+
+    // 4. Create order với final amount (đã trừ discount)
     const order = await this.createOrderTransactionUseCase.execute({
       userId,
       createOrderDto,
       orderItems,
-      totalAmount,
+      totalAmount: discountInfo.finalAmount, // Sử dụng finalAmount thay vì originalAmount
     });
 
-    // 4. Generate QR code using use case
+    // 5. Generate QR code với số tiền đã giảm giá
     const qrCode = await this.generatePaymentQrUseCase.execute(order, createOrderDto.paymentMethod);
 
+    // 6. Map and return result với thông tin discount
     return {
       order: this.orderMapperProvider.mapOrderToDto(order),
       qrCode,
+      discountInfo, // Trả về thông tin discount để frontend hiển thị
     };
   }
 

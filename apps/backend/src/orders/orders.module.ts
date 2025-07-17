@@ -16,28 +16,36 @@ import { CreatePaginationMetaUseCase } from '@/orders/usecases/create-pagination
 import { CreateOrderTransactionUseCase } from '@/orders/usecases/create-order-transaction.usecase';
 import { GeneratePaymentQrUseCase } from '@/orders/usecases/generate-payment-qr.usecase';
 import { ValidateStockUseCase } from '@/orders/usecases/validate-stock.usecase';
+import { UserRankService } from './services/user-rank.service';
+import { DiscountService } from './services/discount.service';
+import { User } from '@/auth/entities/user.entity';
 
 /**
  * Module để quản lý đơn hàng
  */
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Order, OrderItem, Product]),
+    TypeOrmModule.forFeature([Order, OrderItem, Product, User]),
     CartModule,
     AuthModule,
     forwardRef(() => PaymenstModule),
   ],
   controllers: [OrdersController, AdminOrdersController],
   providers: [
+    // services
     AdminOrdersService,
     UsersOrdersService,
+    UserRankService,
+    DiscountService,
+    // providers
     OrdersProvider,
     OrderMapperProvider,
+    // usecases
     CreatePaginationMetaUseCase,
     ValidateStockUseCase,
     CreateOrderTransactionUseCase,
     GeneratePaymentQrUseCase,
   ],
-  exports: [AdminOrdersService, UsersOrdersService],
+  exports: [AdminOrdersService, UsersOrdersService, UserRankService, DiscountService],
 })
 export class OrdersModule {}

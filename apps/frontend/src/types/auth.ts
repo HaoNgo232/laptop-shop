@@ -1,4 +1,4 @@
-import { UserRole } from "@web-ecom/shared-types/auth/enums";
+import { UserRankEnum, UserRole } from "@web-ecom/shared-types/auth/enums";
 import type {
   IUser,
   ILoginUser,
@@ -37,6 +37,8 @@ const UserSchema: z.ZodType<IUser> = z.object({
   address: z.string().optional(),
   phoneNumber: z.string().optional(),
   role: z.nativeEnum(UserRole),
+  rank: z.nativeEnum(UserRankEnum),
+  totalSpent: z.number(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });

@@ -17,6 +17,8 @@ import { JwtStrategy } from '@/auth/strategies/jwt.strategy';
 import { AuthenticationGuard } from '@/auth/guards/authentication/authentication.guard';
 import { GenerateTokensProvider } from '@/auth/providers/generate-tokens.provider';
 import { RolesGuard } from '@/auth/guards/authentication/roles.guard';
+import { UserRankService } from '@/orders/services/user-rank.service';
+import { Order } from '@/orders/entities/order.entity';
 
 /**
  * Module để quản lý đăng nhập, đăng ký, và xác thực người dùng
@@ -24,7 +26,7 @@ import { RolesGuard } from '@/auth/guards/authentication/roles.guard';
 @Module({
   imports: [
     // Cấu hình TypeOrmModule
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Order]),
     // Cấu hình JwtModule
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -44,6 +46,7 @@ import { RolesGuard } from '@/auth/guards/authentication/roles.guard';
     // Services
     AuthService,
     UsersService,
+    UserRankService,
     // Providers
     {
       provide: HashingProvider,

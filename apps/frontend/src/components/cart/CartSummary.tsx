@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Cart } from '@/types/cart';
+import { useAuthStore } from '@/stores/authStore';
+import { calculateDiscount } from '@/helpers/discount.helpers';
 
 interface CartSummaryProps {
     cart: Cart;
@@ -10,7 +12,13 @@ interface CartSummaryProps {
 }
 
 export function CartSummary({ cart, onClearCart }: CartSummaryProps) {
+    const { user } = useAuthStore();
     const navigate = useNavigate();
+
+    // Tính discount ở frontend
+    const discountInfo = user && cart
+        ? calculateDiscount(cart.totalPrice, user.rank)
+        : null;
 
     const formatPrice = (price: number): string => {
         return new Intl.NumberFormat('vi-VN', {
@@ -42,7 +50,7 @@ export function CartSummary({ cart, onClearCart }: CartSummaryProps) {
 
                     <div className="flex justify-between text-sm">
                         <span>Tạm tính:</span>
-                        <span className="font-medium">{formatPrice(cart.totalPrice)}</span>
+                        <span className="font-medium">{formatPrice(discountInfo?.originalAmount || cart.totalPrice)}</span>
                     </div>
 
                     <div className="flex justify-between text-sm">
@@ -52,9 +60,17 @@ export function CartSummary({ cart, onClearCart }: CartSummaryProps) {
 
                     <hr className="my-3" />
 
+                    {/* Hiển thị discount */}
+                    {discountInfo && discountInfo.discountAmount > 0 && (
+                        <div className="flex justify-between text-sm text-green-600">
+                            <span>Giảm giá (Hạng {discountInfo.userRank}):</span>
+                            <span>-{formatPrice(discountInfo.discountAmount)} ({(discountInfo.discountPercentage * 100)}%)</span>
+                        </div>
+                    )}
+
                     <div className="flex justify-between text-lg font-bold">
                         <span>Tổng cộng:</span>
-                        <span className="text-primary">{formatPrice(cart.totalPrice)}</span>
+                        <span className="text-primary">{formatPrice(discountInfo?.finalAmount || cart.totalPrice)}</span>
                     </div>
                 </div>
 

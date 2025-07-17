@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Package, ShoppingCart, TrendingUp, Award } from 'lucide-react';
+import { User, Package, ShoppingCart, TrendingUp, Award, Crown } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAuthStore } from '@/stores/authStore';
@@ -17,6 +17,7 @@ import {
 } from '@/components/profiles';
 import type { Order } from '@/types/order';
 import { OrderStatusEnum } from '@web-ecom/shared-types/orders/enums';
+import { getRankDisplayName, getRankColor, getRankDiscountPercentage } from '@/helpers/rank.helpers';
 
 // Kiểu dữ liệu cho tab
 type TabType = 'profile' | 'orders';
@@ -64,12 +65,14 @@ const ProfilePage = () => {
                     setOrders(response.data);
                     setOrdersMessage(response.message);
 
-                    // Tính toán thống kê người dùng từ đơn hàng
+                    // Tính toán thống kê người dùng từ đơn hàng chi tính DELIVERED
+                    const deliveredOrders = response.data.filter(order => order.status === OrderStatusEnum.DELIVERED);
                     const stats: UserStats = {
                         totalOrders: response.data.length,
-                        totalSpent: response.data.reduce((sum, order) => sum + order.totalAmount, 0),
-                        completedOrders: response.data.filter(order => order.status === OrderStatusEnum.DELIVERED).length,
-                        loyaltyPoints: Math.floor(response.data.reduce((sum, order) => sum + order.totalAmount, 0) / 1000) // 1 điểm cho mỗi 1000 VND
+                        // Chỉ lấy đơn hàng đã giao (DELIVERED)
+                        totalSpent: deliveredOrders.reduce((sum, order) => sum + order.totalAmount, 0),
+                        completedOrders: deliveredOrders.length,
+                        loyaltyPoints: Math.floor(deliveredOrders.reduce((sum, order) => sum + order.totalAmount, 0) / 1000) // 1 điểm cho mỗi 1000 VND
                     };
                     setUserStats(stats);
 
@@ -86,6 +89,48 @@ const ProfilePage = () => {
 
         loadOrdersAndStats();
     }, [isAuthenticated]);
+
+    // Stats Cards - Thông tin người dùng
+    const statsCards = [
+        {
+            title: 'Tổng đơn hàng',
+            value: userStats.totalOrders,
+            icon: ShoppingCart,
+            color: 'text-blue-600',
+            bgColor: 'bg-blue-50',
+            change: '+2 tuần này'
+        },
+        {
+            title: 'Tổng chi tiêu',
+            value: formatCurrency(userStats.totalSpent),
+            icon: TrendingUp,
+            color: 'text-green-600',
+            bgColor: 'bg-green-50',
+            change: 'Tháng này'
+        },
+        {
+            title: 'Hạng thành viên',
+            value: getRankDisplayName(user?.rank || 'BRONZE'),
+            icon: Crown,
+            color: getRankColor(user?.rank || 'BRONZE').split(' ')[0],
+            bgColor: getRankColor(user?.rank || 'BRONZE').split(' ')[1],
+            change: `Giảm ${getRankDiscountPercentage(user?.rank || 'BRONZE')}% khi thanh toán`
+        },
+        {
+            title: 'Điểm tích lũy',
+            value: userStats.loyaltyPoints,
+            icon: Award,
+            color: 'text-orange-600',
+            bgColor: 'bg-orange-50',
+            change: 'Điểm tích lũy mỗi lần thanh toán'
+        }
+    ];
+
+    // Configuration data cho components
+    const tabs = [
+        { type: 'profile' as TabType, label: 'Thông tin cá nhân', icon: User },
+        { type: 'orders' as TabType, label: 'Đơn hàng', icon: Package },
+    ];
 
     // Container logic - callbacks for ProfileView
     const getUserInitials = (username?: string, email?: string) => {
@@ -106,46 +151,9 @@ const ProfilePage = () => {
     const handleViewAllOrders = () => navigate('/orders');
     const handleGoShopping = () => navigate('/products');
 
-    // Configuration data cho components
-    const tabs = [
-        { type: 'profile' as TabType, label: 'Thông tin cá nhân', icon: User },
-        { type: 'orders' as TabType, label: 'Đơn hàng', icon: Package },
-    ];
 
-    const statsCards = [
-        {
-            title: 'Tổng đơn hàng',
-            value: userStats.totalOrders,
-            icon: ShoppingCart,
-            color: 'text-blue-600',
-            bgColor: 'bg-blue-50',
-            change: '+2 tuần này'
-        },
-        {
-            title: 'Tổng chi tiêu',
-            value: formatCurrency(userStats.totalSpent),
-            icon: TrendingUp,
-            color: 'text-green-600',
-            bgColor: 'bg-green-50',
-            change: 'Tháng này'
-        },
-        {
-            title: 'Hoàn thành',
-            value: userStats.completedOrders,
-            icon: Package,
-            color: 'text-purple-600',
-            bgColor: 'bg-purple-50',
-            change: `${userStats.totalOrders > 0 ? Math.round((userStats.completedOrders / userStats.totalOrders) * 100) : 0}%`
-        },
-        {
-            title: 'Điểm tích lũy',
-            value: userStats.loyaltyPoints,
-            icon: Award,
-            color: 'text-orange-600',
-            bgColor: 'bg-orange-50',
-            change: 'Cấp bạc'
-        }
-    ];
+
+
 
     // Loading state với Skeleton
     if (isLoading) {

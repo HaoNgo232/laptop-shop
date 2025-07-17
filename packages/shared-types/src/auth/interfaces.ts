@@ -1,4 +1,4 @@
-import { UserRole } from "./enums";
+import { UserRankEnum, UserRole } from "./enums";
 
 // Base interfaces for auth module
 export interface IUser {
@@ -11,6 +11,23 @@ export interface IUser {
   createdAt: Date;
   updatedAt: Date;
   avatarUrl?: string;
+  rank: UserRankEnum;
+  totalSpent: number;
+}
+
+export interface IUserRankInfo {
+  userId: string;
+  username: string;
+  userRank: UserRankEnum;
+  totalSpent: number;
+}
+
+export interface IDiscountInfo {
+  originalAmount: number;
+  discountPercentage: number;
+  discountAmount: number;
+  finalAmount: number;
+  userRank: UserRankEnum;
 }
 
 export interface ILoginUser {

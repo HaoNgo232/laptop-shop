@@ -136,7 +136,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         return;
       }
 
-      const user = await authService.getCurrentUser();
+      const user = await authService.getUserProfile();
       set({
         user,
         isAuthenticated: true,

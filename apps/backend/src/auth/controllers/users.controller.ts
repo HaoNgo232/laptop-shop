@@ -2,7 +2,8 @@ import { CurrentUser } from '@/auth/decorators/current-user.decorator';
 import { UpdateUserProfileDto } from '@/auth/dtos/update-profile.dto';
 import { User } from '@/auth/entities/user.entity';
 import { UsersService } from '@/auth/services/users.service';
-import { Body, Controller, Get, Put } from '@nestjs/common';
+import { UserRankService } from '@/orders/services/user-rank.service';
+import { Body, Controller, Get, Post, Put } from '@nestjs/common';
 
 @Controller('api/users')
 export class UsersController {
@@ -11,6 +12,7 @@ export class UsersController {
      * Service để xử lý logic liên quan đến người dùng.
      */
     private readonly usersService: UsersService,
+    private readonly userRankService: UserRankService,
   ) {}
 
   /**
@@ -31,5 +33,14 @@ export class UsersController {
     updateUserDto: UpdateUserProfileDto,
   ): Promise<Omit<User, 'passwordHash'>> {
     return this.usersService.update(userId, updateUserDto);
+  }
+
+  /**
+   * Admin endpoint - force update tất cả user ranks (để test)
+   */
+  @Post('admin/update-all-ranks')
+  async forceUpdateAllRanks() {
+    await this.userRankService.forceUpdateAllRanks();
+    return { message: 'Đã cập nhật rank cho tất cả users' };
   }
 }

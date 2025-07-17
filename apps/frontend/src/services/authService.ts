@@ -4,7 +4,6 @@ import type {
   RegisterUser,
   User,
   LoginResponse,
-  ResetPassword,
 } from "@/types/auth";
 
 class AuthService {
@@ -60,7 +59,7 @@ class AuthService {
   }
 
   // Get current user profile
-  async getCurrentUser(): Promise<User> {
+  async getUserProfile(): Promise<User> {
     try {
       return await apiClient.get<User>("/api/users/profile");
     } catch (error) {
@@ -94,26 +93,6 @@ class AuthService {
     } catch (error) {
       console.error("Refresh token error:", error);
       this.clearTokens();
-      throw error;
-    }
-  }
-
-  // Forgot password
-  async forgotPassword(email: string): Promise<void> {
-    try {
-      await apiClient.post("/api/auth/forgot-password", { email });
-    } catch (error) {
-      console.error("Forgot password error:", error);
-      throw error;
-    }
-  }
-
-  // Reset password
-  async resetPassword(data: ResetPassword): Promise<void> {
-    try {
-      await apiClient.post("/api/auth/reset-password", data);
-    } catch (error) {
-      console.error("Reset password error:", error);
       throw error;
     }
   }

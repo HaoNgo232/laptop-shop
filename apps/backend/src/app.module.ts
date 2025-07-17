@@ -15,6 +15,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AppService } from '@/app.service';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthenticationGuard } from '@/auth/guards/authentication/authentication.guard';
@@ -34,6 +35,8 @@ import { ReviewsModule } from './reviews/reviews.module';
       envFilePath: `.env.${process.env.NODE_ENV ?? 'development'}`,
       validationSchema,
     }),
+    // Cấu hình ScheduleModule
+    ScheduleModule.forRoot(),
     // Cấu hình TypeOrmModule
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],

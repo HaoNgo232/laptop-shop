@@ -29,7 +29,6 @@
     "seed": "ts-node -r tsconfig-paths/register --project tsconfig.json src/scripts/seed-data.ts"
   },
   "dependencies": {
-    "@web-ecom/shared-types": "workspace:*",
     "@nestjs-modules/mailer": "^2.0.2",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
@@ -38,9 +37,11 @@
     "@nestjs/mapped-types": "*",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/schedule": "^6.0.0",
     "@nestjs/swagger": "^11.2.0",
     "@nestjs/typeorm": "^11.0.0",
     "@types/passport-jwt": "^4.0.1",
+    "@web-ecom/shared-types": "workspace:*",
     "axios": "^1.9.0",
     "bcrypt": "^6.0.0",
     "class-transformer": "^0.5.1",
