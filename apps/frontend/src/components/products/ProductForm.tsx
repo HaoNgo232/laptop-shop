@@ -36,7 +36,7 @@ interface ProductFormProps {
     isLoading: boolean;
 }
 
-const ProductForm = ({
+export const ProductForm = ({
     product,
     categories,
     onSubmit,
@@ -279,5 +279,3 @@ const ProductForm = ({
         </Card>
     );
 };
-
-export default ProductForm;

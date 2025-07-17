@@ -3,9 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { ReviewList } from '@/components/reviews/ReviewList';
 import { ReviewModal } from '@/components/reviews/ReviewModal';
-import { ProductNavigation } from '@/components/products/ProductNavigation';
-import { ProductInfo } from '@/components/products/ProductInfo';
-import { ProductFeatures } from '@/components/products/ProductFeatures';
+import { ProductNavigation, ProductInfo, ProductFeatures } from '@/components/products';
 import { useProductDetail } from '@/hooks/useProductDetail';
 import { Star, Plus } from 'lucide-react';
 

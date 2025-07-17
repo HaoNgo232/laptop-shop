@@ -1,5 +1,4 @@
-import { ProductCard } from '@/components/products/ProductCard';
-import { ProductSkeleton } from '@/components/products/ProductSkeleton';
+import { ProductCard, ProductSkeleton } from '@/components/products';
 import type { Product } from '@/types/product';
 
 interface ProductListProps {

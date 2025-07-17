@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Header } from '@/components/layout/Header';
 import { SearchBar } from '@/components/SearchBar';
-import { ProductList } from '@/components/products/ProductList';
+import { ProductList } from '@/components/products';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -96,7 +96,9 @@ export function ProductsPage() {
             <Header />
 
             <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-                <div className="px-4 py-6 sm:px-0">
+                <div
+                    className="px-4 py-6 sm:px-0"
+                >
                     {/* Page Header */}
                     <div className="mb-8">
                         <h1 className="text-3xl font-bold text-gray-900 mb-4">Sản phẩm</h1>

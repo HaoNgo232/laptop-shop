@@ -85,7 +85,7 @@ export function OrderStatsCards({
                     <Truck className="h-4 w-4 text-muted-foreground" />
                 </CardHeader>
                 <CardContent>
-                    <div className="text-2xl font-bold text-blue-600">{stats.shipped}</div>
+                    <div className="text-2xl font-bold text-purple-600">{stats.shipped}</div>
                     <Button
                         variant={statusFilter === OrderStatusEnum.SHIPPED ? "default" : "outline"}
                         className="mt-2"

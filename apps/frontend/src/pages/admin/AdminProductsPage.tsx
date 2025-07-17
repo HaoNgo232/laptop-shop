@@ -1,7 +1,7 @@
-import React from 'react';
+
 import { ProductsTable } from '@/components/admin/ProductsTable';
 import { ProductsFilters } from '@/components/admin/ProductsFilters';
-import ProductForm from '@/components/products/ProductForm';
+import { ProductForm } from '@/components/products';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
