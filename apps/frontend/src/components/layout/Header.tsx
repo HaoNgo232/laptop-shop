@@ -10,15 +10,9 @@ export function Header() {
     const location = useLocation();
     const { user, isAuthenticated, logout } = useAuthStore();
 
-    const handleLogout = async () => {
-        try {
-            await logout();
-            navigate('/');
-        } catch (error) {
-            console.error('Logout failed:', error);
-            // Navigate anyway since logout clears local state
-            navigate('/');
-        }
+    const handleLogout = () => {
+        logout();
+        navigate('/');
     };
 
     // Navigation items

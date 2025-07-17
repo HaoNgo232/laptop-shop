@@ -1,5 +1,4 @@
 import { ConfigService } from '@nestjs/config';
-import { TokenBlacklist } from '@/auth/entities/token-blacklist.entity';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -15,7 +14,6 @@ import { HashingProvider } from '@/auth/providers/hashing.provider';
 import { UsersService } from '@/auth/services/users.service';
 import { BcryptProvider } from '@/auth/providers/bcrypt.provider';
 import { JwtStrategy } from '@/auth/strategies/jwt.strategy';
-import { TokenBlacklistProvider } from '@/auth/providers/token-blacklist.provider';
 import { AuthenticationGuard } from '@/auth/guards/authentication/authentication.guard';
 import { GenerateTokensProvider } from '@/auth/providers/generate-tokens.provider';
 import { RolesGuard } from '@/auth/guards/authentication/roles.guard';
@@ -26,7 +24,7 @@ import { RolesGuard } from '@/auth/guards/authentication/roles.guard';
 @Module({
   imports: [
     // Cấu hình TypeOrmModule
-    TypeOrmModule.forFeature([TokenBlacklist, User]),
+    TypeOrmModule.forFeature([User]),
     // Cấu hình JwtModule
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -52,14 +50,13 @@ import { RolesGuard } from '@/auth/guards/authentication/roles.guard';
       useClass: BcryptProvider,
     },
     BcryptProvider,
-    TokenBlacklistProvider,
     GenerateTokensProvider,
     AccessTokenGuard,
     AuthenticationGuard,
     RolesGuard, // Strategies
     JwtStrategy, // Strategies
   ],
-  // Exports cho các module khác sử dụng
+  // Exports cho các module khác sử dụng
   exports: [UsersService, AccessTokenGuard, RolesGuard],
 })
 export class AuthModule {}

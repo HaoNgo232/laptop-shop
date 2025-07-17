@@ -6,7 +6,7 @@ import { RegisterUserDto } from '@/auth/dtos/register-user.dto';
 import { User } from '@/auth/entities/user.entity';
 import { AuthType } from '@/auth/enums/auth-type.enum';
 import { AuthService } from '@/auth/services/auth.service';
-import { Body, Controller, Headers, HttpCode, HttpStatus, Post } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common';
 
 @Controller('api/auth')
 export class AuthController {
@@ -35,20 +35,6 @@ export class AuthController {
   @Auth(AuthType.None)
   async login(@Body() loginUserDto: LoginUserDto): Promise<LoginResponseDto> {
     return this.authService.login(loginUserDto);
-  }
-
-  /**
-   * Đăng xuất người dùng.
-   */
-  @Post('logout')
-  @HttpCode(HttpStatus.OK)
-  @Auth(AuthType.None)
-  async logout(
-    @Headers('authorization') authHeader: string,
-    @Body() refreshTokenDto?: RefreshTokenDto,
-  ) {
-    await this.authService.logout(authHeader, refreshTokenDto?.refreshToken);
-    return { message: 'Đăng xuất thành công' };
   }
 
   /**

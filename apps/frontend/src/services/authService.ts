@@ -46,27 +46,16 @@ class AuthService {
   }
 
   // Logout method
-  async logout(): Promise<void> {
-    try {
-      const refreshToken = localStorage.getItem("refreshToken");
+  logout(): void {
+    // Clear local storage
+    this.clearTokens();
 
-      await apiClient.post("/api/auth/logout", {
-        refreshToken: refreshToken || undefined,
-      });
-    } catch (error) {
-      console.error("Logout error (ignored):", error);
-      // Continue with local logout even if API fails
-    } finally {
-      // Always clear local storage
-      this.clearTokens();
-
-      // Redirect to login
-      if (
-        typeof window !== "undefined" &&
-        window.location.pathname !== "/login"
-      ) {
-        window.location.href = "/login";
-      }
+    // Redirect to login
+    if (
+      typeof window !== "undefined" &&
+      window.location.pathname !== "/login"
+    ) {
+      window.location.href = "/login";
     }
   }
 

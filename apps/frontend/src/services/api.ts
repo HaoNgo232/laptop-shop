@@ -46,11 +46,6 @@ class ApiClient {
           _retry?: boolean;
         };
 
-        //  Bỏ qua interceptor cho logout (ngăn vòng lặp)
-        if (originalRequest.url?.includes("/api/auth/logout")) {
-          return Promise.reject(this.transformError(error));
-        }
-
         // Handle 401: token expired
         if (
           error.response?.status === 401 &&

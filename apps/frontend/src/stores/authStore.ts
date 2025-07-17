@@ -21,7 +21,7 @@ interface AuthState {
   // Actions
   login: (credentials: LoginUser) => Promise<void>;
   register: (userData: RegisterUser) => Promise<void>;
-  logout: () => Promise<void>;
+  logout: () => void;
   updateProfile: (data: UpdateProfile) => Promise<void>;
   initializeAuth: () => Promise<void>;
   clearError: () => void;
@@ -75,28 +75,20 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     }
   },
 
-  logout: async () => {
-    try {
-      set({ isLoading: true });
+  logout: () => {
+    // Call authService to clear tokens and redirect
+    authService.logout();
 
-      await authService.logout();
-    } catch (error) {
-      console.error("Logout error:", error);
-    } finally {
-      // Clear local state
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
+    // Clear local state
+    set({
+      user: null,
+      isAuthenticated: false,
+      error: null,
+      isLoading: false,
+    });
 
-      set({
-        user: null,
-        isAuthenticated: false,
-        error: null,
-        isLoading: false,
-      });
-
-      // Clear cart state
-      useCartStore.setState({ cart: null, error: null });
-    }
+    // Clear cart state
+    useCartStore.setState({ cart: null, error: null });
   },
 
   updateProfile: async (data) => {

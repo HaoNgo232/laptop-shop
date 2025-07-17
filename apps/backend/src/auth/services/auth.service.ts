@@ -2,7 +2,6 @@ import { LoginResponseDto } from '@/auth/dtos/login-response.dto';
 import { RefreshTokenDto } from '@/auth/dtos/refresh-token.dto';
 import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { GenerateTokensProvider } from '@/auth/providers/generate-tokens.provider';
-import { TokenBlacklistProvider } from '@/auth/providers/token-blacklist.provider';
 import { RegisterUserDto } from '@/auth/dtos/register-user.dto';
 import { LoginUserDto } from '@/auth/dtos/login.dto';
 import { User } from '@/auth/entities/user.entity';
@@ -29,14 +28,12 @@ interface IAuthService {
     user: Omit<User, 'passwordHash'>;
   }>;
   refreshToken(refreshTokenDto: RefreshTokenDto): Promise<LoginResponseDto>;
-  logout(accessToken: string, refreshToken?: string): Promise<void>;
 }
 
 @Injectable()
 export class AuthService implements IAuthService {
   constructor(
     private readonly generateTokensProvider: GenerateTokensProvider,
-    private readonly tokenBlacklistProvider: TokenBlacklistProvider,
     private readonly bcryptProvider: BcryptProvider,
     private readonly mailService: MailService,
     private readonly jwtService: JwtService,
@@ -112,22 +109,6 @@ export class AuthService implements IAuthService {
         throw error;
       }
       throw new UnauthorizedException('Refresh token không hợp lệ');
-    }
-  }
-
-  /**
-   * Đăng xuất người dùng và đưa token vào blacklist.
-   */
-  async logout(accessToken: string, refreshToken?: string): Promise<void> {
-    // Lấy access token
-    const formattedAccessToken = accessToken.replace('Bearer ', '');
-
-    // Thêm access token vào blacklist
-    await this.tokenBlacklistProvider.addToBlacklist(formattedAccessToken, 'access');
-
-    // Thêm refresh token vào blacklist nếu có
-    if (refreshToken) {
-      await this.tokenBlacklistProvider.addToBlacklist(refreshToken, 'refresh');
     }
   }
 
