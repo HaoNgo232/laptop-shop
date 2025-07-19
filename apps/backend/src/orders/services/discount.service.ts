@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '@/auth/entities/user.entity';
@@ -6,9 +6,7 @@ import { getDiscountPercentage } from '@/orders/helpers/rank-caculatetor.helpers
 import { DiscountCalculation } from '@/orders/interfaces/discount-caculation.interface';
 
 interface IDiscountService {
-  calculateDiscount(userId: string, originalAmount: number): Promise<DiscountCalculation>;
-  applyDiscount(userId: string, originalAmount: number): Promise<number>;
-  getPercentage(userId: string): Promise<number>;
+  calculate(userId: string, originalAmount: number): Promise<DiscountCalculation>;
 }
 
 /**
@@ -22,21 +20,26 @@ export class DiscountService implements IDiscountService {
   ) {}
 
   /**
-   * Tính toán discount dựa trên rank của user
+   * Tính toán giảm giá dựa trên rank của user
    */
-  async calculateDiscount(userId: string, originalAmount: number): Promise<DiscountCalculation> {
-    // Lấy thông tin rank của user
+  async calculate(userId: string, originalAmount: number): Promise<DiscountCalculation> {
+    // Lấy thông tin rank của user
     const user = await this.userRepository.findOne({
       where: { id: userId },
       select: ['rank'],
     });
 
     if (!user) {
-      throw new Error('User không tồn tại');
+      throw new NotFoundException('User không tồn tại');
     }
 
+    // Lấy phần trăm giảm giá dựa trên rank của user
     const discountPercentage = getDiscountPercentage(user.rank);
+
+    // Số tiền sẽ giảm giá
     const discountAmount = originalAmount * discountPercentage;
+
+    // Tổng tiền sau khi giảm giá
     const finalAmount = originalAmount - discountAmount;
 
     return {
@@ -46,29 +49,5 @@ export class DiscountService implements IDiscountService {
       finalAmount,
       userRank: user.rank,
     };
-  }
-
-  /**
-   * Áp dụng discount vào số tiền (helper method)
-   */
-  async applyDiscount(userId: string, originalAmount: number): Promise<number> {
-    const calculation = await this.calculateDiscount(userId, originalAmount);
-    return calculation.finalAmount;
-  }
-
-  /**
-   * Lấy discount percentage cho một user cụ thể
-   */
-  async getPercentage(userId: string): Promise<number> {
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-      select: ['rank'],
-    });
-
-    if (!user) {
-      throw new Error('User không tồn tại');
-    }
-
-    return getDiscountPercentage(user.rank);
   }
 }

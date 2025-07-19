@@ -3,7 +3,6 @@ import { PaymentMethodEnum } from '@/payments/enums/payments-method.enum';
 import { PaymentProviderFactory } from './providers/payment-provider.factory';
 import {
   QRCodeResponse,
-  TransactionResult,
   QRGenerationRequest,
 } from '@/payments/interfaces/payment-provider.interfaces';
 import { AdminOrdersService } from '@/orders/services/admin-orders.service';
@@ -44,12 +43,15 @@ export class PaymentsService implements IPaymentsService {
   async generateQRCode(createPaymentDto: CreatePaymentDto): Promise<QRCodeResponse> {
     const { orderId, amount, paymentMethod, bankAccount, expireMinutes } = createPaymentDto;
     try {
+      // Kiểm tra phương thức thanh toán có sẵn hay không
       if (!this.paymentProviderFactory.isProviderSupported(paymentMethod)) {
         throw new BadRequestException(`Phuong thuc thanh toan ${paymentMethod} khong duoc ho tro`);
       }
 
+      // Lấy provider tương ứng với phương thức thanh toán
       const provider = this.paymentProviderFactory.getProvider(paymentMethod);
 
+      // Request để tạo QR code
       const qrRequest: QRGenerationRequest = {
         orderId,
         amount,
@@ -81,7 +83,7 @@ export class PaymentsService implements IPaymentsService {
 
       // Kiểm tra webhook
       if (!provider.verifyWebhook(payload, signature)) {
-        throw new BadRequestException('Webhook khong hop le');
+        throw new BadRequestException('Webhook không hợp lệ!');
       }
 
       // Xử lý giao dich
@@ -89,7 +91,7 @@ export class PaymentsService implements IPaymentsService {
 
       // Log thông tin giao dich
       this.logger.log(
-        `Processed ${result.status} transaction ${result.transactionId} for order ${result.orderId}`,
+        `Xử lý giao dịch ${result.status} ${result.transactionId} cho đơn hàng ${result.orderId}`,
       );
 
       // Cập nhật trạng thái thanh toán
@@ -115,7 +117,7 @@ export class PaymentsService implements IPaymentsService {
 
       return {
         success: true,
-        message: 'Webhook processed successfully',
+        message: 'Webhook đã được xử lý thành công',
         transactionId: result.transactionId,
         orderId: result.orderId,
         status: result.status,
@@ -125,20 +127,29 @@ export class PaymentsService implements IPaymentsService {
 
       return {
         success: false,
-        message: 'Webhook processing failed',
-        error: error instanceof Error ? error.message : 'Unknown error',
+        message: 'Webhook đã được xử lý thành công',
+        error: error instanceof Error ? error.message : 'Lỗi không xác định',
       };
     }
   }
 
+  /**
+   * Lấy danh sách các phương thức thanh toán có sẵn
+   */
   getAvailableMethods(): PaymentMethodEnum[] {
     return this.paymentProviderFactory.getAvailableProviders();
   }
 
+  /**
+   * Kiểm tra phương thức thanh toán có sẵn hay không
+   */
   isMethodSupported(method: PaymentMethodEnum): boolean {
     return this.paymentProviderFactory.isProviderSupported(method);
   }
 
+  /**
+   * Chuyển đổi phương thức thanh toán
+   */
   async switchMethod(
     orderId: string,
     amount: number,

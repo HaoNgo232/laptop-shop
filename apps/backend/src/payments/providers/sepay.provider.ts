@@ -16,7 +16,12 @@ export class SepayProvider implements PaymentProvider {
   readonly name = 'SEPAY_QR';
   private readonly logger = new Logger(SepayProvider.name);
 
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    /**
+     * @description ConfigService để lấy các giá trị từ file .env
+     */
+    private readonly configService: ConfigService,
+  ) {}
 
   /**
    * Tạo QR code cho thanh toán SePay
@@ -122,10 +127,13 @@ export class SepayProvider implements PaymentProvider {
 
       // Strategy 1: Thử tìm từ content trước
       const orderMatch = transaction.content.match(/DH([a-f0-9-]{32,36})/i);
+      console.log('>>>orderMatch', orderMatch);
+
+      // Trích xuất id đơn hàng từ content
       if (orderMatch && orderMatch[1]) {
         let extractedId = orderMatch[1];
 
-        // Handle UUID không có dấu gạch
+        // Format id sepay trả về thành UUID
         if (extractedId.length === 32 && !extractedId.includes('-')) {
           extractedId = [
             extractedId.slice(0, 8),
@@ -143,34 +151,34 @@ export class SepayProvider implements PaymentProvider {
         orderId = transaction.code.replace(/^DH/, '');
         this.logger.log(`Extracted orderId from 'code': ${orderId}`);
       } else {
-        throw new Error('Cannot extract orderId from transaction');
+        throw new Error('Không thể trích xuất orderId từ giao dịch');
       }
 
-      // Validation: Ensure orderId is valid UUID format
+      // Validation: Đảm bảo orderId là định dạng UUID
       const uuidRegex =
         /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
       if (!uuidRegex.test(orderId)) {
-        this.logger.error(`Invalid UUID format: ${orderId}`);
-        throw new Error(`OrderId is not a valid UUID: ${orderId}`);
+        this.logger.error(`Không đúng format UUID: ${orderId}`);
+        throw new Error(`OrderId không phải là UUID: ${orderId}`);
       }
 
       const amount = transaction.transferAmount;
 
-      // Determine transaction status based on SePay webhook data
+      // Xác định trạng thái giao dịch dựa trên dữ liệu webhook SePay
       let status: 'success' | 'failed' | 'pending' = 'pending';
-      let message = 'Transaction is being processed.';
+      let message = 'Giao dịch đang được xử lý.';
 
-      // Success condition: transferType = 'in' (incoming) và amount > 0
+      // Điều kiện thành công: transferType = 'in' (incoming) và amount > 0
       if (transaction.transferType === 'in' && amount > 0) {
         status = 'success';
-        message = 'Payment completed successfully.';
+        message = 'Thanh toán thành công!';
       } else {
-        // Failed: không phải incoming payment hoặc amount <= 0
+        // Thất bại: không phải incoming payment hoặc amount <= 0
         status = 'failed';
-        message = 'Transaction was not an incoming payment.';
+        message = 'Giao dịch không phải là đầu vào "in" (nhận tiền) hoặc amount <= 0';
       }
 
-      this.logger.log(`Transaction processed successfully: orderId=${orderId}, status=${status}`);
+      this.logger.log(`Giao dịch đã được xử lý thành công: orderId=${orderId}, status=${status}`);
 
       return Promise.resolve({
         transactionId: transaction.id,
@@ -187,8 +195,8 @@ export class SepayProvider implements PaymentProvider {
         },
       });
     } catch (error) {
-      this.logger.error('Error processing transaction:', error);
-      return Promise.reject(new Error(`Failed to process SePay transaction: ${error}`));
+      this.logger.error('Lỗi xử lý giao dịch:', error);
+      return Promise.reject(new Error(`Lỗi xử lý giao dịch SePay: ${error}`));
     }
   }
 

@@ -37,7 +37,7 @@ export class UsersOrdersService implements IUsersOrdersService {
     private readonly dataSource: DataSource,
     private readonly orderMapperProvider: OrderMapperProvider,
     private readonly ordersProvider: OrdersProvider,
-    private readonly validateStockUseCase: ValidateStockUseCase,
+    private readonly validateStock: ValidateStockUseCase,
     private readonly createOrderUseCase: CreateOrderUseCase,
     private readonly cartService: CartService,
     private readonly discountService: DiscountService,
@@ -55,12 +55,12 @@ export class UsersOrdersService implements IUsersOrdersService {
     const cart = await this.cartService.findCart(userId);
 
     // 2. Kiểm tra số lượng sản phẩm có đủ không và tính tổng tiền (chưa áp dụng discount)
-    const { orderItems, totalAmount: originalAmount } = await this.validateStockUseCase.execute(
+    const { orderItems, totalAmount: originalAmount } = await this.validateStock.execute(
       cart.cartItems,
     );
 
     // 3. Tính toán giảm giá dựa trên rank của user
-    const discountInfo = await this.discountService.calculateDiscount(userId, originalAmount);
+    const discountInfo = await this.discountService.calculate(userId, originalAmount);
 
     // 4. Tạo order với số tiền đã giảm giá
     const order = await this.createOrderUseCase.execute({
@@ -73,11 +73,11 @@ export class UsersOrdersService implements IUsersOrdersService {
     // 5. Tạo QR code với số tiền đã giảm giá
     const qrCode = await this.generateQRCode(order, createOrderDto.paymentMethod);
 
-    // 6. Map and return result với thông tin discount
+    // 6. Map và return result với thông tin giảm giá
     return {
       order: this.orderMapperProvider.mapOrderToDto(order),
       qrCode,
-      discountInfo, // Trả về thông tin discount để frontend hiển thị
+      discountInfo, // Trả về thông tin giảm giá để frontend hiển thị
     };
   }
 

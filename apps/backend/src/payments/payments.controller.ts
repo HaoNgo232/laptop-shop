@@ -23,6 +23,7 @@ export class PaymentsController {
 
   /**
    * Endpoint chỉ dùng để nhận webhook sepay
+   * Webhook hiện tại chưa bắn về signature do SEPAY_WEBHOOK_SECRET chưa được cấu hình
    */
   @Post('webhook/sepay')
   @Auth(AuthType.None)
