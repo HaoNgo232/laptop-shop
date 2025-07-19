@@ -17,9 +17,9 @@ interface OrderFiltersProps {
 function getStatusLabel(status: OrderStatusEnum): string {
     const statusLabels = {
         [OrderStatusEnum.PENDING]: 'Chờ xử lý',
-        [OrderStatusEnum.PROCESSING]: 'Đang xử lý',
-        [OrderStatusEnum.SHIPPED]: 'Đang giao',
-        [OrderStatusEnum.DELIVERED]: 'Đã giao',
+        [OrderStatusEnum.PROCESSING]: 'Đang chuẩn bị hàng',
+        [OrderStatusEnum.SHIPPED]: 'Đã giao cho vận chuyển',
+        [OrderStatusEnum.DELIVERED]: 'Khách đã nhận hàng',
         [OrderStatusEnum.CANCELLED]: 'Đã hủy'
     };
     return statusLabels[status] || status;
@@ -68,7 +68,7 @@ export function OrderFilters({
                         <SelectContent>
                             <SelectItem value="all">Tất cả trạng thái</SelectItem>
                             <SelectItem value={OrderStatusEnum.PENDING}>Chờ xử lý</SelectItem>
-                            <SelectItem value={OrderStatusEnum.PROCESSING}>Đang xử lý</SelectItem>
+                            <SelectItem value={OrderStatusEnum.PROCESSING}>Đang chuẩn bị hàng</SelectItem>
                             <SelectItem value={OrderStatusEnum.SHIPPED}>Đã giao cho vận chuyển</SelectItem>
                             <SelectItem value={OrderStatusEnum.DELIVERED}>Khách đã nhận hàng</SelectItem>
                             <SelectItem value={OrderStatusEnum.CANCELLED}>Đã hủy</SelectItem>

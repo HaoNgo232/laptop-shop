@@ -39,7 +39,7 @@ export class ReviewsService implements IReviewsService {
   ): Promise<Review> {
     try {
       // Kiểm tra các điều kiện business rules
-      await this.validateCreateReview(userId, productId);
+      await this.validateCreate(userId, productId);
 
       // Tạo review trực tiếp
       const review = this.reviewRepository.create({
@@ -51,7 +51,7 @@ export class ReviewsService implements IReviewsService {
       const savedReview = await this.reviewRepository.save(review);
 
       // Update rating async (không block response)
-      this.updateProductRatingAsync(productId).catch((error) => {
+      this.updateRating(productId).catch((error) => {
         console.error('Background rating update failed:', error);
       });
 
@@ -81,7 +81,7 @@ export class ReviewsService implements IReviewsService {
     const updatedReview = await this.reviewRepository.save(review);
 
     // Update rating async
-    this.updateProductRatingAsync(review.product.id).catch((error) => {
+    this.updateRating(review.product.id).catch((error) => {
       console.error('Background rating update failed:', error);
     });
 
@@ -109,7 +109,7 @@ export class ReviewsService implements IReviewsService {
     await this.reviewRepository.remove(review);
 
     // Update rating async
-    this.updateProductRatingAsync(productId).catch((error) => {
+    this.updateRating(productId).catch((error) => {
       console.error('Background rating update failed:', error);
     });
   }
@@ -153,12 +153,12 @@ export class ReviewsService implements IReviewsService {
   }
 
   // Kiểm tra các điều kiện trước khi tạo review
-  private async validateCreateReview(userId: string, productId: string): Promise<void> {
+  private async validateCreate(userId: string, productId: string): Promise<void> {
     const [existingReview, hasPurchased, product] = await Promise.all([
       this.reviewRepository.findOne({
         where: { user: { id: userId }, product: { id: productId } },
       }),
-      this.adminOrdersService.hasPurchasedProduct(userId, productId),
+      this.adminOrdersService.hasPurchased(userId, productId),
       this.productRepository.findOneBy({ id: productId }),
     ]);
 
@@ -176,7 +176,7 @@ export class ReviewsService implements IReviewsService {
   }
 
   // Update rating async (không block main flow)
-  private async updateProductRatingAsync(productId: string): Promise<void> {
+  private async updateRating(productId: string): Promise<void> {
     try {
       const stats = (await this.reviewRepository
         .createQueryBuilder('review')

@@ -49,7 +49,7 @@ export class ManagerUsersService implements IManagerUsersService {
    * Lấy thông tin chi tiết một người dùng theo ID cho admin
    */
   async findOne(userId: string): Promise<AdminViewDetailDto> {
-    const user = await this.findUserOrThrow(userId);
+    const user = await this.findById(userId);
     return this.mapToAdminDetailView(user);
   }
 
@@ -57,7 +57,7 @@ export class ManagerUsersService implements IManagerUsersService {
    * Cập nhật thông tin người dùng bởi admin
    */
   async update(userId: string, updateUserDto: UpdateUserByAdminDto): Promise<AdminViewDetailDto> {
-    const user = await this.findUserOrThrow(userId);
+    const user = await this.findById(userId);
     this.updateUserFields(user, updateUserDto);
     const updatedUser = await this.userRepository.save(user);
     return this.mapToAdminDetailView(updatedUser);
@@ -112,7 +112,7 @@ export class ManagerUsersService implements IManagerUsersService {
   /**
    * Tìm user theo ID hoặc throw exception
    */
-  private async findUserOrThrow(userId: string): Promise<User> {
+  private async findById(userId: string): Promise<User> {
     const user = await this.userRepository.findOne({ where: { id: userId } });
 
     if (!user) {

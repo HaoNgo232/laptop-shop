@@ -49,7 +49,7 @@ export function OrdersTable({
                 className: 'bg-yellow-100 text-yellow-800 border-yellow-200',
             },
             [OrderStatusEnum.PROCESSING]: {
-                label: 'Đang xử lý',
+                label: 'Đang chuẩn bị hàng',
                 icon: <CheckCircle className="h-3 w-3" />,
                 className: 'bg-blue-100 text-blue-800 border-blue-200',
             },

@@ -11,7 +11,7 @@ import { PaginatedResponse } from '@/products/interfaces/paginated-response.inte
 import { AdminOrderQueryDto } from '@/orders/dtos/admin-order-query.dto';
 import { UpdateOrderStatusDto } from '@/orders/dtos/update-order-status.dto';
 import { OrderMapperProvider } from '@/orders/providers/order-mapper.provider';
-import { CreatePaginationMetaUseCase } from '@/orders/usecases/create-pagination-meta.usecase';
+import { createPaginationMeta } from '@/orders/helpers/creare-pagination.helper';
 
 interface IAdminOrdersService {
   findAll(query: AdminOrderQueryDto): Promise<PaginatedResponse<OrderDto>>;
@@ -34,7 +34,6 @@ export class AdminOrdersService implements IAdminOrdersService {
     private readonly ordersProvider: OrdersProvider,
     private readonly orderMapperProvider: OrderMapperProvider,
     private readonly dataSource: DataSource,
-    private readonly createPaginationMetaUseCase: CreatePaginationMetaUseCase,
   ) {}
 
   /**
@@ -48,7 +47,7 @@ export class AdminOrdersService implements IAdminOrdersService {
 
     return {
       data: data.map((order) => this.orderMapperProvider.mapOrderToDto(order)),
-      meta: this.createPaginationMetaUseCase.execute(total, page, limit),
+      meta: createPaginationMeta(total, page, limit),
     };
   }
 
@@ -86,14 +85,14 @@ export class AdminOrdersService implements IAdminOrdersService {
       }
 
       // Cập nhật payment status và transaction ID
-      this.updateOrderPaymentInfo(order, paymentStatus, transactionId);
+      this.updatePaymentInfo(order, paymentStatus, transactionId);
 
       // Xử lý logic theo trạng thái thanh toán
-      await this.handlePaymentStatusChange(order, paymentStatus, orderId, manager);
+      await this.handlePaymentChange(order, paymentStatus, orderId, manager);
 
       // Lưu đơn hàng
       const savedOrder = await manager.save(order);
-      this.logPaymentStatusUpdate(orderId, paymentStatus, savedOrder.status);
+      this.logPaymentUpdate(orderId, paymentStatus, savedOrder.status);
 
       return savedOrder;
     });
@@ -124,7 +123,7 @@ export class AdminOrdersService implements IAdminOrdersService {
   /**
    * Cập nhật thông tin thanh toán của đơn hàng
    */
-  private updateOrderPaymentInfo(
+  private updatePaymentInfo(
     order: Order,
     paymentStatus: PaymentStatusEnum,
     transactionId: string,
@@ -136,7 +135,7 @@ export class AdminOrdersService implements IAdminOrdersService {
   /**
    * Xử lý logic thay đổi theo trạng thái thanh toán
    */
-  private async handlePaymentStatusChange(
+  private async handlePaymentChange(
     order: Order,
     paymentStatus: PaymentStatusEnum,
     orderId: string,
@@ -161,16 +160,13 @@ export class AdminOrdersService implements IAdminOrdersService {
     order.status = OrderStatusEnum.CANCELLED;
 
     // Hoàn trả stock
-    await this.restoreStockForFailedPayment(orderId, manager);
+    await this.restoreStock(orderId, manager);
   }
 
   /**
    * Hoàn trả stock khi thanh toán thất bại
    */
-  private async restoreStockForFailedPayment(
-    orderId: string,
-    manager: EntityManager,
-  ): Promise<void> {
+  private async restoreStock(orderId: string, manager: EntityManager): Promise<void> {
     // Tìm đơn hàng với items
     const orderWithItems = await manager.findOne(Order, {
       where: { id: orderId },
@@ -188,7 +184,7 @@ export class AdminOrdersService implements IAdminOrdersService {
   /**
    * Log thông tin cập nhật payment status
    */
-  private logPaymentStatusUpdate(
+  private logPaymentUpdate(
     orderId: string,
     paymentStatus: PaymentStatusEnum,
     orderStatus: OrderStatusEnum,
@@ -202,7 +198,7 @@ export class AdminOrdersService implements IAdminOrdersService {
   /**
    * Kiểm tra xem user đã mua sản phẩm hay chưa
    */
-  async hasPurchasedProduct(userId: string, productId: string): Promise<boolean> {
+  async hasPurchased(userId: string, productId: string): Promise<boolean> {
     const count = await this.orderRepository
       .createQueryBuilder('order')
       .innerJoin('order.items', 'item')

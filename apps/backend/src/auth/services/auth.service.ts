@@ -51,10 +51,10 @@ export class AuthService implements IAuthService {
   async register(registerUserDto: RegisterUserDto) {
     try {
       // Kiểm tra email đã tồn tại chưa
-      await this.checkEmail(registerUserDto.email);
+      await this.isEmailExists(registerUserDto.email);
 
       // Mã hóa mật khẩu
-      const hashedPassword = await this.hashUserPassword(registerUserDto.password);
+      const hashedPassword = await this.hashPassword(registerUserDto.password);
 
       // Tạo user mới
       const newUser = await this.createNewUser(registerUserDto, hashedPassword);
@@ -77,10 +77,10 @@ export class AuthService implements IAuthService {
     user: Omit<User, 'passwordHash'>;
   }> {
     // Kiểm tra thông tin đăng nhập
-    const user = await this.getUserByEmail(loginUserDto.email);
+    const user = await this.findByEmail(loginUserDto.email);
 
     // Kiểm tra mật khẩu
-    await this.checkPassword(loginUserDto.password, user);
+    await this.verifyPassword(loginUserDto.password, user);
 
     // Tạo token
     const tokens = await this.generateTokensProvider.generateTokens(user);
@@ -98,7 +98,7 @@ export class AuthService implements IAuthService {
       const payload = await this.verifyRefreshToken(refreshTokenDto.refreshToken);
 
       // Lấy thông tin user từ database
-      const user = await this.getUserFromPayload(payload.sub);
+      const user = await this.findByPayload(payload.sub);
 
       // Tạo token mới
       const tokens = await this.generateTokensProvider.generateTokens(user);
@@ -130,7 +130,7 @@ export class AuthService implements IAuthService {
     return await this.userRepository.save(newUser);
   }
 
-  private async hashUserPassword(password: string): Promise<string> {
+  private async hashPassword(password: string): Promise<string> {
     const hashedPassword = await this.bcryptProvider.hashPassword(password);
 
     if (!hashedPassword) {
@@ -142,13 +142,13 @@ export class AuthService implements IAuthService {
 
   private async sendWelcomeEmail(user: User): Promise<void> {
     try {
-      await this.mailService.sendUserWelcomeEmail(user);
+      await this.mailService.sendWelcome(user);
     } catch (error) {
       throw new RequestTimeoutException(error, 'Gửi email chào mừng thất bại');
     }
   }
 
-  private async getUserByEmail(email: string): Promise<User> {
+  private async findByEmail(email: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { email },
     });
@@ -159,7 +159,10 @@ export class AuthService implements IAuthService {
     return user;
   }
 
-  private async getUserFromPayload(userId: string): Promise<User> {
+  /**
+   * Tìm user theo ID trong payload
+   */
+  private async findByPayload(userId: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
     });
@@ -171,7 +174,7 @@ export class AuthService implements IAuthService {
     return user;
   }
 
-  private async checkPassword(password: string, user: User): Promise<void> {
+  private async verifyPassword(password: string, user: User): Promise<void> {
     const isPasswordValid = await this.bcryptProvider.comparePassword(password, user.passwordHash);
 
     if (!isPasswordValid) {
@@ -179,7 +182,10 @@ export class AuthService implements IAuthService {
     }
   }
 
-  private async checkEmail(email: string): Promise<void> {
+  /**
+   * Kiểm tra email đã tồn tại chưa
+   */
+  private async isEmailExists(email: string): Promise<void> {
     const user = await this.userRepository.findOne({
       where: { email },
     });

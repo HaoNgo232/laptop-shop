@@ -31,7 +31,7 @@ export function OrderDetailModal({ order, isOpen, onClose }: OrderDetailModalPro
             },
             [OrderStatusEnum.PROCESSING]: {
                 variant: 'default' as const,
-                label: 'Đang xử lý',
+                label: 'Đang chuẩn bị hàng',
                 icon: <CheckCircle className="h-3 w-3" />,
             },
             [OrderStatusEnum.SHIPPED]: {

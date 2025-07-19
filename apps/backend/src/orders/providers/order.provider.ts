@@ -181,7 +181,7 @@ export class OrdersProvider implements IOrdersProvider {
     const order = await this.findOrderById(orderId);
 
     // Kiểm tra logic business cho việc chuyển trạng thái
-    this.validateStatusTransition(order.status, status);
+    // this.validateStatusTransition(order.status, status);
 
     order.status = status;
     return await this.orderRepository.save(order);

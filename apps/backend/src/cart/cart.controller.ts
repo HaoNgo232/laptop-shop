@@ -36,7 +36,7 @@ export class CartController {
    */
   @Post('items')
   addItem(@CurrentUser('sub') userId: string, @Body() addItemDto: AddToCartDto): Promise<CartDto> {
-    return this.cartService.addItemToCart(userId, addItemDto.productId, addItemDto.quantity);
+    return this.cartService.addItem(userId, addItemDto.productId, addItemDto.quantity);
   }
 
   /**
@@ -48,7 +48,7 @@ export class CartController {
     @Param('productId') productId: string,
     @Body() updateItemDto: UpdateCartItemDto,
   ): Promise<CartDto> {
-    return this.cartService.updateItemQuantity(userId, productId, updateItemDto.quantity);
+    return this.cartService.updateQuantity(userId, productId, updateItemDto.quantity);
   }
 
   /**

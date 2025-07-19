@@ -33,13 +33,13 @@ export class CategoriesService implements ICategoriesService {
 
   async findOne(id: string): Promise<CategoryDetailDto> {
     // Tìm category theo ID, throw error nếu không tồn tại
-    const category = await this.findCategoryByIdOrThrow(id);
+    const category = await this.findById(id);
     return category;
   }
 
   async create(createCategoryDto: CreateCategoryDto): Promise<CategoryDto> {
     // Kiểm tra tên danh mục đã tồn tại chưa trước khi tạo
-    await this.validateCategoryNameNotExists(createCategoryDto.name);
+    await this.isNameExists(createCategoryDto.name);
 
     const category = this.categoryRepository.create(createCategoryDto);
     const savedCategory = await this.categoryRepository.save(category);
@@ -48,11 +48,11 @@ export class CategoriesService implements ICategoriesService {
   }
 
   async update(id: string, updateCategoryDto: UpdateCategoryDto): Promise<CategoryDto> {
-    const category = await this.findCategoryByIdOrThrow(id);
+    const category = await this.findById(id);
 
     // Chỉ validate tên mới nếu tên được thay đổi và khác với tên hiện tại
     if (updateCategoryDto.name && updateCategoryDto.name !== category.name) {
-      await this.validateCategoryNameNotExists(updateCategoryDto.name);
+      await this.isNameExists(updateCategoryDto.name);
     }
 
     Object.assign(category, updateCategoryDto);
@@ -62,7 +62,7 @@ export class CategoriesService implements ICategoriesService {
   }
 
   async remove(id: string): Promise<void> {
-    const category = await this.findCategoryByIdOrThrow(id);
+    const category = await this.findById(id);
 
     // Kiểm tra xem danh mục có sản phẩm nào không bằng cách join với bảng products
     const hasProducts = await this.categoryRepository
@@ -79,7 +79,10 @@ export class CategoriesService implements ICategoriesService {
     await this.categoryRepository.remove(category);
   }
 
-  private async findCategoryByIdOrThrow(id: string): Promise<Category> {
+  /**
+   * Tìm category theo ID, throw error nếu không tồn tại
+   */
+  private async findById(id: string): Promise<Category> {
     // Load category cùng với relations products để kiểm tra
     const category = await this.categoryRepository.findOne({
       where: { id },
@@ -93,7 +96,7 @@ export class CategoriesService implements ICategoriesService {
     return category;
   }
 
-  private async validateCategoryNameNotExists(name: string): Promise<void> {
+  private async isNameExists(name: string): Promise<void> {
     // Kiểm tra tên danh mục đã tồn tại trong database chưa
     const existingCategory = await this.categoryRepository.findOne({
       where: { name },

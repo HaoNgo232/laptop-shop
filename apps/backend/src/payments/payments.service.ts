@@ -18,9 +18,9 @@ interface IPaymentsService {
     payload: any,
     signature?: string,
   ): Promise<WebhookResponse>;
-  getAvailablePaymentMethods(): PaymentMethodEnum[];
-  isPaymentMethodSupported(method: PaymentMethodEnum): boolean;
-  switchPaymentMethod(
+  getAvailableMethods(): PaymentMethodEnum[];
+  isMethodSupported(method: PaymentMethodEnum): boolean;
+  switchMethod(
     orderId: string,
     amount: number,
     fromMethod: PaymentMethodEnum,
@@ -131,22 +131,22 @@ export class PaymentsService implements IPaymentsService {
     }
   }
 
-  getAvailablePaymentMethods(): PaymentMethodEnum[] {
+  getAvailableMethods(): PaymentMethodEnum[] {
     return this.paymentProviderFactory.getAvailableProviders();
   }
 
-  isPaymentMethodSupported(method: PaymentMethodEnum): boolean {
+  isMethodSupported(method: PaymentMethodEnum): boolean {
     return this.paymentProviderFactory.isProviderSupported(method);
   }
 
-  async switchPaymentMethod(
+  async switchMethod(
     orderId: string,
     amount: number,
     fromMethod: PaymentMethodEnum,
     toMethod: PaymentMethodEnum,
   ): Promise<QRCodeResponse> {
     try {
-      if (!this.isPaymentMethodSupported(toMethod)) {
+      if (!this.isMethodSupported(toMethod)) {
         throw new BadRequestException(`Phuong thuc thanh toan ${toMethod} khong duoc ho tro`);
       }
 

@@ -40,7 +40,7 @@ export class UsersController {
    */
   @Post('admin/update-all-ranks')
   async forceUpdateAllRanks() {
-    await this.userRankService.forceUpdateAllRanks();
+    await this.userRankService.forceUpdateRanks();
     return { message: 'Đã cập nhật rank cho tất cả users' };
   }
 }

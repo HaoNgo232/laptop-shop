@@ -45,7 +45,7 @@ export class PaymentsController {
   @Auth(AuthType.None)
   getPaymentMethods(): { methods: PaymentMethodEnum[] } {
     return {
-      methods: this.paymentsService.getAvailablePaymentMethods(),
+      methods: this.paymentsService.getAvailableMethods(),
     };
   }
 
@@ -63,7 +63,7 @@ export class PaymentsController {
       toMethod: PaymentMethodEnum;
     },
   ): Promise<QRCodeResponse> {
-    return await this.paymentsService.switchPaymentMethod(
+    return await this.paymentsService.switchMethod(
       orderId,
       body.amount,
       body.fromMethod,

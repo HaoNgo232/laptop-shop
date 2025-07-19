@@ -33,12 +33,12 @@ export class AdminDashboardService implements IAdminDashboardService {
     try {
       const [totalUsers, newUsers, totalProducts, totalOrders, newOrders, totalRevenue] =
         await Promise.all([
-          this.getTotalUsers(),
+          this.getUsers(),
           this.getNewUsers(),
-          this.getTotalProducts(),
-          this.getTotalOrders(),
+          this.getProducts(),
+          this.getOrders(),
           this.getNewOrders(),
-          this.getTotalRevenue(),
+          this.getRevenue(),
         ]);
 
       return {
@@ -79,7 +79,7 @@ export class AdminDashboardService implements IAdminDashboardService {
   /**
    * Lấy tổng số người dùng
    */
-  private async getTotalUsers(): Promise<number> {
+  private async getUsers(): Promise<number> {
     return await this.userRepository.count();
   }
 
@@ -96,14 +96,14 @@ export class AdminDashboardService implements IAdminDashboardService {
   /**
    * Lấy tổng số sản phẩm
    */
-  private async getTotalProducts(): Promise<number> {
+  private async getProducts(): Promise<number> {
     return await this.productRepository.count();
   }
 
   /**
    * Lấy tổng số đơn hàng
    */
-  private async getTotalOrders(): Promise<number> {
+  private async getOrders(): Promise<number> {
     return await this.orderRepository.count();
   }
 
@@ -120,7 +120,7 @@ export class AdminDashboardService implements IAdminDashboardService {
   /**
    * Tính tổng doanh thu từ các đơn hàng đã thanh toán
    */
-  private async getTotalRevenue(): Promise<number> {
+  private async getRevenue(): Promise<number> {
     const { total } = await this.orderRepository
       .createQueryBuilder('order')
       .select('SUM(order.totalAmount)', 'total')

@@ -33,9 +33,12 @@ export class ProductsService implements IProductsService {
     private readonly categoryRepository: Repository<Category>,
   ) {}
 
+  /**
+   * Tìm tất cả sản phẩm
+   */
   async findAll(queryDto: QueryProductDto): Promise<PaginatedResponse<ProductDto>> {
     try {
-      return await this.findAllProducts(queryDto);
+      return await this.findWithFilters(queryDto);
     } catch (error) {
       console.error('Lỗi khi tải danh sách sản phẩm:', error);
       if (error instanceof NotFoundException) {
@@ -45,6 +48,9 @@ export class ProductsService implements IProductsService {
     }
   }
 
+  /**
+   * Tìm sản phẩm theo ID
+   */
   async findOne(id: string): Promise<ProductDto> {
     try {
       // 1. Tìm sản phẩm theo ID với relations đến category
@@ -66,6 +72,9 @@ export class ProductsService implements IProductsService {
     }
   }
 
+  /**
+   * Tạo sản phẩm
+   */
   async create(createProductDto: CreateProductDto): Promise<Product> {
     try {
       // 1. Kiểm tra category tồn tại
@@ -96,6 +105,9 @@ export class ProductsService implements IProductsService {
     }
   }
 
+  /**
+   * Cập nhật sản phẩm
+   */
   async update(id: string, updateProductDto: UpdateProductDto): Promise<Product> {
     try {
       // 1. Tìm sản phẩm theo ID
@@ -141,6 +153,9 @@ export class ProductsService implements IProductsService {
     }
   }
 
+  /**
+   * Xóa sản phẩm
+   */
   async remove(id: string): Promise<void> {
     try {
       // TypeORM tự động kiểm tra sản phẩm tồn tại và chưa bị soft delete
@@ -159,6 +174,9 @@ export class ProductsService implements IProductsService {
     }
   }
 
+  /**
+   * Khôi phục sản phẩm
+   */
   async restore(id: string): Promise<Product> {
     try {
       // TypeORM tự động set deletedAt = null
@@ -187,7 +205,10 @@ export class ProductsService implements IProductsService {
     }
   }
 
-  private async findAllProducts(queryDto: QueryProductDto): Promise<PaginatedResponse<ProductDto>> {
+  /**
+   * Tìm sản phẩm với các bộ lọc và phân trang
+   */
+  private async findWithFilters(queryDto: QueryProductDto): Promise<PaginatedResponse<ProductDto>> {
     // 1. Trích xuất tham số truy vấn
     const {
       page = 1,

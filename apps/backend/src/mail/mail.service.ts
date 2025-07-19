@@ -3,14 +3,14 @@ import { Injectable } from '@nestjs/common';
 import { User } from '@/auth/entities/user.entity';
 
 interface IMailService {
-  sendUserWelcomeEmail(user: User): Promise<void>;
+  sendWelcome(user: User): Promise<void>;
 }
 
 @Injectable()
 export class MailService implements IMailService {
   constructor(private readonly mailerService: MailerService) {}
 
-  async sendUserWelcomeEmail(user: User) {
+  async sendWelcome(user: User) {
     await this.mailerService.sendMail({
       to: user.email,
       from: 'noreply@myapp.com',

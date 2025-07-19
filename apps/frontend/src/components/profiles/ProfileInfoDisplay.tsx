@@ -2,6 +2,7 @@ import { User, Mail, Phone, MapPin, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import type { User as UserType } from '@/types/auth';
+import { motion } from 'framer-motion';
 
 interface ProfileInfoDisplayProps {
     user: UserType;
@@ -16,8 +17,18 @@ export const ProfileInfoDisplay = ({ user, onEditProfile }: ProfileInfoDisplayPr
         (user.avatarUrl ? 1 : 0)) / 4 * 100);
 
     return (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2">
+        <motion.div
+            className="grid grid-cols-1 lg:grid-cols-3 gap-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+        >
+            <motion.div
+                className="lg:col-span-2"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+            >
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center space-x-2">
@@ -64,10 +75,14 @@ export const ProfileInfoDisplay = ({ user, onEditProfile }: ProfileInfoDisplayPr
                         </div>
                     </CardContent>
                 </Card>
-            </div>
+            </motion.div>
 
             {/* Hoàn thiện hồ sơ */}
-            <div>
+            <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+            >
                 <Card>
                     <CardHeader>
                         <CardTitle className="flex items-center space-x-2">
@@ -86,10 +101,12 @@ export const ProfileInfoDisplay = ({ user, onEditProfile }: ProfileInfoDisplayPr
                                 <span className="font-medium">{completionPercentage}%</span>
                             </div>
                             <div className="w-full bg-gray-200 rounded-full h-2">
-                                <div
-                                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                                    style={{ width: `${completionPercentage}%` }}
-                                ></div>
+                                <motion.div
+                                    className="bg-blue-600 h-2 rounded-full"
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${completionPercentage}%` }}
+                                    transition={{ duration: 0.8, delay: 0.4, ease: "easeOut" }}
+                                ></motion.div>
                             </div>
                         </div>
 
@@ -122,7 +139,7 @@ export const ProfileInfoDisplay = ({ user, onEditProfile }: ProfileInfoDisplayPr
                         </Button>
                     </CardContent>
                 </Card>
-            </div>
-        </div>
+            </motion.div>
+        </motion.div>
     );
 }; 

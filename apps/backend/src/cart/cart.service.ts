@@ -8,9 +8,9 @@ import { Repository } from 'typeorm';
 
 interface ICartService {
   findOne(userId: string): Promise<CartDto>;
-  findOneEntity(userId: string): Promise<Cart>;
-  addItemToCart(userId: string, productId: string, quantity: number): Promise<CartDto>;
-  updateItemQuantity(userId: string, productId: string, quantity: number): Promise<CartDto>;
+  findCart(userId: string): Promise<Cart>;
+  addItem(userId: string, productId: string, quantity: number): Promise<CartDto>;
+  updateQuantity(userId: string, productId: string, quantity: number): Promise<CartDto>;
   removeItem(userId: string, productId: string): Promise<CartDto>;
   clear(userId: string): Promise<void>;
 }
@@ -32,14 +32,14 @@ export class CartService implements ICartService {
    * Lấy cart của user theo userId và trả về DTO
    */
   async findOne(userId: string): Promise<CartDto> {
-    const cart = await this.findOneEntity(userId);
+    const cart = await this.findCart(userId);
     return this.mapCartToDto(cart);
   }
 
   /**
    * Lấy cart  của user theo userId
    */
-  async findOneEntity(userId: string): Promise<Cart> {
+  async findCart(userId: string): Promise<Cart> {
     const cart = await this.cartRepository.findOne({
       where: { user: { id: userId } },
       relations: ['cartItems', 'cartItems.product', 'cartItems.product.category'],
@@ -47,7 +47,7 @@ export class CartService implements ICartService {
 
     if (!cart) {
       // Tự động tạo cart mới nếu chưa có
-      return await this.findOrCreateCart(userId);
+      return await this.findOrCreate(userId);
     }
 
     return cart;
@@ -56,7 +56,7 @@ export class CartService implements ICartService {
   /**
    * Thêm sản phẩm vào cart
    */
-  async addItemToCart(userId: string, productId: string, quantity: number): Promise<CartDto> {
+  async addItem(userId: string, productId: string, quantity: number): Promise<CartDto> {
     // Kiểm tra sản phẩm có tồn tại không
     const product = await this.productRepository.findOne({
       where: { id: productId },
@@ -67,7 +67,7 @@ export class CartService implements ICartService {
     }
 
     // Tìm hoặc tạo cart
-    const cart = await this.findOrCreateCart(userId);
+    const cart = await this.findOrCreate(userId);
 
     // Kiểm tra xem sản phẩm đã có trong cart chưa
     const existingCartItem = await this.cartItemRepository.findOne({
@@ -90,15 +90,15 @@ export class CartService implements ICartService {
     }
 
     // Reload cart với relations và trả về DTO
-    const updatedCart = await this.findOneEntity(userId);
+    const updatedCart = await this.findCart(userId);
     return this.mapCartToDto(updatedCart);
   }
 
   /**
    * Cập nhật số lượng sản phẩm trong cart
    */
-  async updateItemQuantity(userId: string, productId: string, quantity: number): Promise<CartDto> {
-    const cart = await this.findOneEntity(userId);
+  async updateQuantity(userId: string, productId: string, quantity: number): Promise<CartDto> {
+    const cart = await this.findCart(userId);
 
     const cartItem = await this.cartItemRepository.findOne({
       where: { cartId: cart.id, productId: productId },
@@ -115,7 +115,7 @@ export class CartService implements ICartService {
     cartItem.quantity = quantity;
     await this.cartItemRepository.save(cartItem);
 
-    const updatedCart = await this.findOneEntity(userId);
+    const updatedCart = await this.findCart(userId);
     return this.mapCartToDto(updatedCart);
   }
 
@@ -123,7 +123,7 @@ export class CartService implements ICartService {
    * Xóa sản phẩm khỏi cart
    */
   async removeItem(userId: string, productId: string): Promise<CartDto> {
-    const cart = await this.findOneEntity(userId);
+    const cart = await this.findCart(userId);
 
     const cartItem = await this.cartItemRepository.findOne({
       where: { cartId: cart.id, productId: productId },
@@ -135,7 +135,7 @@ export class CartService implements ICartService {
 
     await this.cartItemRepository.remove(cartItem);
 
-    const updatedCart = await this.findOneEntity(userId);
+    const updatedCart = await this.findCart(userId);
     return this.mapCartToDto(updatedCart);
   }
 
@@ -143,7 +143,7 @@ export class CartService implements ICartService {
    * Xóa tất cả sản phẩm trong cart
    */
   async clear(userId: string): Promise<void> {
-    const cart = await this.findOneEntity(userId);
+    const cart = await this.findCart(userId);
 
     await this.cartItemRepository.delete({
       cartId: cart.id,
@@ -153,7 +153,7 @@ export class CartService implements ICartService {
   /**
    * Tìm hoặc tạo cart cho user
    */
-  private async findOrCreateCart(userId: string): Promise<Cart> {
+  private async findOrCreate(userId: string): Promise<Cart> {
     let cart = await this.cartRepository.findOne({
       where: { user: { id: userId } },
       relations: ['cartItems', 'cartItems.product', 'cartItems.product.category'],

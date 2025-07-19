@@ -8,7 +8,7 @@ import { DiscountCalculation } from '@/orders/interfaces/discount-caculation.int
 interface IDiscountService {
   calculateDiscount(userId: string, originalAmount: number): Promise<DiscountCalculation>;
   applyDiscount(userId: string, originalAmount: number): Promise<number>;
-  getUserDiscountPercentage(userId: string): Promise<number>;
+  getPercentage(userId: string): Promise<number>;
 }
 
 /**
@@ -59,7 +59,7 @@ export class DiscountService implements IDiscountService {
   /**
    * Lấy discount percentage cho một user cụ thể
    */
-  async getUserDiscountPercentage(userId: string): Promise<number> {
+  async getPercentage(userId: string): Promise<number> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
       select: ['rank'],

@@ -12,8 +12,8 @@ export interface UpdatePaymentStatusCommand {
 }
 
 @Injectable()
-export class UpdateOrderPaymentStatusUseCase {
-  private readonly logger = new Logger(UpdateOrderPaymentStatusUseCase.name);
+export class UpdatePaymentUseCase {
+  private readonly logger = new Logger(UpdatePaymentUseCase.name);
 
   constructor(
     private readonly dataSource: DataSource,
@@ -21,15 +21,14 @@ export class UpdateOrderPaymentStatusUseCase {
   ) {}
 
   /**
-   * Update order payment status với business logic
-   * Tuân thủ Single Responsibility Principle - chỉ lo update payment status
+   * Cập nhật payment status của order
    */
   async execute(command: UpdatePaymentStatusCommand): Promise<Order> {
     const { orderId, transactionId, paymentStatus } = command;
 
     return await this.dataSource.transaction(async (manager) => {
       // 1. Lock và lấy order
-      const order = await this.lockAndGetOrder(manager, orderId);
+      const order = await this.lockOrder(manager, orderId);
 
       // 2. Validate current payment status
       if (!this.canUpdatePaymentStatus(order, transactionId)) {
@@ -41,7 +40,7 @@ export class UpdateOrderPaymentStatusUseCase {
       order.transactionId = transactionId;
 
       // 4. Update order status based on payment status
-      await this.updateOrderStatusBasedOnPayment(manager, order, paymentStatus);
+      await this.updateStatusByPayment(manager, order, paymentStatus);
 
       // 5. Save and return
       const savedOrder = await manager.save(order);
@@ -53,7 +52,10 @@ export class UpdateOrderPaymentStatusUseCase {
     });
   }
 
-  private async lockAndGetOrder(manager: EntityManager, orderId: string): Promise<Order> {
+  /**
+   * Lock order và lấy order
+   */
+  private async lockOrder(manager: EntityManager, orderId: string): Promise<Order> {
     // EntityManager from TypeORM transaction
     const order = await manager.findOne(Order, {
       where: { id: orderId },
@@ -67,6 +69,9 @@ export class UpdateOrderPaymentStatusUseCase {
     return order;
   }
 
+  /**
+   * Kiểm tra xem có thể cập nhật payment status không
+   */
   private canUpdatePaymentStatus(order: Order, transactionId: string): boolean {
     // Chỉ cập nhật nếu đang PENDING payment
     if (order.paymentStatus !== PaymentStatusEnum.PENDING) {
@@ -86,7 +91,10 @@ export class UpdateOrderPaymentStatusUseCase {
     return true;
   }
 
-  private async updateOrderStatusBasedOnPayment(
+  /**
+   * Cập nhật status của order dựa vào payment status
+   */
+  private async updateStatusByPayment(
     manager: EntityManager,
     order: Order,
     paymentStatus: PaymentStatusEnum,

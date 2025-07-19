@@ -9,13 +9,15 @@ import { PaginatedResponse } from '@/products/interfaces/paginated-response.inte
 import { OrderDetailDto } from '@/orders/dtos/order-detail.dto';
 import { OrderMapperProvider } from '@/orders/providers/order-mapper.provider';
 import { QRCodeResponse } from '@/payments/interfaces/payment-provider.interfaces';
-import { CreatePaginationMetaUseCase } from '@/orders/usecases/create-pagination-meta.usecase';
 import { ValidateStockUseCase } from '@/orders/usecases/validate-stock.usecase';
-import { CreateOrderTransactionUseCase } from '@/orders/usecases/create-order-transaction.usecase';
-import { GeneratePaymentQrUseCase } from '@/orders/usecases/generate-payment-qr.usecase';
+import { CreateOrderUseCase } from '@/orders/usecases/create-order.usecase';
 import { CartService } from '@/cart/cart.service';
 import { DiscountService } from '@/orders/services/discount.service';
 import { DiscountCalculation } from '@/orders/interfaces/discount-caculation.interface';
+import { PaymentMethodEnum } from '@/payments/enums/payments-method.enum';
+import { Order } from '@/orders/entities/order.entity';
+import { PaymentsService } from '@/payments/payments.service';
+import { createPaginationMeta } from '@/orders/helpers/creare-pagination.helper';
 
 interface IUsersOrdersService {
   create(
@@ -35,12 +37,11 @@ export class UsersOrdersService implements IUsersOrdersService {
     private readonly dataSource: DataSource,
     private readonly orderMapperProvider: OrderMapperProvider,
     private readonly ordersProvider: OrdersProvider,
-    private readonly createPaginationMetaUseCase: CreatePaginationMetaUseCase,
     private readonly validateStockUseCase: ValidateStockUseCase,
-    private readonly createOrderTransactionUseCase: CreateOrderTransactionUseCase,
-    private readonly generatePaymentQrUseCase: GeneratePaymentQrUseCase,
+    private readonly createOrderUseCase: CreateOrderUseCase,
     private readonly cartService: CartService,
     private readonly discountService: DiscountService,
+    private readonly paymentsService: PaymentsService,
   ) {}
 
   /**
@@ -51,26 +52,26 @@ export class UsersOrdersService implements IUsersOrdersService {
     createOrderDto: CreateOrderDto,
   ): Promise<{ order: OrderDto; qrCode?: QRCodeResponse; discountInfo: DiscountCalculation }> {
     // 1. Tìm cart của user
-    const cart = await this.cartService.findOneEntity(userId);
+    const cart = await this.cartService.findCart(userId);
 
-    // 2. Validate stock và calculate total (chưa áp dụng discount)
+    // 2. Kiểm tra số lượng sản phẩm có đủ không và tính tổng tiền (chưa áp dụng discount)
     const { orderItems, totalAmount: originalAmount } = await this.validateStockUseCase.execute(
       cart.cartItems,
     );
 
-    // 3. Tính toán discount dựa trên rank của user
+    // 3. Tính toán giảm giá dựa trên rank của user
     const discountInfo = await this.discountService.calculateDiscount(userId, originalAmount);
 
-    // 4. Create order với final amount (đã trừ discount)
-    const order = await this.createOrderTransactionUseCase.execute({
+    // 4. Tạo order với số tiền đã giảm giá
+    const order = await this.createOrderUseCase.execute({
       userId,
       createOrderDto,
       orderItems,
       totalAmount: discountInfo.finalAmount, // Sử dụng finalAmount thay vì originalAmount
     });
 
-    // 5. Generate QR code với số tiền đã giảm giá
-    const qrCode = await this.generatePaymentQrUseCase.execute(order, createOrderDto.paymentMethod);
+    // 5. Tạo QR code với số tiền đã giảm giá
+    const qrCode = await this.generateQRCode(order, createOrderDto.paymentMethod);
 
     // 6. Map and return result với thông tin discount
     return {
@@ -79,8 +80,6 @@ export class UsersOrdersService implements IUsersOrdersService {
       discountInfo, // Trả về thông tin discount để frontend hiển thị
     };
   }
-
-  // Private methods đã được thay thế bằng use cases
 
   /**
    * Lấy danh sách đơn hàng của user
@@ -106,7 +105,7 @@ export class UsersOrdersService implements IUsersOrdersService {
 
       const result = {
         data: data.map((order) => this.orderMapperProvider.mapOrderToDto(order)),
-        meta: this.createPaginationMetaUseCase.execute(total, page, limit),
+        meta: createPaginationMeta(total, page, limit),
       };
 
       // Tạo message phù hợp
@@ -154,5 +153,33 @@ export class UsersOrdersService implements IUsersOrdersService {
 
       return this.orderMapperProvider.mapOrderToDto(order);
     });
+  }
+
+  /**
+   * Tạo QR code cho payment nếu cần thiết
+   */
+  private async generateQRCode(
+    order: Order,
+    paymentMethod: PaymentMethodEnum,
+  ): Promise<QRCodeResponse | undefined> {
+    if (paymentMethod !== PaymentMethodEnum.SEPAY_QR) {
+      return undefined;
+    }
+
+    try {
+      const qrCode = await this.paymentsService.generateQRCode({
+        orderId: order.id,
+        amount: Number(order.totalAmount),
+        paymentMethod,
+        expireMinutes: 15,
+      });
+
+      this.logger.log(`QR code generated successfully for order ${order.id}`);
+      return qrCode;
+    } catch (qrError) {
+      // QR generation failure không nên fail order creation
+      this.logger.error(`Failed to generate QR code for order ${order.id}:`, qrError);
+      return undefined;
+    }
   }
 }

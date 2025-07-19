@@ -16,8 +16,8 @@ export interface CreateOrderCommand {
 }
 
 @Injectable()
-export class CreateOrderTransactionUseCase {
-  private readonly logger = new Logger(CreateOrderTransactionUseCase.name);
+export class CreateOrderUseCase {
+  private readonly logger = new Logger(CreateOrderUseCase.name);
 
   constructor(
     private readonly dataSource: DataSource,
@@ -26,7 +26,6 @@ export class CreateOrderTransactionUseCase {
 
   /**
    * Tạo đơn hàng trong transaction
-   * Tuân thủ Single Responsibility Principle - chỉ lo tạo order và transaction
    */
   async execute(command: CreateOrderCommand): Promise<Order> {
     const { userId, createOrderDto, orderItems, totalAmount } = command;
@@ -47,7 +46,7 @@ export class CreateOrderTransactionUseCase {
         const savedOrder = await manager.save(order);
 
         // 2. Tạo order items và update stock
-        await this.createOrderItemsAndUpdateStock(manager, savedOrder.id, orderItems);
+        await this.processOrderItems(manager, savedOrder.id, orderItems);
 
         // 3. Clear user cart
         await this.cartService.clear(userId);
@@ -61,7 +60,7 @@ export class CreateOrderTransactionUseCase {
     }
   }
 
-  private async createOrderItemsAndUpdateStock(
+  private async processOrderItems(
     manager: EntityManager, // EntityManager from TypeORM transaction
     orderId: string,
     orderItems: Pick<OrderItem, 'productId' | 'quantity' | 'priceAtPurchase'>[],

@@ -17,7 +17,7 @@ interface IUserRankService {
     userRank: UserRankEnum;
     totalSpent: number;
   }>;
-  forceUpdateAllRanks(): Promise<void>;
+  forceUpdateRanks(): Promise<void>;
 }
 
 /**
@@ -48,7 +48,7 @@ export class UserRankService implements IUserRankService {
       this.logger.log(`Tìm thấy ${users.length} users để cập nhật rank`);
 
       // Cập nhật rank cho tất cả users
-      const updatedCount = await this.processRankUpdates(users);
+      const updatedCount = await this.processUpdates(users);
 
       this.logger.log(
         `Hoàn thành cập nhật rank. ${updatedCount}/${users.length} users được cập nhật.`,
@@ -65,7 +65,7 @@ export class UserRankService implements IUserRankService {
    */
   async updateRank(userId: string): Promise<boolean> {
     try {
-      const totalSpent = await this.calculateUserTotalSpent(userId);
+      const totalSpent = await this.calculateTotalSpent(userId);
       const newTier = calculateUserRank(totalSpent);
 
       // Lấy thông tin user hiện tại
@@ -114,7 +114,7 @@ export class UserRankService implements IUserRankService {
   /**
    * Manual trigger để test hoặc chạy ngay lập tức
    */
-  async forceUpdateAllRanks(): Promise<void> {
+  async forceUpdateRanks(): Promise<void> {
     this.logger.log('Manual trigger - bắt đầu cập nhật rank...');
     await this.updateAllRanks();
   }
@@ -122,7 +122,7 @@ export class UserRankService implements IUserRankService {
   /**
    * Cập nhật rank cho tất cả users
    */
-  private async processRankUpdates(users: User[]): Promise<number> {
+  private async processUpdates(users: User[]): Promise<number> {
     let updatedCount = 0;
 
     for (const user of users) {
@@ -138,7 +138,7 @@ export class UserRankService implements IUserRankService {
   /**
    * Tính tổng số tiền đã chi từ các đơn hàng hoàn thành
    */
-  private async calculateUserTotalSpent(userId: string): Promise<number> {
+  private async calculateTotalSpent(userId: string): Promise<number> {
     const totalSpentResult: { totalSpent: string } | undefined = await this.orderRepository
       .createQueryBuilder('order')
       .select('SUM(order.totalAmount)', 'totalSpent')
