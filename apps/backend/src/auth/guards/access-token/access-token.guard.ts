@@ -46,10 +46,14 @@ export class AccessTokenGuard implements CanActivate {
     // Kiểm tra token
     try {
       // Verify token
-      const payload: JwtPayload = await this.jwtService.verifyAsync(token, this.jwtConfiguration);
+      const payload: JwtPayload = await this.jwtService.verifyAsync(token, {
+        secret: this.jwtConfiguration.secret,
+        ignoreExpiration: false, // Không bỏ qua thời gian hết hạn - JWT tự động kiểm tra trường "exp" trong token
+      });
 
       // Lưu payload vào request
       request[REQUEST_USER_KEY] = payload;
+
       // Trả về true để cho phép request đi tiếp
       return true;
     } catch {

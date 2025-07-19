@@ -35,7 +35,7 @@ export class AuthenticationGuard implements CanActivate {
    * Kiểm tra xem request có được phép truy cập hay không.
    */
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    // Lấy authTypes từ reflector
+    //  Sử dụng reflector lấy authTypes từ metadata gắn tại context từ class hoặc method(handler)
     const authTypes = this.reflector.getAllAndOverride(AUTH_TYPE_KEY, [
       context.getHandler(),
       context.getClass(),

@@ -14,65 +14,60 @@ interface IGenerateTokensProvider {
 export class GenerateTokensProvider implements IGenerateTokensProvider {
   constructor(
     /**
-     * JwtService để tạo token.
+     * Service để tạo và verify JWT tokens
      */
     private readonly jwtService: JwtService,
 
     /**
-     * Cấu hình Jwt.
+     * Config chứa secret key và thời gian hết hạn tokens
      */
     @Inject(jwtConfig.KEY)
     private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
   ) {}
 
   /**
-   * Tạo token cho user.
+   * Tạo JWT token với thông tin user và thời gian hết hạn
+   * @param userId - ID của user (sẽ được lưu trong 'sub' claim)
+   * @param expiresIn - Thời gian hết hạn (vd: '1h', '7d' hoặc số giây)
+   * @param payload - Data bổ sung cần lưu trong token
    */
-  public async signToken<T>(
-    userId: string,
-    expiresIn: string | number, // Có thể là string (ví dụ: '7d') hoặc number (giây)
-    payload?: T,
-  ) {
-    const signOptions = {
-      secret: this.jwtConfiguration.secret,
-      expiresIn: expiresIn,
+  public async signToken<T>(userId: string, expiresIn: string | number, payload?: T) {
+    const payloadData: object = {
+      sub: userId,
+      ...payload,
     };
 
-    return await this.jwtService.signAsync(
-      {
-        sub: userId,
-        ...payload,
-      },
-      signOptions,
-    );
+    const optional = {
+      secret: this.jwtConfiguration.secret,
+      expiresIn,
+    };
+
+    // Tạo token với payload và thời gian hết hạn
+    const token: string = await this.jwtService.signAsync(payloadData, optional);
+
+    return token;
   }
 
   /**
-   * Tạo token cho user.
+   * Tạo cặp access token và refresh token cho user
+   * Access token: dùng để xác thực API calls (thời gian ngắn)
+   * Refresh token: dùng để tạo access token mới (thời gian dài)
    */
   public async generateTokens(user: User): Promise<{ accessToken: string; refreshToken: string }> {
+    // Payload chung cho cả 2 loại token
     const payload: JwtPayload = {
       sub: user.id,
       email: user.email,
       role: user.role,
     };
 
-    // Access token sử dụng string expirationTime với đơn vị thời gian (ví dụ: "1h")
     const accessTokenExpiresIn = this.jwtConfiguration.expirationTime;
-    // Refresh token sử dụng string refreshExpirationTime (ví dụ: '7d')
     const refreshTokenExpiresIn = this.jwtConfiguration.refreshExpirationTime;
 
+    // Tạo song song để tối ưu performance
     const [accessToken, refreshToken] = await Promise.all([
-      this.signToken<JwtPayload>(
-        user.id,
-        accessTokenExpiresIn, // Truyền string với đơn vị thời gian (ví dụ: "1h")
-        payload,
-      ),
-      this.signToken<JwtPayload>(
-        user.id,
-        refreshTokenExpiresIn, // Truyền string (ví dụ: '7d')
-        payload,
-      ),
+      this.signToken<JwtPayload>(user.id, accessTokenExpiresIn, payload),
+      this.signToken<JwtPayload>(user.id, refreshTokenExpiresIn, payload),
     ]);
 
     return { accessToken, refreshToken };
