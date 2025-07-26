@@ -1,7 +1,5 @@
-export { CategoryForm, type CategoryFormData } from "./CategoryForm";
-export { CategorySearch } from "./CategorySearch";
-export { DeleteCategoryDialog } from "./DeleteCategoryDialog";
-export { CategoryListItem } from "./CategoryListItem";
-export { CategoryList } from "./CategoryList";
-export { CompactCategoryManager } from "./CompactCategoryManager";
-export { CategorySelector } from "./CategorySelector";
+// Export CategoryForm from categorys folder (the actual location)
+export { default as CategoryForm } from "../categorys/CategoryForm";
+
+// Note: Other components (CategorySearch, DeleteCategoryDialog, etc.)
+// are not implemented yet. They need to be created if required.

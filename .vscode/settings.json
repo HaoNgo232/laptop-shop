@@ -3,5 +3,6 @@
   "javascript.preferences.importModuleSpecifier": "non-relative",
   "path-intellisense.mappings": {
     "@": "${workspaceFolder}/src"
-  }
+  },
+  "commentTranslate.hover.enabled": false
 }

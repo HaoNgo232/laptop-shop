@@ -12,7 +12,7 @@
     },
     "scripts": {
         "dev": "pnpm run dev:setup && concurrently -n \"shared-types,frontend,backend\" -c \"yellow,cyan,green\" \"pnpm run shared-types:dev\" \"pnpm run frontend:dev\" \"pnpm run backend:dev\"",
-        "dev:setup": "pnpm run shared-types:verify && pnpm run backend:build",
+        "dev:setup": "pnpm run shared-types:verify",
         "frontend:dev": "pnpm --filter frontend dev",
         "backend:dev": "pnpm --filter backend dev",
         "frontend:build": "pnpm --filter frontend build",

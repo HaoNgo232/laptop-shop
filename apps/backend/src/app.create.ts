@@ -19,7 +19,7 @@ export function appCreate(app: INestApplication): void {
     }),
   );
 
-  // Swagger
+  // Cấu hình Swagger document cho API
   const config = new DocumentBuilder()
     .setTitle('Web Ecommerce API')
     .setDescription('API documentation cho ứng dụng Web Ecommerce')

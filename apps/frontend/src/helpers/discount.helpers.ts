@@ -1,5 +1,12 @@
 import { getRankDiscountPercentage } from "@/helpers/rank.helpers";
 
+/**
+ * Tính toán giảm giá dựa trên số tiền và cấp độ người dùng.
+ * Phần này chỉ hiện thị ở frontend vì backend đã tính toán giảm giá rồi
+ * @param amount
+ * @param userRank
+ * @returns
+ */
 export const calculateDiscount = (amount: number, userRank: string) => {
   const discountPercentage = getRankDiscountPercentage(userRank);
   const discountAmount = amount * (discountPercentage / 100);

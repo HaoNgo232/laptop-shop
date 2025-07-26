@@ -11,10 +11,18 @@ interface ProfileInfoDisplayProps {
 
 export const ProfileInfoDisplay = ({ user, onEditProfile }: ProfileInfoDisplayProps) => {
     // Tính phần trăm hoàn thành profile
-    const completionPercentage = Math.round(((user.username ? 1 : 0) +
-        (user.phoneNumber ? 1 : 0) +
-        (user.address ? 1 : 0) +
-        (user.avatarUrl ? 1 : 0)) / 4 * 100);
+    // Áp dụng Single Responsibility Principle: tách logic tính toán ra function riêng
+    const getCompletionPercentage = (user: UserType) => {
+        const fields = [
+            Boolean(user.username),
+            Boolean(user.phoneNumber),
+            Boolean(user.address),
+        ];
+        const completed = fields.filter(Boolean).length;
+        return Math.round((completed / fields.length) * 100);
+    };
+
+    const completionPercentage = getCompletionPercentage(user);
 
     return (
         <motion.div
@@ -124,19 +132,18 @@ export const ProfileInfoDisplay = ({ user, onEditProfile }: ProfileInfoDisplayPr
                                 <div className={`w-2 h-2 rounded-full ${user.address ? 'bg-green-500' : 'bg-gray-300'}`}></div>
                                 <span>Cập nhật địa chỉ</span>
                             </div>
-                            <div className={`flex items-center space-x-2 text-sm ${user.avatarUrl ? 'text-green-600' : 'text-gray-600'}`}>
-                                <div className={`w-2 h-2 rounded-full ${user.avatarUrl ? 'bg-green-500' : 'bg-gray-300'}`}></div>
-                                <span>Tải lên ảnh đại diện</span>
-                            </div>
                         </div>
 
-                        <Button
-                            onClick={onEditProfile}
-                            className="w-full"
-                            size="sm"
-                        >
-                            Hoàn thiện ngay
-                        </Button>
+                        {/* Nút hoàn thiện hồ sơ */}
+                        {completionPercentage < 100 && (
+                            <Button
+                                onClick={onEditProfile}
+                                className="w-full"
+                                size="sm"
+                            >
+                                Hoàn thiện ngay
+                            </Button>
+                        )}
                     </CardContent>
                 </Card>
             </motion.div>

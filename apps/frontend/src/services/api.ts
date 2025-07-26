@@ -69,7 +69,7 @@ class ApiClient {
           } catch (refreshError) {
             console.error("Token hết hạn, đang logout...");
             // Logout khi refresh thất bại
-            await authService.logout();
+            authService.logout();
             return Promise.reject(
               this.transformError(refreshError as AxiosError),
             );
