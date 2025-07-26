@@ -1,13 +1,11 @@
-import { ConfigService } from '@nestjs/config';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigService, ConfigModule } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '@/auth/entities/user.entity';
-import { forwardRef } from '@nestjs/common';
 import { AuthController } from '@/auth/controllers/auth.controller';
 import { AccessTokenGuard } from '@/auth/guards/access-token/access-token.guard';
 import { UsersController } from '@/auth/controllers/users.controller';
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { CartModule } from '@/cart/cart.module';
 import { AuthService } from '@/auth/services/auth.service';
 import { HashingProvider } from '@/auth/providers/hashing.provider';
@@ -17,8 +15,8 @@ import { JwtStrategy } from '@/auth/strategies/jwt.strategy';
 import { AuthenticationGuard } from '@/auth/guards/authentication/authentication.guard';
 import { GenerateTokensProvider } from '@/auth/providers/generate-tokens.provider';
 import { RolesGuard } from '@/auth/guards/authentication/roles.guard';
-import { UserRankService } from '@/orders/services/user-rank.service';
 import { Order } from '@/orders/entities/order.entity';
+import { RankService } from '@/orders/services/rank.service';
 
 /**
  * Module để quản lý đăng nhập, đăng ký, và xác thực người dùng
@@ -46,7 +44,7 @@ import { Order } from '@/orders/entities/order.entity';
     // Services
     AuthService,
     UsersService,
-    UserRankService,
+    RankService,
     // Providers
     {
       provide: HashingProvider,

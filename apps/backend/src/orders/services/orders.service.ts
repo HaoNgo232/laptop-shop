@@ -19,7 +19,7 @@ import { Order } from '@/orders/entities/order.entity';
 import { PaymentsService } from '@/payments/payments.service';
 import { createPaginationMeta } from '@/orders/helpers/creare-pagination.helper';
 
-interface IUsersOrdersService {
+interface IOrdersService {
   create(
     userId: string,
     createOrderDto: CreateOrderDto,
@@ -30,8 +30,8 @@ interface IUsersOrdersService {
 }
 
 @Injectable()
-export class UsersOrdersService implements IUsersOrdersService {
-  private readonly logger = new Logger(UsersOrdersService.name);
+export class OrdersService implements IOrdersService {
+  private readonly logger = new Logger(OrdersService.name);
 
   constructor(
     private readonly dataSource: DataSource,

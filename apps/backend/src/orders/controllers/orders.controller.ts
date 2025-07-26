@@ -10,19 +10,19 @@ import { PaginationQueryDto } from '@/orders/dtos/pagination-query.dto';
 import { PaginatedResponse } from '@/products/interfaces/paginated-response.interface';
 import { OrderDetailDto } from '@/orders/dtos/order-detail.dto';
 import { QRCodeResponse } from '@/payments/interfaces/payment-provider.interfaces';
-import { UsersOrdersService } from '@/orders/services/users-orders.service';
+import { OrdersService } from '@/orders/services/orders.service';
 
 @Controller('api/orders')
 @Auth(AuthType.Bearer, UserRole.USER, UserRole.ADMIN)
 export class OrdersController {
-  constructor(private readonly usersOrdersService: UsersOrdersService) {}
+  constructor(private readonly ordersService: OrdersService) {}
 
   @Post()
   async createOrder(
     @CurrentUser('sub') userId: string,
     @Body() createOrderDto: CreateOrderDto,
   ): Promise<{ order: OrderDto; qrCode?: QRCodeResponse }> {
-    return await this.usersOrdersService.create(userId, createOrderDto);
+    return await this.ordersService.create(userId, createOrderDto);
   }
 
   @Get()
@@ -30,7 +30,7 @@ export class OrdersController {
     @CurrentUser('sub') userId: string,
     @Query() query: PaginationQueryDto,
   ): Promise<PaginatedResponse<OrderDto> & { message: string }> {
-    const result = await this.usersOrdersService.findAll(userId, query);
+    const result = await this.ordersService.findAll(userId, query);
 
     return {
       ...result,
@@ -43,7 +43,7 @@ export class OrdersController {
     @CurrentUser('sub') userId: string,
     @Param('orderId', ParseUUIDPipe) orderId: string,
   ): Promise<OrderDetailDto> {
-    return await this.usersOrdersService.findOne(userId, orderId);
+    return await this.ordersService.findOne(userId, orderId);
   }
 
   @Get(':orderId/check-payment-status')
@@ -51,7 +51,7 @@ export class OrdersController {
     @CurrentUser('sub') userId: string,
     @Param('orderId', ParseUUIDPipe) orderId: string,
   ): Promise<OrderDetailDto> {
-    return await this.usersOrdersService.findOne(userId, orderId);
+    return await this.ordersService.findOne(userId, orderId);
   }
 
   @Delete(':orderId/cancel')
@@ -59,6 +59,6 @@ export class OrdersController {
     @CurrentUser('sub') userId: string,
     @Param('orderId', ParseUUIDPipe) orderId: string,
   ): Promise<OrderDto> {
-    return await this.usersOrdersService.cancel(userId, orderId);
+    return await this.ordersService.cancel(userId, orderId);
   }
 }

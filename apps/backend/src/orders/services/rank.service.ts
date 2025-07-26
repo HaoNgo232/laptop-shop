@@ -8,7 +8,7 @@ import { OrderStatusEnum } from '@/orders/enums/order-status.enum';
 import { calculateUserRank } from '@/orders/helpers/rank-caculatetor.helpers';
 import { UserRankEnum } from '@/orders/enums/user-rank.enum';
 
-interface IUserRankService {
+interface IRankService {
   updateAllRanks(): Promise<void>;
   updateRank(userId: string): Promise<boolean>;
   getRankInfo(userId: string): Promise<{
@@ -24,8 +24,8 @@ interface IUserRankService {
  * Cập nhật xếp hạng người dùng dựa trên tổng số tiền đã chi tiêu
  */
 @Injectable()
-export class UserRankService implements IUserRankService {
-  private readonly logger = new Logger(UserRankService.name);
+export class RankService implements IRankService {
+  private readonly logger = new Logger(RankService.name);
 
   constructor(
     @InjectRepository(User)

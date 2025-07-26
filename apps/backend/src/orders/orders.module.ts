@@ -11,10 +11,10 @@ import { PaymenstModule } from '@/payments/payments.module';
 import { Product } from '@/products/entities/product.entity';
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersOrdersService } from '@/orders/services/users-orders.service';
+import { OrdersService } from '@/orders/services/orders.service';
 import { CreateOrderUseCase } from '@/orders/usecases/create-order.usecase';
 import { ValidateStockUseCase } from '@/orders/usecases/validate-stock.usecase';
-import { UserRankService } from './services/user-rank.service';
+import { RankService } from './services/rank.service';
 import { DiscountService } from './services/discount.service';
 import { User } from '@/auth/entities/user.entity';
 
@@ -32,8 +32,8 @@ import { User } from '@/auth/entities/user.entity';
   providers: [
     // services
     AdminOrdersService,
-    UsersOrdersService,
-    UserRankService,
+    OrdersService,
+    RankService,
     DiscountService,
     // providers
     OrdersProvider,
@@ -42,6 +42,6 @@ import { User } from '@/auth/entities/user.entity';
     ValidateStockUseCase,
     CreateOrderUseCase,
   ],
-  exports: [AdminOrdersService, UsersOrdersService, UserRankService, DiscountService],
+  exports: [AdminOrdersService, OrdersService, RankService, DiscountService],
 })
 export class OrdersModule {}

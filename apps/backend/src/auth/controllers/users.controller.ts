@@ -2,7 +2,7 @@ import { CurrentUser } from '@/auth/decorators/current-user.decorator';
 import { UpdateUserProfileDto } from '@/auth/dtos/update-profile.dto';
 import { User } from '@/auth/entities/user.entity';
 import { UsersService } from '@/auth/services/users.service';
-import { UserRankService } from '@/orders/services/user-rank.service';
+import { RankService } from '@/orders/services/rank.service';
 import { Body, Controller, Get, Post, Put } from '@nestjs/common';
 
 @Controller('api/users')
@@ -12,7 +12,7 @@ export class UsersController {
      * Service để xử lý logic liên quan đến người dùng.
      */
     private readonly usersService: UsersService,
-    private readonly userRankService: UserRankService,
+    private readonly rankService: RankService,
   ) {}
 
   /**
@@ -40,7 +40,7 @@ export class UsersController {
    */
   @Post('admin/update-all-ranks')
   async forceUpdateAllRanks() {
-    await this.userRankService.forceUpdateRanks();
+    await this.rankService.forceUpdateRanks();
     return { message: 'Đã cập nhật rank cho tất cả users' };
   }
 }
