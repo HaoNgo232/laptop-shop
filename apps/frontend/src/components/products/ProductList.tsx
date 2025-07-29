@@ -1,5 +1,6 @@
 import { ProductCard, ProductSkeleton } from '@/components/products';
 import type { Product } from '@/types/product';
+import { motion } from 'framer-motion';
 
 interface ProductListProps {
     readonly products: Product[];
@@ -36,10 +37,23 @@ export function ProductList({ products, isLoading = false }: ProductListProps) {
 
     // Products grid
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
+        <motion.div
+            initial={{ opacity: 0, scale: 1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.1 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {products.map((product, index) => (
+                <motion.div
+                    key={product.id}
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    // Áp dụng delay dựa trên index để tạo hiệu ứng lần lượt
+                    transition={{ delay: index * 0.1 }}
+                    whileHover={{ scale: 1.02 }}
+                >
+                    <ProductCard key={product.id} product={product} />
+                </motion.div>
             ))}
-        </div>
+        </motion.div>
     );
-} 
+}

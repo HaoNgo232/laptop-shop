@@ -6,6 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { formatCurrency } from '@/utils/currency';
 import { OrderStatusEnum } from '@web-ecom/shared-types/orders/enums';
 import type { Order } from '@/types/order';
+import { getStatusBadge } from '@/helpers/get-status.badge';
 
 interface OrdersListProps {
     readonly orders: Order[];
@@ -44,8 +45,8 @@ export const OrdersList = ({
         if (ordersLoading) {
             return (
                 <div className="space-y-4">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                        <div key={i} className="p-4 border rounded-lg">
+                    {Array.from({ length: 5 }).map((_, index) => (
+                        <div key={index} className="p-4 border rounded-lg">
                             <div className="flex justify-between items-start mb-3">
                                 <div className="space-y-2">
                                     <Skeleton className="h-4 w-32" />
@@ -69,6 +70,7 @@ export const OrdersList = ({
                 </div>
             );
         }
+
 
         // Render danh sách đơn hàng với animation
         return (
@@ -94,7 +96,7 @@ export const OrdersList = ({
                             </div>
                             {/* Status badge với màu dynamic */}
                             <span className={`px-3 py-1 rounded-full text-xs font-medium ${getOrderStatusClasses(order.status)}`}>
-                                {order.status}
+                                {getStatusBadge(order.status)}
                             </span>
                         </div>
                         <div className="flex justify-between items-center">

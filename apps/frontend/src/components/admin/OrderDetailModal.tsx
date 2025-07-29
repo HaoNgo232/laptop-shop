@@ -1,5 +1,5 @@
 import React from 'react';
-import { Order } from '@/types/order';
+import { Order, OrderDetail } from '@/types/order';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -101,8 +101,7 @@ export function OrderDetailModal({ order, isOpen, onClose }: OrderDetailModalPro
     };
 
     // Cast order to get detailed info (because Order type might not have all fields)
-    const orderDetail = order as any;
-
+    const orderDetail = order as OrderDetail
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="max-w-4xl lg:max-w-6xl xl:max-w-7xl max-h-[90vh] overflow-y-auto">

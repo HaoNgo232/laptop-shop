@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useProductStore } from '@/stores/productStore';
 import { SortOrder } from '@web-ecom/shared-types/products/enums';
 import { Pagination } from '@/components/Pagination';
+import { motion } from 'framer-motion';
 
 export function ProductsPage() {
     const [searchParams] = useSearchParams();
@@ -92,7 +93,9 @@ export function ProductsPage() {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div
+            className="min-h-screen bg-gray-50"
+        >
             <Header />
 
             <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">

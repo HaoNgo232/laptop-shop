@@ -20,7 +20,7 @@ export interface UsersFiltersProps {
  * Search và filter component cho users
  * Bao gồm search text, role filter, Enter key support
  */
-export const UsersFilters: React.FC<UsersFiltersProps> = ({
+export const UsersFilters = ({
     searchTerm,
     selectedRole,
     onSearchTermChange,
@@ -29,7 +29,7 @@ export const UsersFilters: React.FC<UsersFiltersProps> = ({
     onRoleFilter,
     onRefresh,
     isLoading = false
-}) => {
+}: UsersFiltersProps) => {
     return (
         <Card>
             <CardContent className="p-4">

@@ -27,8 +27,6 @@ const CategoryForm = ({ category, onSubmit, onCancel, isLoading }: CategoryFormP
     const {
         register,
         handleSubmit,
-        setValue,
-        watch,
         formState: { errors, isSubmitting },
         reset
     } = useForm<CategoryFormData>({

@@ -1,7 +1,7 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Edit, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Edit, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { AdminView } from '@/types/admin';
 import type { PaginationMeta } from '@/types/api';
 import { UserRole } from '@web-ecom/shared-types/auth/enums';

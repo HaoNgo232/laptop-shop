@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Package, Calendar, DollarSign, MapPin, CreditCard, FileText, CheckCircle, Clock, XCircle } from 'lucide-react';
+import { ArrowLeft, Package, Calendar, DollarSign, MapPin, CreditCard, FileText, XCircle } from 'lucide-react';
 import { Header } from '@/components/layout/Header';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import { useAuthStore } from '@/stores/authStore';
 import { orderService } from '@/services/orderService';
 import { formatCurrency } from '@/utils/currency';
 import type { OrderDetail } from '@/types/order';
-import { OrderStatusEnum, PaymentStatusEnum } from '@web-ecom/shared-types/orders/enums';
+import { getStatusBadge } from '@/helpers/get-status.badge';
+import { getPaymentStatusIcon } from '@/helpers/get-payment-status-icon';
+import { getPaymentStatusText } from '@/helpers/get-payment-status-text';
 
 export function OrderDetailPage() {
     const { orderId } = useParams<{ orderId: string }>();
@@ -52,57 +53,11 @@ export function OrderDetailPage() {
     }, [isAuthenticated, orderId]);
 
     const handleGoBack = () => {
-        navigate('/orders');
+        navigate(-1);
     };
 
-    const getStatusBadge = (status: OrderStatusEnum) => {
-        switch (status) {
-            case OrderStatusEnum.DELIVERED:
-                return <Badge className="bg-green-100 text-green-800">Khách đã nhận hàng</Badge>;
-            case OrderStatusEnum.PENDING:
-                return <Badge className="bg-yellow-100 text-yellow-800">Chờ xử lý</Badge>;
-            case OrderStatusEnum.PROCESSING:
-                return <Badge className="bg-blue-100 text-blue-800">Đang chuẩn bị hàng</Badge>;
-            case OrderStatusEnum.SHIPPED:
-                return <Badge className="bg-purple-100 text-purple-800">Đã giao cho vận chuyển</Badge>;
-            case OrderStatusEnum.CANCELLED:
-                return <Badge className="bg-red-100 text-red-800">Đã hủy</Badge>;
-            default:
-                return <Badge variant="outline">{status}</Badge>;
-        }
-    };
 
-    const getPaymentStatusIcon = (status: PaymentStatusEnum) => {
-        switch (status) {
-            case PaymentStatusEnum.PAID:
-                return <CheckCircle className="h-4 w-4 text-green-600" />;
-            case PaymentStatusEnum.PENDING:
-            case PaymentStatusEnum.WAITING:
-                return <Clock className="h-4 w-4 text-yellow-600" />;
-            case PaymentStatusEnum.FAILED:
-            case PaymentStatusEnum.CANCELLED:
-                return <XCircle className="h-4 w-4 text-red-600" />;
-            default:
-                return <Clock className="h-4 w-4 text-gray-600" />;
-        }
-    };
 
-    const getPaymentStatusText = (status: PaymentStatusEnum) => {
-        switch (status) {
-            case PaymentStatusEnum.PAID:
-                return 'Đã thanh toán';
-            case PaymentStatusEnum.PENDING:
-                return 'Chờ thanh toán';
-            case PaymentStatusEnum.WAITING:
-                return 'Đang chờ thanh toán';
-            case PaymentStatusEnum.FAILED:
-                return 'Thanh toán thất bại';
-            case PaymentStatusEnum.CANCELLED:
-                return 'Đã hủy thanh toán';
-            default:
-                return status;
-        }
-    };
 
     // Not authenticated
     if (!isAuthenticated && !authLoading) {
@@ -248,8 +203,8 @@ export function OrderDetailPage() {
                                 </CardHeader>
                                 <CardContent>
                                     <div className="space-y-4">
-                                        {order.items.map((item, index) => (
-                                            <div key={index} className="flex items-center space-x-4 p-4 border rounded-lg">
+                                        {order.items.map((item) => (
+                                            <div key={item.product.id} className="flex items-center space-x-4 p-4 border rounded-lg">
                                                 {item.product.imageUrl && (
                                                     <img
                                                         src={item.product.imageUrl}
