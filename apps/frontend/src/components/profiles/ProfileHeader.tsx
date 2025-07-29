@@ -5,12 +5,12 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import type { User } from '@/types/auth';
 
 interface ProfileHeaderProps {
-    user: User;
-    isEditing: boolean;
-    activeTab: string;
-    onGoBack: () => void;
-    onEditClick: () => void;
-    getUserInitials: (username?: string, email?: string) => string;
+    readonly user: User;
+    readonly isEditing: boolean;
+    readonly activeTab: string;
+    readonly onGoBack: () => void;
+    readonly onEditClick: () => void;
+    readonly getUserInitials: (username?: string, email?: string) => string;
 }
 
 export const ProfileHeader = ({

@@ -5,12 +5,12 @@ import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { Product } from '@/types/product';
 
 interface FeaturedProductsProps {
-    products: Product[];
-    currentSlide: number;
-    onPrevSlide: () => void;
-    onNextSlide: () => void;
-    onProductClick: (productId: string) => void;
-    onNavigate: (path: string) => void;
+    readonly products: Product[];
+    readonly currentSlide: number;
+    readonly onPrevSlide: () => void;
+    readonly onNextSlide: () => void;
+    readonly onProductClick: (productId: string) => void;
+    readonly onNavigate: (path: string) => void;
 }
 
 export function FeaturedProducts({

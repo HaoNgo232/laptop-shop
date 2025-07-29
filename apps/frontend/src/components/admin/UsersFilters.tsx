@@ -6,14 +6,14 @@ import { Search, Filter, RefreshCw } from 'lucide-react';
 import { UserRole } from '@web-ecom/shared-types/auth/enums';
 
 export interface UsersFiltersProps {
-    searchTerm: string;
-    selectedRole: string;
-    onSearchTermChange: (term: string) => void;
-    onSearch: () => void;
-    onSearchKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-    onRoleFilter: (role: string) => void;
-    onRefresh: () => void;
-    isLoading?: boolean;
+    readonly searchTerm: string;
+    readonly selectedRole: string;
+    readonly onSearchTermChange: (term: string) => void;
+    readonly onSearch: () => void;
+    readonly onSearchKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+    readonly onRoleFilter: (role: string) => void;
+    readonly onRefresh: () => void;
+    readonly isLoading?: boolean;
 }
 
 /**

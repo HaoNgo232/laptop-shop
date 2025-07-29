@@ -9,10 +9,10 @@ import { Edit, Send } from 'lucide-react';
 import type { ReviewWithUser } from '@/types/review';
 
 interface ReviewModalProps {
-    productId: string;
-    existingReview?: ReviewWithUser | null;
-    isOpen: boolean;
-    onClose: () => void;
+    readonly productId: string;
+    readonly existingReview?: ReviewWithUser | null;
+    readonly isOpen: boolean;
+    readonly onClose: () => void;
 }
 
 export function ReviewModal({

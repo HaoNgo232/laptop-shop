@@ -7,9 +7,9 @@ import { MapPin } from 'lucide-react';
 import type { ShippingAddress } from '@/types/order';
 
 interface ShippingAddressFormProps {
-    onSubmit: (address: ShippingAddress) => void;
-    initialData?: ShippingAddress;
-    isLoading?: boolean;
+    readonly onSubmit: (address: ShippingAddress) => void;
+    readonly initialData?: ShippingAddress;
+    readonly isLoading?: boolean;
 }
 
 export function ShippingAddressForm({ onSubmit, initialData, isLoading = false }: ShippingAddressFormProps) {

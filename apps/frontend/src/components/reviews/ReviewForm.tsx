@@ -21,10 +21,10 @@ import { CreateReviewSchema, UpdateReviewSchema } from '@/types/review';
 import type { CreateReview, UpdateReview, ReviewWithUser } from '@/types/review';
 
 interface ReviewFormProps {
-    productId: string;
-    existingReview?: ReviewWithUser | null;
-    onCancel?: () => void; // Chỉ cần onCancel để đóng modal
-    className?: string;
+    readonly productId: string;
+    readonly existingReview?: ReviewWithUser | null;
+    readonly onCancel?: () => void; // Chỉ cần onCancel để đóng modal
+    readonly className?: string;
 }
 
 export function ReviewForm({

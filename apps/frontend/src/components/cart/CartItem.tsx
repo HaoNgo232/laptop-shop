@@ -5,9 +5,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import type { CartItem } from '@/types/cart';
 
 interface CartItemProps {
-    item: CartItem;
-    onUpdateQuantity: (productId: string, quantity: number) => Promise<void>;
-    onRemoveItem: (productId: string) => Promise<void>;
+    readonly item: CartItem;
+    readonly onUpdateQuantity: (productId: string, quantity: number) => Promise<void>;
+    readonly onRemoveItem: (productId: string) => Promise<void>;
 }
 
 export function CartItemComponent({ item, onUpdateQuantity, onRemoveItem }: CartItemProps) {

@@ -3,8 +3,8 @@ import { Tag } from 'lucide-react';
 import type { Category } from '@/types/product';
 
 interface CategorySectionProps {
-    categories: Category[];
-    onCategoryClick: (categoryId: string) => void;
+    readonly categories: Category[];
+    readonly onCategoryClick: (categoryId: string) => void;
 }
 
 export function CategorySection({ categories, onCategoryClick }: CategorySectionProps) {

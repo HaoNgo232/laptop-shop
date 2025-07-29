@@ -11,12 +11,12 @@ import { UserRole } from '@web-ecom/shared-types/auth/enums';
 import type { AdminDetail, UpdateByAdmin } from '@/types/admin';
 
 interface UserDetailModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    user: AdminDetail | null;
-    isLoading: boolean;
-    onUpdate: (userId: string, data: UpdateByAdmin) => Promise<void>;
-    error?: string | null;
+    readonly isOpen: boolean;
+    readonly onClose: () => void;
+    readonly user: AdminDetail | null;
+    readonly isLoading: boolean;
+    readonly onUpdate: (userId: string, data: UpdateByAdmin) => Promise<void>;
+    readonly error?: string | null;
 }
 
 export function UserDetailModal({

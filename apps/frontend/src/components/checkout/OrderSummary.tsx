@@ -7,7 +7,7 @@ import { useAuthStore } from '@/stores/authStore';
 import { calculateDiscount } from '@/helpers/discount.helpers';
 
 interface OrderSummaryProps {
-    className?: string;
+    readonly className?: string;
 }
 
 export function OrderSummary({ className }: OrderSummaryProps) {

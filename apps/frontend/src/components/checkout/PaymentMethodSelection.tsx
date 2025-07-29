@@ -13,9 +13,9 @@ interface PaymentMethodOption {
 }
 
 interface PaymentMethodSelectionProps {
-    onSelect: (method: PaymentMethodEnum) => void;
-    selected?: PaymentMethodEnum;
-    isLoading?: boolean;
+    readonly onSelect: (method: PaymentMethodEnum) => void;
+    readonly selected?: PaymentMethodEnum;
+    readonly isLoading?: boolean;
 }
 
 export function PaymentMethodSelection({ onSelect, selected, isLoading = false }: PaymentMethodSelectionProps) {

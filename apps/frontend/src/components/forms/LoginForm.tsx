@@ -12,9 +12,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface LoginFormProps {
-    onSubmit: (data: LoginUser) => void;
-    loading?: boolean;
-    error?: string | null;
+    readonly onSubmit: (data: LoginUser) => void;
+    readonly loading?: boolean;
+    readonly error?: string | null;
 }
 
 export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit, loading = false, error }) => {

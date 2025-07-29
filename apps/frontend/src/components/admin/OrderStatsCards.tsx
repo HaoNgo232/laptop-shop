@@ -14,10 +14,10 @@ interface OrderStats {
 }
 
 interface OrderStatsCardsProps {
-    stats: OrderStats;
-    statusFilter: OrderStatusEnum | 'all';
-    onFilterByStatus: (status: OrderStatusEnum) => void;
-    onClearFilter: () => void;
+    readonly stats: OrderStats;
+    readonly statusFilter: OrderStatusEnum | 'all';
+    readonly onFilterByStatus: (status: OrderStatusEnum) => void;
+    readonly onClearFilter: () => void;
 }
 
 export function OrderStatsCards({

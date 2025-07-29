@@ -17,13 +17,13 @@ import { cn } from '@/lib/utils';
 import { useNavigate } from 'react-router-dom';
 
 interface ProductsTableProps {
-    products: Product[];
-    pagination: PaginationMeta | null;
-    onEdit: (product: Product) => void;
-    onDelete: (product: Product) => void;
-    onView: (product: Product) => void;
-    onPageChange: (page: number) => void;
-    isLoading?: boolean;
+    readonly products: Product[];
+    readonly pagination: PaginationMeta | null;
+    readonly onEdit: (product: Product) => void;
+    readonly onDelete: (product: Product) => void;
+    readonly onView: (product: Product) => void;
+    readonly onPageChange: (page: number) => void;
+    readonly isLoading?: boolean;
 }
 
 export function ProductsTable({

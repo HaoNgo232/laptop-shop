@@ -3,10 +3,10 @@ import { Button } from '@/components/ui/button';
 import { ArrowRight, Grid, Circle } from 'lucide-react';
 
 interface MinimalBackgroundProps {
-    children?: React.ReactNode;
-    showCTA?: boolean;
-    onCTAClick?: () => void;
-    theme?: 'light' | 'dark';
+    readonly children?: React.ReactNode;
+    readonly showCTA?: boolean;
+    readonly onCTAClick?: () => void;
+    readonly theme?: 'light' | 'dark';
 }
 
 export function MinimalBackground({

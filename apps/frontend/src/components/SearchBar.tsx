@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 interface SearchBarProps {
-    onSearch: (searchTerm: string) => void;
-    placeholder?: string;
+    readonly onSearch: (searchTerm: string) => void;
+    readonly placeholder?: string;
 }
 
 export function SearchBar({ onSearch, placeholder = "Tìm kiếm sản phẩm..." }: SearchBarProps) {

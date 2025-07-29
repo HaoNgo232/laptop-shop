@@ -17,10 +17,10 @@ const CategoryFormSchema = z.object({
 type CategoryFormData = z.infer<typeof CategoryFormSchema>;
 
 interface CategoryFormProps {
-    category?: Category | null;
-    onSubmit: (data: CreateCategory | UpdateCategory) => Promise<void>;
-    onCancel: () => void;
-    isLoading: boolean;
+    readonly category?: Category | null;
+    readonly onSubmit: (data: CreateCategory | UpdateCategory) => Promise<void>;
+    readonly onCancel: () => void;
+    readonly isLoading: boolean;
 }
 
 const CategoryForm = ({ category, onSubmit, onCancel, isLoading }: CategoryFormProps) => {

@@ -11,16 +11,16 @@ interface MenuItem {
 }
 
 interface AdminSidebarProps {
-    user: any;
-    menuItems: MenuItem[];
-    sidebarOpen: boolean;
-    sidebarCollapsed: boolean;
-    isActive: (path: string) => boolean;
-    onToggleSidebar: () => void;
-    onToggleCollapse: () => void;
-    onMenuClick: (path: string) => void;
-    onLogout: () => void;
-    onNavigate: (path: string) => void;
+    readonly user: any;
+    readonly menuItems: MenuItem[];
+    readonly sidebarOpen: boolean;
+    readonly sidebarCollapsed: boolean;
+    readonly isActive: (path: string) => boolean;
+    readonly onToggleSidebar: () => void;
+    readonly onToggleCollapse: () => void;
+    readonly onMenuClick: (path: string) => void;
+    readonly onLogout: () => void;
+    readonly onNavigate: (path: string) => void;
 }
 
 export function AdminSidebar({

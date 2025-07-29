@@ -5,8 +5,8 @@ import type { User as UserType } from '@/types/auth';
 import { motion } from 'framer-motion';
 
 interface ProfileInfoDisplayProps {
-    user: UserType;
-    onEditProfile: () => void;
+    readonly user: UserType;
+    readonly onEditProfile: () => void;
 }
 
 export const ProfileInfoDisplay = ({ user, onEditProfile }: ProfileInfoDisplayProps) => {

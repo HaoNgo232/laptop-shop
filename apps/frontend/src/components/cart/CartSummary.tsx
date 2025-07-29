@@ -7,8 +7,8 @@ import { useAuthStore } from '@/stores/authStore';
 import { calculateDiscount } from '@/helpers/discount.helpers';
 
 interface CartSummaryProps {
-    cart: Cart;
-    onClearCart?: () => Promise<void>;
+    readonly cart: Cart;
+    readonly onClearCart?: () => Promise<void>;
 }
 
 export function CartSummary({ cart, onClearCart }: CartSummaryProps) {

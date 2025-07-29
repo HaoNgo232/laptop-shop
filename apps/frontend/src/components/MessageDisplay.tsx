@@ -2,9 +2,9 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Info, CheckCircle, AlertTriangle } from 'lucide-react';
 
 interface MessageDisplayProps {
-    message: string;
-    type?: 'info' | 'success' | 'warning';
-    className?: string;
+    readonly message: string;
+    readonly type?: 'info' | 'success' | 'warning';
+    readonly className?: string;
 }
 
 export function MessageDisplay({ message, type = 'info', className = '' }: MessageDisplayProps) {

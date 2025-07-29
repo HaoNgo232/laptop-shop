@@ -2,9 +2,9 @@ import { Menu, Home } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface AdminHeaderProps {
-    currentPageTitle: string;
-    onToggleSidebar: () => void;
-    onNavigate: (path: string) => void;
+    readonly currentPageTitle: string;
+    readonly onToggleSidebar: () => void;
+    readonly onNavigate: (path: string) => void;
 }
 
 export function AdminHeader({

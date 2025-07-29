@@ -6,13 +6,13 @@ import { OrderStatusEnum } from '@web-ecom/shared-types/orders/enums';
 import { Order } from '@/types/order';
 
 interface OrderStatusModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    order: Order | null;
-    newStatus: OrderStatusEnum;
-    onStatusChange: (status: OrderStatusEnum) => void;
-    onConfirm: () => void;
-    isLoading: boolean;
+    readonly isOpen: boolean;
+    readonly onClose: () => void;
+    readonly order: Order | null;
+    readonly newStatus: OrderStatusEnum;
+    readonly onStatusChange: (status: OrderStatusEnum) => void;
+    readonly onConfirm: () => void;
+    readonly isLoading: boolean;
 }
 
 export function OrderStatusModal({

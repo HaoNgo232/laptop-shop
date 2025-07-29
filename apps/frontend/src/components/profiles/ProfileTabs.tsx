@@ -10,9 +10,9 @@ interface Tab {
 }
 
 interface ProfileTabsProps {
-    tabs: Tab[];
-    activeTab: TabType;
-    onTabChange: (tab: TabType) => void;
+    readonly tabs: Tab[];
+    readonly activeTab: TabType;
+    readonly onTabChange: (tab: TabType) => void;
 }
 
 export const ProfileTabs = ({ tabs, activeTab, onTabChange }: ProfileTabsProps) => {

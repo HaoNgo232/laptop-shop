@@ -2,7 +2,7 @@ import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 interface CheckoutHeaderProps {
-    onBack: () => void;
+    readonly onBack: () => void;
 }
 
 export function CheckoutHeader({ onBack }: CheckoutHeaderProps) {

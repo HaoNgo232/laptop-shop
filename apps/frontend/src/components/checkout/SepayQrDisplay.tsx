@@ -8,9 +8,9 @@ import { PaymentStatusEnum } from '@web-ecom/shared-types/orders/enums';
 import type { QRCodeResponse } from '@/types/order';
 
 interface SepayQrDisplayProps {
-    qrCodeData: QRCodeResponse;
-    paymentStatus: PaymentStatusEnum;
-    onRetry?: () => void;
+    readonly qrCodeData: QRCodeResponse;
+    readonly paymentStatus: PaymentStatusEnum;
+    readonly onRetry?: () => void;
 }
 
 export function SepayQrDisplay({ qrCodeData, paymentStatus, onRetry }: SepayQrDisplayProps) {

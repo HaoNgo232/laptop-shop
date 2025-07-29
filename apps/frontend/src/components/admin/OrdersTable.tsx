@@ -21,13 +21,13 @@ import { OrderStatusEnum } from '@web-ecom/shared-types/orders/enums';
 import { cn } from '@/lib/utils';
 
 interface OrdersTableProps {
-    orders: Order[];
-    onView: (order: Order) => void;
-    onUpdateStatus: (order: Order) => void;
-    isLoading?: boolean;
-    currentPage?: number;
-    totalPages?: number;
-    onPageChange?: (page: number) => void;
+    readonly orders: Order[];
+    readonly onView: (order: Order) => void;
+    readonly onUpdateStatus: (order: Order) => void;
+    readonly isLoading?: boolean;
+    readonly currentPage?: number;
+    readonly totalPages?: number;
+    readonly onPageChange?: (page: number) => void;
 }
 
 export function OrdersTable({

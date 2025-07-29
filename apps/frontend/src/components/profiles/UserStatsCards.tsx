@@ -12,7 +12,7 @@ interface StatCard {
 }
 
 interface UserStatsCardsProps {
-    statsCards: StatCard[];
+    readonly statsCards: StatCard[];
 }
 
 export const UserStatsCards = ({ statsCards }: UserStatsCardsProps) => {

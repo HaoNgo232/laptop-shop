@@ -14,9 +14,9 @@ import { OrderStatusEnum, PaymentStatusEnum, PaymentMethodEnum } from '@web-ecom
 import { Truck, CheckCircle, XCircle, User, MapPin, CreditCard, Package, Calendar } from 'lucide-react';
 
 interface OrderDetailModalProps {
-    order: Order | null;
-    isOpen: boolean;
-    onClose: () => void;
+    readonly order: Order | null;
+    readonly isOpen: boolean;
+    readonly onClose: () => void;
 }
 
 export function OrderDetailModal({ order, isOpen, onClose }: OrderDetailModalProps) {

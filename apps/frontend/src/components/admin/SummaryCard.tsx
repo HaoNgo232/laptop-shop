@@ -3,12 +3,12 @@ import { TrendingUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface SummaryCardProps {
-    title: string;
-    value: string | number;
-    icon: React.ComponentType<{ className?: string }>;
-    trend?: 'up' | 'down';
-    trendValue?: string;
-    description?: string;
+    readonly title: string;
+    readonly value: string | number;
+    readonly icon: React.ComponentType<{ className?: string }>;
+    readonly trend?: 'up' | 'down';
+    readonly trendValue?: string;
+    readonly description?: string;
     className?: string;
 }
 

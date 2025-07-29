@@ -4,11 +4,11 @@ import { Edit, Trash2 } from 'lucide-react';
 import { Category } from '@/types/product';
 
 interface CategoriesTableProps {
-    categories: Category[];
-    isLoading: boolean;
-    searchQuery: string;
-    onEdit: (category: Category) => void;
-    onDelete: (category: Category) => void;
+    readonly categories: Category[];
+    readonly isLoading: boolean;
+    readonly searchQuery: string;
+    readonly onEdit: (category: Category) => void;
+    readonly onDelete: (category: Category) => void;
 }
 
 const LoadingSkeleton = () => (

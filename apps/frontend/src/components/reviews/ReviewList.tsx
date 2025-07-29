@@ -19,9 +19,9 @@ import type { ReviewWithUser } from '@/types/review';
 import { ReviewForm } from '@/components/reviews/ReviewForm';
 
 interface ReviewListProps {
-    productId: string;
-    className?: string;
-    openReviewModal?: (review: ReviewWithUser) => void;
+    readonly productId: string;
+    readonly className?: string;
+    readonly openReviewModal?: (review: ReviewWithUser) => void;
 }
 
 export function ReviewList({ productId, className, openReviewModal }: ReviewListProps) {

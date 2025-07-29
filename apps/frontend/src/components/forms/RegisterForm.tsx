@@ -9,9 +9,9 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { RegisterUserSchema, type RegisterUser } from '@/types/auth';
 
 interface RegisterFormProps {
-    onSubmit: (userData: RegisterUser) => Promise<void>;
-    isLoading?: boolean;
-    error?: string | null;
+    readonly onSubmit: (userData: RegisterUser) => Promise<void>;
+    readonly isLoading?: boolean;
+    readonly error?: string | null;
 }
 
 export function RegisterForm({ onSubmit, isLoading = false, error }: RegisterFormProps) {

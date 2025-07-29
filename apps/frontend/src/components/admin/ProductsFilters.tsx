@@ -4,11 +4,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Search, RefreshCw } from 'lucide-react';
 
 export interface ProductsFiltersProps {
-    searchQuery: string;
-    onSearchQueryChange: (query: string) => void;
-    onSearch: () => void;
-    onRefresh: () => void;
-    isLoading?: boolean;
+    readonly searchQuery: string;
+    readonly onSearchQueryChange: (query: string) => void;
+    readonly onSearch: () => void;
+    readonly onRefresh: () => void;
+    readonly isLoading?: boolean;
 }
 
 /**

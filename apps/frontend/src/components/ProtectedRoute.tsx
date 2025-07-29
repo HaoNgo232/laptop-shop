@@ -4,9 +4,9 @@ import { UserRole } from '@web-ecom/shared-types/auth/enums';
 import { useAuthStore } from '@/stores/authStore';
 
 interface ProtectedRouteProps {
-    children: React.ReactNode;
-    requiredRole?: UserRole;
-    redirectTo?: string;
+    readonly children: React.ReactNode;
+    readonly requiredRole?: UserRole;
+    readonly redirectTo?: string;
 }
 
 export function ProtectedRoute({

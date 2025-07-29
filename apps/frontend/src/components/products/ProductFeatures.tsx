@@ -3,14 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import type { Product } from '@/types/product';
 
 interface ProductFeaturesProps {
-    product: Product;
+    readonly product: Product;
 }
 
 export function ProductFeatures({ product }: ProductFeaturesProps) {
     return (
         <>
             {/* Features */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+            <div className="grid grid-cols-1 mb-12 md:grid-cols-3 gap-6 ">
                 <Card>
                     <CardContent className="flex items-center space-x-3 p-6">
                         <div className="p-2 bg-primary/10 rounded-full">

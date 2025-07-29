@@ -3,10 +3,10 @@ import type { ShippingAddress } from '@/types/order';
 import { PaymentMethodEnum } from '@web-ecom/shared-types/orders/enums';
 
 interface OrderReviewProps {
-    shippingAddress: ShippingAddress | null;
-    paymentMethod: PaymentMethodEnum | null;
-    isLoading: boolean;
-    onPlaceOrder: () => void;
+    readonly shippingAddress: ShippingAddress | null;
+    readonly paymentMethod: PaymentMethodEnum | null;
+    readonly isLoading: boolean;
+    readonly onPlaceOrder: () => void;
 }
 
 export function OrderReview({

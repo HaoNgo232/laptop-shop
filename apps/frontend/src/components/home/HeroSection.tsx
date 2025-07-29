@@ -6,11 +6,11 @@ import { motion } from 'framer-motion';
 import type { Product } from '@/types/product';
 
 interface HeroSectionProps {
-    products: Product[];
-    isAuthenticated: boolean;
-    onProductClick: (productId: string) => void;
-    onQuickAddToCart: (product: Product, e: React.MouseEvent<HTMLButtonElement>) => void;
-    onNavigate: (path: string) => void;
+    readonly products: Product[];
+    readonly isAuthenticated: boolean;
+    readonly onProductClick: (productId: string) => void;
+    readonly onQuickAddToCart: (product: Product, e: React.MouseEvent<HTMLButtonElement>) => void;
+    readonly onNavigate: (path: string) => void;
 }
 
 export function HeroSection({

@@ -2,11 +2,11 @@ import { motion } from 'framer-motion';
 import { ReactNode } from 'react';
 
 interface MinimalDarkWrapperProps {
-    children: ReactNode;
-    className?: string;
-    padding?: 'sm' | 'md' | 'lg' | 'xl';
-    showPattern?: boolean;
-    showFloatingElements?: boolean;
+    readonly children: ReactNode;
+    readonly className?: string;
+    readonly padding?: 'sm' | 'md' | 'lg' | 'xl';
+    readonly showPattern?: boolean;
+    readonly showFloatingElements?: boolean;
 }
 
 export function MinimalDarkWrapper({

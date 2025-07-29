@@ -3,12 +3,12 @@ import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface PaginationProps {
-    currentPage: number;
-    totalPages: number;
-    totalItems: number;
-    itemsPerPage: number;
-    onPageChange: (page: number) => void;
-    isLoading?: boolean;
+    readonly currentPage: number;
+    readonly totalPages: number;
+    readonly totalItems: number;
+    readonly itemsPerPage: number;
+    readonly onPageChange: (page: number) => void;
+    readonly isLoading?: boolean;
 }
 
 export function Pagination({

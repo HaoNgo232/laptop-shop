@@ -12,8 +12,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface ProfileFormProps {
-    onSuccess?: () => void;
-    onCancel?: () => void;
+    readonly onSuccess?: () => void;
+    readonly onCancel?: () => void;
 }
 
 const ProfileForm = ({ onSuccess, onCancel }: ProfileFormProps) => {

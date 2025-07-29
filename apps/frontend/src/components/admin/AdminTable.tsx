@@ -7,11 +7,11 @@ import type { PaginationMeta } from '@/types/api';
 import { UserRole } from '@web-ecom/shared-types/auth/enums';
 
 interface AdminTableProps {
-    users: AdminView[];
-    pagination: PaginationMeta | null;
-    isLoading: boolean;
-    onUserEdit: (userId: string) => void;
-    onPageChange: (page: number) => void;
+    readonly users: AdminView[];
+    readonly pagination: PaginationMeta | null;
+    readonly isLoading: boolean;
+    readonly onUserEdit: (userId: string) => void;
+    readonly onPageChange: (page: number) => void;
 }
 
 export function AdminTable({

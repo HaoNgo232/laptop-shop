@@ -7,10 +7,10 @@ import { Search, Filter } from 'lucide-react';
 import { OrderStatusEnum } from '@web-ecom/shared-types/orders/enums';
 
 interface OrderFiltersProps {
-    searchTerm: string;
-    statusFilter: OrderStatusEnum | 'all';
-    onSearchChange: (value: string) => void;
-    onStatusChange: (value: OrderStatusEnum | 'all') => void;
+    readonly searchTerm: string;
+    readonly statusFilter: OrderStatusEnum | 'all';
+    readonly onSearchChange: (value: string) => void;
+    readonly onStatusChange: (value: OrderStatusEnum | 'all') => void;
 }
 
 // Helper function để get status label

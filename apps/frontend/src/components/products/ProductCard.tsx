@@ -7,7 +7,7 @@ import { useAuthStore } from '@/stores/authStore';
 import type { Product } from '@/types/product';
 
 interface ProductCardProps {
-    product: Product;
+    readonly product: Product;
 }
 
 export function ProductCard({ product }: ProductCardProps) {
@@ -54,6 +54,13 @@ export function ProductCard({ product }: ProductCardProps) {
             setIsAddingToCart(false);
         }
     };
+
+    let addToCartButtonText = 'Thêm vào giỏ';
+    if (isAddingToCart) {
+        addToCartButtonText = 'Đang thêm...';
+    } else if (product.stockQuantity === 0) {
+        addToCartButtonText = 'Hết hàng';
+    }
 
     return (
         <Card className="w-full max-w-sm mx-auto hover:shadow-lg transition-shadow">
@@ -106,15 +113,11 @@ export function ProductCard({ product }: ProductCardProps) {
                         disabled={product.stockQuantity === 0 || isAddingToCart}
                         className="flex-1"
                     >
-                        {isAddingToCart
-                            ? 'Đang thêm...'
-                            : product.stockQuantity === 0
-                                ? 'Hết hàng'
-                                : 'Thêm vào giỏ'
-                        }
+                        {/* Hiển thị trạng thái nút thêm vào giỏ hàng */}
+                        {addToCartButtonText}
                     </Button>
                 </div>
             </CardContent>
         </Card>
     );
-} 
+}
