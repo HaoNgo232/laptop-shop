@@ -1,16 +1,18 @@
 import { LoginResponseDto } from '@/auth/dtos/login-response.dto';
 import { RefreshTokenDto } from '@/auth/dtos/refresh-token.dto';
-import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
-import { GenerateTokensProvider } from '@/auth/providers/generate-tokens.provider';
-import { RegisterUserDto } from '@/auth/dtos/register-user.dto';
-import { LoginUserDto } from '@/auth/dtos/login.dto';
-import { User } from '@/auth/entities/user.entity';
 import {
+  Inject,
+  Injectable,
+  UnauthorizedException,
   ConflictException,
   InternalServerErrorException,
   BadRequestException,
   RequestTimeoutException,
 } from '@nestjs/common';
+import { GenerateTokensProvider } from '@/auth/providers/generate-tokens.provider';
+import { RegisterUserDto } from '@/auth/dtos/register-user.dto';
+import { LoginUserDto } from '@/auth/dtos/login.dto';
+import { User } from '@/auth/entities/user.entity';
 import { MailService } from '@/mail/mail.service';
 import { BcryptProvider } from '@/auth/providers/bcrypt.provider';
 import { Repository } from 'typeorm';

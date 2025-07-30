@@ -26,7 +26,12 @@
     "test:e2e": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json",
     "test:cart-e2e": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json --testNamePattern=\"Cart E2E Tests\"",
     "test:cart-e2e:watch": "cross-env NODE_ENV=test jest --config ./test/jest-e2e.json --testNamePattern=\"Cart E2E Tests\" --watch",
-    "seed": "ts-node -r tsconfig-paths/register --project tsconfig.json src/scripts/seed-data.ts"
+    "seed": "ts-node -r tsconfig-paths/register --project tsconfig.json src/scripts/seed-data.ts",
+    "typeorm": "typeorm-ts-node-commonjs -d src/data-source.ts",
+    "typeorm:prod": "node --require tsconfig-paths/register ./node_modules/typeorm/cli.js -d dist/data-source.js",
+    "migration:run:dev": "pnpm typeorm migration:run",
+    "migration:run:prod": "pnpm typeorm:prod migration:run",
+    "migrate": "pnpm run migration:run:prod"
   },
   "dependencies": {
     "@nestjs-modules/mailer": "^2.0.2",

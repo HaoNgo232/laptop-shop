@@ -16,7 +16,7 @@ import { UpdateProductDto } from '@/products/dtos/update-product.dto';
 import { SortOrder } from '@/products/enums/sort.enum';
 import { PaginationMeta } from '@/common/interfaces/response.interface';
 
-interface ProductsService {
+interface IProductsService {
   findAll(queryDto: QueryProductDto): Promise<PaginatedResponse<ProductDto>>;
   findOne(id: string): Promise<ProductDto>;
   create(createProductDto: CreateProductDto): Promise<Product>;
@@ -25,7 +25,7 @@ interface ProductsService {
 }
 
 @Injectable()
-export class ProductsService implements ProductsService {
+export class ProductsService implements IProductsService {
   constructor(
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,

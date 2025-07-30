@@ -6,7 +6,7 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 
-interface CartService {
+interface ICartService {
   findOne(userId: string): Promise<CartDto>;
   findCart(userId: string): Promise<Cart>;
   addItem(userId: string, productId: string, quantity: number): Promise<CartDto>;
@@ -16,7 +16,7 @@ interface CartService {
 }
 
 @Injectable()
-export class CartService implements CartService {
+export class CartService implements ICartService {
   constructor(
     @InjectRepository(Cart)
     private readonly cartRepository: Repository<Cart>,

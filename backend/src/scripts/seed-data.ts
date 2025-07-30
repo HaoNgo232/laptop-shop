@@ -447,8 +447,8 @@ async function seedData() {
 
     // Admin user - sử dụng findOrCreateUser thay vì save trực tiếp
     await findOrCreateUser({
-      email: 'admin@techstore.com',
-      username: 'admin',
+      email: 'admin@gmail.com',
+      username: 'admin123',
       passwordHash: hashedAdminPassword,
       address: 'Trụ sở chính - 123 Nguyễn Văn Cừ, Q1, HCM',
       phoneNumber: '0909123456',
@@ -488,7 +488,7 @@ async function seedData() {
     console.log('📂 Categories: Laptop, Phụ kiện, Linh kiện, Màn hình, Thiết bị di động');
     console.log('📱 Products: 38 sản phẩm công nghệ cao cấp');
     console.log('👥 Test users:');
-    console.log('   - Admin: admin@techstore.com / admin123');
+    console.log('   - Admin: admin@gmail.com / admin123');
     console.log('   - Customer: customer@gmail.com / 123456789');
     console.log('   - John Doe: john.doe@example.com / 123456789');
     console.log('   - Jane Smith: jane.smith@example.com / 123456789');

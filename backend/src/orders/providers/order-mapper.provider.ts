@@ -3,7 +3,7 @@ import { OrderDto } from '@/orders/dtos/order.dto';
 import { Order } from '@/orders/entities/order.entity';
 import { Injectable } from '@nestjs/common';
 
-interface OrderMapperProvider {
+interface IOrderMapperProvider {
   toOrderDto(order: Order): OrderDto;
   toOrderDtos(orders: Order[]): OrderDto[];
   toOrderDetailDto(order: Order): OrderDetailDto;
@@ -12,7 +12,7 @@ interface OrderMapperProvider {
 }
 
 @Injectable()
-export class OrderMapperProvider implements OrderMapperProvider {
+export class OrderMapperProvider implements IOrderMapperProvider {
   /**
    * Map Order antity sang OrderDto
    */

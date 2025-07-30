@@ -13,7 +13,7 @@ import { DataSource, Repository } from 'typeorm';
 import { PaginatedResponse } from '@/common/interfaces/paginated-response.interface';
 import { UserRole } from '@/auth/enums/user-role.enum';
 
-interface ReviewsService {
+interface IReviewsService {
   create(userId: string, productId: string, createReviewDto: CreateReviewDto): Promise<Review>;
   update(userId: string, reviewId: string, updateReviewDto: UpdateReviewDto): Promise<Review>;
   delete(reviewId: string, userId: string, userRole: UserRole): Promise<void>;
@@ -22,7 +22,7 @@ interface ReviewsService {
 }
 
 @Injectable()
-export class ReviewsService implements ReviewsService {
+export class ReviewsService implements IReviewsService {
   constructor(
     @InjectRepository(Review)
     private readonly reviewRepository: Repository<Review>,

@@ -7,7 +7,7 @@ import { Order } from '@/orders/entities/order.entity';
 import { OrderStatusEnum } from '@/orders/enums/order-status.enum';
 import { InjectRepository } from '@nestjs/typeorm';
 
-interface OrdersProvider {
+interface IOrdersProvider {
   findUserOrders(
     userId: string,
     query: PaginationQueryDto,
@@ -19,7 +19,7 @@ interface OrdersProvider {
 }
 
 @Injectable()
-export class OrdersProvider implements OrdersProvider {
+export class OrdersProvider implements IOrdersProvider {
   private readonly logger = new Logger(OrdersProvider.name);
 
   constructor(

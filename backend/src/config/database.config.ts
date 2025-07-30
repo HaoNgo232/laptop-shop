@@ -6,10 +6,12 @@ export default registerAs('database', () => ({
   username: process.env.DATABASE_USERNAME,
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE_NAME,
-  // Chỉ synchronize trong môi trường phát triển
-  synchronize: process.env.NODE_ENV !== 'production',
-  // Chỉ xóa schema trong môi trường phát triển và test
-  dropSchema: ['development', 'test'].includes(process.env.NODE_ENV ?? ''),
+  // Bật synchronize để tự động tạo bảng
+  synchronize: true,
+  // Bật logging để debug
+  logging: true,
+  // Không xóa schema
+  dropSchema: false,
   // Thêm cấu hình migrations
   migrationsRun: process.env.NODE_ENV === 'production',
   migrations: ['dist/migrations/**/*.js'],

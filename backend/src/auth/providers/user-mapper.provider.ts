@@ -2,13 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { UserProfileDto } from '@/auth/dtos/user-profile.dto';
 import { User } from '@/auth/entities/user.entity';
 
-interface UserMapperProvider {
+interface IUserMapperProvider {
   toUserProfileDto(user: User): UserProfileDto;
   toUserDtos(users: User[]): UserProfileDto[];
 }
 
 @Injectable()
-export class UserMapperProvider implements UserMapperProvider {
+export class UserMapperProvider implements IUserMapperProvider {
   /**
    * Map User entity to UserProfileDto (without role - for user profile)
    */
