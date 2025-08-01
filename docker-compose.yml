@@ -40,7 +40,7 @@ services:
       PORT: 3000
 
       # JWT (thay đổi secret trong production thực tế)
-      JWT_SECRET: your-super-secret-jwt-key-change-this-in-production
+      JWT_SECRET: 47440ad9d5c1a938d7c5d7d7071e6395
       JWT_EXPIRATION_TIME: 1h
       JWT_REFRESH_EXPIRATION_TIME: 7d
 
