@@ -1,22 +1,21 @@
-import { ConfigService, ConfigModule } from '@nestjs/config';
-import { JwtModule } from '@nestjs/jwt';
+import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { JwtModule } from '@nestjs/jwt';
 import { User } from '@/auth/entities/user.entity';
-import { AuthController } from '@/auth/controllers/auth.controller';
-import { AccessTokenGuard } from '@/auth/guards/access-token/access-token.guard';
-import { UsersController } from '@/auth/controllers/users.controller';
-import { Module, forwardRef } from '@nestjs/common';
-import { CartModule } from '@/cart/cart.module';
-import { AuthService } from '@/auth/services/auth.service';
-import { HashingProvider } from '@/auth/providers/hashing.provider';
-import { UsersService } from '@/auth/services/users.service';
-import { BcryptProvider } from '@/auth/providers/bcrypt.provider';
-import { JwtStrategy } from '@/auth/strategies/jwt.strategy';
-import { AuthenticationGuard } from '@/auth/guards/authentication/authentication.guard';
-import { GenerateTokensProvider } from '@/auth/providers/generate-tokens.provider';
-import { RolesGuard } from '@/auth/guards/authentication/roles.guard';
 import { Order } from '@/orders/entities/order.entity';
+import { AuthController } from '@/auth/controllers/auth.controller';
+import { UsersController } from '@/auth/controllers/users.controller';
+import { AuthService } from '@/auth/services/auth.service';
+import { UsersService } from '@/auth/services/users.service';
 import { RankService } from '@/orders/services/rank.service';
+import { HashingProvider } from '@/auth/providers/hashing.provider';
+import { BcryptProvider } from '@/auth/providers/bcrypt.provider';
+import { GenerateTokensProvider } from '@/auth/providers/generate-tokens.provider';
+import { AccessTokenGuard } from '@/auth/guards/access-token/access-token.guard';
+import { AuthenticationGuard } from '@/auth/guards/authentication/authentication.guard';
+import { RolesGuard } from '@/auth/guards/authentication/roles.guard';
+import { JwtStrategy } from '@/auth/strategies/jwt.strategy';
 
 /**
  * Module để quản lý đăng nhập, đăng ký, và xác thực người dùng
@@ -36,8 +35,6 @@ import { RankService } from '@/orders/services/rank.service';
         },
       }),
     }),
-    // Import CartModule
-    forwardRef(() => CartModule),
   ],
   controllers: [AuthController, UsersController],
   providers: [

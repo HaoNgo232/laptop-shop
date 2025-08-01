@@ -3,7 +3,7 @@ import { UpdateUserProfileDto } from '@/auth/dtos/update-profile.dto';
 import { User } from '@/auth/entities/user.entity';
 import { UsersService } from '@/auth/services/users.service';
 import { RankService } from '@/orders/services/rank.service';
-import { Body, Controller, Get, Post, Put } from '@nestjs/common';
+import { Body, Controller, Get, Patch, Post, Put } from '@nestjs/common';
 
 @Controller('api/users')
 export class UsersController {
@@ -26,7 +26,7 @@ export class UsersController {
   /**
    * Cập nhật thông tin người dùng.
    */
-  @Put('profile')
+  @Patch('profile')
   async updateUserProfile(
     @CurrentUser('sub') userId: string,
     @Body()

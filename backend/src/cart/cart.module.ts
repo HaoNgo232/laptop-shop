@@ -14,7 +14,7 @@ import { Product } from '@/products/entities/product.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Cart, CartItem, User, Product]),
-    forwardRef(() => AuthModule),
+    AuthModule,
     forwardRef(() => ProductsModule),
   ],
   controllers: [CartController],

@@ -9,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useProductStore } from '@/stores/productStore';
 import { SortOrder } from "@/types";
 import { Pagination } from '@/components/Pagination';
-import { motion } from 'framer-motion';
 
 export function ProductsPage() {
     const [searchParams] = useSearchParams();

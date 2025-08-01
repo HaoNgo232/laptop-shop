@@ -7,7 +7,7 @@ import { OrdersController } from '@/orders/controllers/orders.controller';
 import { AdminOrdersService } from '@/orders/services/admin-orders.service';
 import { OrderMapperProvider } from '@/orders/providers/order-mapper.provider';
 import { OrdersProvider } from '@/orders/providers/order.provider';
-import { PaymenstModule } from '@/payments/payments.module';
+import { PaymentsModule } from '@/payments/payments.module';
 import { Product } from '@/products/entities/product.entity';
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -26,7 +26,7 @@ import { User } from '@/auth/entities/user.entity';
     TypeOrmModule.forFeature([Order, OrderItem, Product, User]),
     CartModule,
     AuthModule,
-    forwardRef(() => PaymenstModule),
+    forwardRef(() => PaymentsModule),
   ],
   controllers: [OrdersController, AdminOrdersController],
   providers: [

@@ -9,7 +9,7 @@ export default registerAs('database', () => ({
   // Bật synchronize để tự động tạo bảng
   synchronize: true,
   // Bật logging để debug
-  logging: true,
+  logging: false,
   // Không xóa schema
   dropSchema: false,
   // Thêm cấu hình migrations

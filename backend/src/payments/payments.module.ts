@@ -17,4 +17,4 @@ import sepayConfig from '@/config/sepay.config';
   providers: [PaymentsService, SepayProvider, PaymentProviderFactory],
   exports: [PaymentsService],
 })
-export class PaymenstModule {}
+export class PaymentsModule {}

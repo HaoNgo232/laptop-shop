@@ -15,7 +15,7 @@ class UserService {
         ),
       ) as UpdateProfile;
 
-      const response = await apiClient.put<User>(
+      const response = await apiClient.patch<User>(
         "/api/users/profile",
         cleanData,
       );
