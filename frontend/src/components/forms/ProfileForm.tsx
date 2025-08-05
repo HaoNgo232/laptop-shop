@@ -50,9 +50,11 @@ const ProfileForm = ({ onSuccess, onCancel }: ProfileFormProps) => {
             await updateProfile(data);
             setSuccessMessage('Cập nhật thông tin thành công!');
 
-            // Call success callback after short delay
+
             setTimeout(() => {
                 onSuccess?.();
+                // Reload lại trang
+                window.location.reload();
             }, 1500);
         } catch (error) {
             console.error('Form submission error:', error);

@@ -26,7 +26,7 @@ export class UsersController {
   /**
    * Cập nhật thông tin người dùng.
    */
-  @Patch('profile')
+  @Put('profile')
   async updateUserProfile(
     @CurrentUser('sub') userId: string,
     @Body()
