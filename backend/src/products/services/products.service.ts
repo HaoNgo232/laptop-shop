@@ -228,7 +228,7 @@ export class ProductsService implements IProductsService {
 
     // Áp dụng các bộ lọc nếu có
     if (search) {
-      queryBuilder.andWhere('product.name LIKE :name', { name: `%${search}%` });
+      queryBuilder.andWhere('product.name ILIKE :name', { name: `%${search.trim()}%` });
     }
 
     if (priceMin !== undefined) {
