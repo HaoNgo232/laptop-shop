@@ -126,7 +126,8 @@ export class SepayProvider implements PaymentProvider {
       let orderId: string;
 
       // Strategy 1: Thử tìm từ content trước
-      const orderMatch = transaction.content.match(/DH([a-f0-9-]{32,36})/i);
+      const regex = /DH([a-f0-9-]{32,36})/i;
+      const orderMatch = regex.exec(transaction.content);
       console.log('>>>orderMatch', orderMatch);
 
       // Trích xuất id đơn hàng từ content
@@ -165,8 +166,8 @@ export class SepayProvider implements PaymentProvider {
       const amount = transaction.transferAmount;
 
       // Xác định trạng thái giao dịch dựa trên dữ liệu webhook SePay
-      let status: 'success' | 'failed' | 'pending' = 'pending';
-      let message = 'Giao dịch đang được xử lý.';
+      let status: 'success' | 'failed' | 'pending';
+      let message: string;
 
       // Điều kiện thành công: transferType = 'in' (incoming) và amount > 0
       if (transaction.transferType === 'in' && amount > 0) {

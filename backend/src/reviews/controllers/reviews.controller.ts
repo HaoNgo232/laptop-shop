@@ -19,13 +19,28 @@ import type { JwtPayload } from '@/auth/interfaces/jwt-payload.interface';
 import { Auth } from '@/auth/decorators/auth.decorator';
 import { AuthType } from '@/auth/enums/auth-type.enum';
 import { UserRole } from '@/auth/enums/user-role.enum';
+import {
+  ApiBearerAuth,
+  ApiNoContentResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 
+@ApiTags('Đánh giá')
 @Controller('api/reviews')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
 
   // Tạo review cho sản phẩm
   @Post('/:productId')
+  @Auth(AuthType.Bearer)
+  @ApiBearerAuth('Authorization')
+  @ApiOperation({ summary: 'Tạo đánh giá cho sản phẩm' })
+  @ApiOkResponse({ description: 'Đã tạo/cập nhật đánh giá cho sản phẩm.' })
+  @ApiParam({ name: 'productId', description: 'ID sản phẩm' })
   async create(
     @CurrentUser() user: JwtPayload,
     @Param('productId') productId: string,
@@ -36,6 +51,11 @@ export class ReviewsController {
 
   // Cập nhật review
   @Put(':reviewId')
+  @Auth(AuthType.Bearer)
+  @ApiBearerAuth('Authorization')
+  @ApiOperation({ summary: 'Cập nhật đánh giá' })
+  @ApiOkResponse({ description: 'Cập nhật đánh giá thành công.' })
+  @ApiParam({ name: 'reviewId', description: 'ID review' })
   async update(
     @CurrentUser() user: JwtPayload,
     @Param('reviewId') reviewId: string,
@@ -47,6 +67,11 @@ export class ReviewsController {
   // Xóa review
   @Delete(':reviewId')
   @HttpCode(HttpStatus.NO_CONTENT)
+  @Auth(AuthType.Bearer)
+  @ApiBearerAuth('Authorization')
+  @ApiOperation({ summary: 'Xóa đánh giá' })
+  @ApiNoContentResponse({ description: 'Đã xóa đánh giá.' })
+  @ApiParam({ name: 'reviewId', description: 'ID review' })
   async remove(@CurrentUser() user: JwtPayload, @Param('reviewId') reviewId: string) {
     return this.reviewsService.delete(reviewId, user.sub, user.role as UserRole);
   }
@@ -54,6 +79,11 @@ export class ReviewsController {
   // Lấy danh sách review của sản phẩm
   @Auth(AuthType.None)
   @Get('/:productId')
+  @ApiOperation({ summary: 'Danh sách đánh giá theo sản phẩm' })
+  @ApiOkResponse({ description: 'Danh sách review của sản phẩm.' })
+  @ApiParam({ name: 'productId', description: 'ID sản phẩm' })
+  @ApiQuery({ name: 'page', required: false })
+  @ApiQuery({ name: 'limit', required: false })
   async getProductReviews(
     @Param('productId') productId: string,
     @Query() query: PaginationQueryDto,

@@ -7,7 +7,9 @@ import { SepayWebhookDto } from '@/payments/dtos/sepay-webhook.dto';
 import { QRCodeResponse } from '@/payments/interfaces/payment-provider.interfaces';
 import { WebhookResponse } from '@/payments/interfaces/webhook-response.interfaces';
 import { PaymentMethodEnum } from '@/payments/enums/payments-method.enum';
+import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Thanh toán')
 @Controller('api/payment')
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
@@ -17,6 +19,9 @@ export class PaymentsController {
    */
   @Post('create')
   @Auth(AuthType.Bearer)
+  @ApiBearerAuth('Authorization')
+  @ApiOperation({ summary: 'Tạo QR thanh toán' })
+  @ApiOkResponse({ description: 'Trả về thông tin QR để thanh toán.' })
   async createPayment(@Body() createPaymentDto: CreatePaymentDto): Promise<QRCodeResponse> {
     return await this.paymentsService.generateQRCode(createPaymentDto);
   }
@@ -28,6 +33,8 @@ export class PaymentsController {
   @Post('webhook/sepay')
   @Auth(AuthType.None)
   @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Webhook SePay' })
+  @ApiOkResponse({ description: 'Tiếp nhận và xử lý webhook từ SePay.' })
   async handleSepayWebhook(
     @Body() payload: SepayWebhookDto,
     @Headers('x-sepay-signature') signature?: string,
@@ -44,6 +51,8 @@ export class PaymentsController {
    */
   @Get('methods')
   @Auth(AuthType.None)
+  @ApiOperation({ summary: 'Danh sách phương thức thanh toán khả dụng' })
+  @ApiOkResponse({ description: 'Trả về danh sách phương thức thanh toán.' })
   getPaymentMethods(): { methods: PaymentMethodEnum[] } {
     return {
       methods: this.paymentsService.getAvailableMethods(),
@@ -55,6 +64,10 @@ export class PaymentsController {
    */
   @Post('switch/:orderId')
   @Auth(AuthType.Bearer)
+  @ApiBearerAuth('Authorization')
+  @ApiOperation({ summary: 'Chuyển đổi phương thức thanh toán' })
+  @ApiOkResponse({ description: 'Trả về QR mới (nếu chuyển sang SePay) hoặc xác nhận chuyển đổi.' })
+  @ApiParam({ name: 'orderId', description: 'ID đơn hàng' })
   async switchPaymentMethod(
     @Param('orderId') orderId: string,
     @Body()

@@ -1,19 +1,19 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36" version="28.0.6">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36" version="28.0.9">
   <diagram name="Luồng Xác thực" id="authentication_flow">
-    <mxGraphModel dx="653" dy="284" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
+    <mxGraphModel dx="476" dy="215" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="900" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="alt_frame2" value="alt" style="shape=umlFrame;whiteSpace=wrap;html=1;width=40;height=20;" parent="1" vertex="1">
           <mxGeometry x="70" y="390" width="860" height="410" as="geometry" />
         </mxCell>
-        <mxCell id="title" value="Sơ đồ Sequence - Luồng Xác thực Request" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontStyle=1;" parent="1" vertex="1">
-          <mxGeometry x="300" y="20" width="400" height="30" as="geometry" />
+        <mxCell id="title" value="Sơ đồ Sequence - Luồng Xác thực và Kiểm tra quyền" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontStyle=1;" parent="1" vertex="1">
+          <mxGeometry x="300" y="20" width="480" height="20" as="geometry" />
         </mxCell>
         <mxCell id="client_box" value="Client/Frontend" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=1;" parent="1" vertex="1">
           <mxGeometry x="80" y="80" width="120" height="40" as="geometry" />
         </mxCell>
-        <mxCell id="guard_box" value="Guard Xác thực" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=1;" parent="1" vertex="1">
+        <mxCell id="guard_box" value="Guard" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=1;" parent="1" vertex="1">
           <mxGeometry x="280" y="80" width="150" height="40" as="geometry" />
         </mxCell>
         <mxCell id="jwt_box" value="JwtService" style="rounded=0;whiteSpace=wrap;html=1;fontStyle=1;" parent="1" vertex="1">
@@ -200,6 +200,21 @@
         </mxCell>
         <mxCell id="msg8_label" value="canActivate() = true (cho phép truy cập)" style="text;html=1;align=center;verticalAlign=bottom;resizable=0;points=[];autosize=1;fontSize=11;" parent="1" vertex="1">
           <mxGeometry x="470.89" y="650" width="220" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="x9Un6-TGZ3_LbPjQqrKe-1" value="" style="curved=1;endArrow=classic;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="360.89" y="650" as="sourcePoint" />
+            <mxPoint x="360.89" y="660" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="380.89" y="650" />
+              <mxPoint x="370.89" y="660" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="x9Un6-TGZ3_LbPjQqrKe-2" value="&lt;span style=&quot;background-color: rgb(236, 236, 236);&quot;&gt;kiểm tra role từ payload&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" connectable="0" vertex="1" parent="x9Un6-TGZ3_LbPjQqrKe-1">
+          <mxGeometry x="0.1753" y="-1" relative="1" as="geometry">
+            <mxPoint x="64" y="6" as="offset" />
+          </mxGeometry>
         </mxCell>
       </root>
     </mxGraphModel>

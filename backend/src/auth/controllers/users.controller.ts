@@ -4,7 +4,10 @@ import { User } from '@/auth/entities/user.entity';
 import { UsersService } from '@/auth/services/users.service';
 import { RankService } from '@/orders/services/rank.service';
 import { Body, Controller, Get, Patch, Post, Put } from '@nestjs/common';
+import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Người dùng')
+@ApiBearerAuth('Authorization')
 @Controller('api/users')
 export class UsersController {
   constructor(
@@ -19,6 +22,8 @@ export class UsersController {
    * Lấy thông tin người dùng.
    */
   @Get('profile')
+  @ApiOperation({ summary: 'Lấy thông tin cá nhân' })
+  @ApiOkResponse({ description: 'Trả về hồ sơ người dùng hiện tại.' })
   async getUserProfile(@CurrentUser('sub') userId: string): Promise<Omit<User, 'passwordHash'>> {
     return this.usersService.findById(userId);
   }
@@ -27,6 +32,8 @@ export class UsersController {
    * Cập nhật thông tin người dùng.
    */
   @Put('profile')
+  @ApiOperation({ summary: 'Cập nhật thông tin cá nhân' })
+  @ApiOkResponse({ description: 'Cập nhật hồ sơ thành công.' })
   async updateUserProfile(
     @CurrentUser('sub') userId: string,
     @Body()
@@ -36,9 +43,11 @@ export class UsersController {
   }
 
   /**
-   * Admin endpoint - force update tất cả user ranks (để test)
+   * Admin endpoint - Cập nhật lại rank cho toàn bộ người dùng (phục vụ mục đích test/dev)
    */
   @Post('admin/update-all-ranks')
+  @ApiOperation({ summary: 'Force cập nhật rank tất cả users (DEV)' })
+  @ApiOkResponse({ description: 'Đã cập nhật rank cho tất cả users.' })
   async forceUpdateAllRanks() {
     await this.rankService.forceUpdateRanks();
     return { message: 'Đã cập nhật rank cho tất cả users' };

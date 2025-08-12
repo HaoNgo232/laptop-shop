@@ -9,6 +9,9 @@ import { UserRole } from '@/auth/enums/user-role.enum';
 import { NestFactory } from '@nestjs/core';
 import { DataSource } from 'typeorm';
 
+/**
+ * Hàm khởi tạo dữ liệu mẫu
+ */
 async function seedData() {
   const app = await NestFactory.create(AppModule);
   const dataSource = app.get(DataSource);
@@ -485,13 +488,13 @@ async function seedData() {
     });
 
     console.log(' Tech Store seed data completed successfully!');
-    console.log('📂 Categories: Laptop, Phụ kiện, Linh kiện, Màn hình, Thiết bị di động');
-    console.log('📱 Products: 38 sản phẩm công nghệ cao cấp');
-    console.log('👥 Test users:');
-    console.log('   - Admin: admin@gmail.com / admin123');
-    console.log('   - Customer: customer@gmail.com / 123456789');
-    console.log('   - John Doe: john.doe@example.com / 123456789');
-    console.log('   - Jane Smith: jane.smith@example.com / 123456789');
+    console.log(' Categories: Laptop, Phụ kiện, Linh kiện, Màn hình, Thiết bị di động');
+    console.log(' Products: 38 sản phẩm công nghệ cao cấp');
+    console.log(' Test users:');
+    console.log(' - Admin: admin@gmail.com / admin123');
+    console.log(' - Customer: customer@gmail.com / 123456789');
+    console.log(' - John Doe: john.doe@example.com / 123456789');
+    console.log(' - Jane Smith: jane.smith@example.com / 123456789');
   } catch (error) {
     console.error(' Seed data failed:', error);
   } finally {

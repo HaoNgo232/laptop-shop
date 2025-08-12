@@ -11,13 +11,26 @@ import { PaginatedResponse } from '@/common/interfaces/paginated-response.interf
 import { OrderDetailDto } from '@/orders/dtos/order-detail.dto';
 import { QRCodeResponse } from '@/payments/interfaces/payment-provider.interfaces';
 import { OrdersService } from '@/orders/services/orders.service';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 
+@ApiTags('Đơn hàng')
+@ApiBearerAuth('Authorization')
 @Controller('api/orders')
 @Auth(AuthType.Bearer, UserRole.USER, UserRole.ADMIN)
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Post()
+  @ApiOperation({ summary: 'Tạo đơn hàng' })
+  @ApiCreatedResponse({ description: 'Tạo đơn hàng thành công. Có thể kèm thông tin QR.' })
   async createOrder(
     @CurrentUser('sub') userId: string,
     @Body() createOrderDto: CreateOrderDto,
@@ -26,6 +39,10 @@ export class OrdersController {
   }
 
   @Get()
+  @ApiOperation({ summary: 'Lịch sử đơn hàng' })
+  @ApiOkResponse({ description: 'Danh sách đơn hàng của người dùng.' })
+  @ApiQuery({ name: 'page', required: false })
+  @ApiQuery({ name: 'limit', required: false })
   async getUserOrders(
     @CurrentUser('sub') userId: string,
     @Query() query: PaginationQueryDto,
@@ -39,6 +56,9 @@ export class OrdersController {
   }
 
   @Get(':orderId')
+  @ApiOperation({ summary: 'Chi tiết đơn hàng' })
+  @ApiOkResponse({ description: 'Thông tin chi tiết đơn hàng.' })
+  @ApiParam({ name: 'orderId', description: 'ID đơn hàng (UUID)' })
   async getUserOrderById(
     @CurrentUser('sub') userId: string,
     @Param('orderId', ParseUUIDPipe) orderId: string,
@@ -47,6 +67,9 @@ export class OrdersController {
   }
 
   @Get(':orderId/check-payment-status')
+  @ApiOperation({ summary: 'Kiểm tra trạng thái thanh toán' })
+  @ApiOkResponse({ description: 'Trạng thái thanh toán hiện tại của đơn hàng.' })
+  @ApiParam({ name: 'orderId', description: 'ID đơn hàng (UUID)' })
   async checkPaymentStatus(
     @CurrentUser('sub') userId: string,
     @Param('orderId', ParseUUIDPipe) orderId: string,
@@ -55,6 +78,9 @@ export class OrdersController {
   }
 
   @Delete(':orderId/cancel')
+  @ApiOperation({ summary: 'Hủy đơn hàng' })
+  @ApiOkResponse({ description: 'Đơn hàng đã được hủy (nếu đủ điều kiện).' })
+  @ApiParam({ name: 'orderId', description: 'ID đơn hàng (UUID)' })
   async cancelOrder(
     @CurrentUser('sub') userId: string,
     @Param('orderId', ParseUUIDPipe) orderId: string,

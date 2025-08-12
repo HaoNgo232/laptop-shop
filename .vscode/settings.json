@@ -4,5 +4,5 @@
   "path-intellisense.mappings": {
     "@": "${workspaceFolder}/src"
   },
-  "commentTranslate.hover.enabled": false
+  "commentTranslate.hover.enabled": true
 }
