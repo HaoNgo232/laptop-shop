@@ -211,7 +211,3 @@ Roadmap / Future Work
 - Advanced search and spec comparison.
 - Additional payment gateways: VNPay, MoMo, ZaloPay.
 - Mobile UX improvements and performance optimizations.
-
-License
-
-- Currently UNLICENSED. Update as needed for your distribution policy.
