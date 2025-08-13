@@ -61,8 +61,8 @@ export class GenerateTokensProvider implements IGenerateTokensProvider {
       role: user.role,
     };
 
-    const accessTokenExpiresIn = this.jwtConfiguration.expirationTime;
-    const refreshTokenExpiresIn = this.jwtConfiguration.refreshExpirationTime;
+    const accessTokenExpiresIn = this.jwtConfiguration.expirationTime; // láy thời gian hết hạn từ biến môi trường - 1h
+    const refreshTokenExpiresIn = this.jwtConfiguration.refreshExpirationTime; // láy thời gian hết hạn từ biến môi trường - 7d
 
     // Tạo song song để tối ưu performance
     const [accessToken, refreshToken] = await Promise.all([
