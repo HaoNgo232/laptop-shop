@@ -46,11 +46,13 @@ class ApiClient {
           _retry?: boolean;
         };
 
-        // Handle 401: token expired
+        // Handle 401: token expired, but ignore for login/register
         if (
           error.response?.status === 401 &&
           originalRequest &&
-          !originalRequest._retry
+          !originalRequest._retry &&
+          !originalRequest.url?.endsWith("/login") &&
+          !originalRequest.url?.endsWith("/register")
         ) {
           originalRequest._retry = true;
 
@@ -62,8 +64,9 @@ class ApiClient {
             const { accessToken } = await this.refreshTokenPromise;
 
             if (originalRequest.headers) {
-              originalRequest.headers["Authorization"] =
-                `Bearer ${accessToken}`;
+              originalRequest.headers[
+                "Authorization"
+              ] = `Bearer ${accessToken}`;
             }
             return await this.client(originalRequest);
           } catch (refreshError) {

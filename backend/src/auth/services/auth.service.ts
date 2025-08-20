@@ -176,6 +176,9 @@ export class AuthService implements IAuthService {
     return user;
   }
 
+  /**
+   * Kiểm tra mật khẩu
+   */
   private async verifyPassword(password: string, user: User): Promise<void> {
     const isPasswordValid = await this.bcryptProvider.comparePassword(password, user.passwordHash);
 

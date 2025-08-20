@@ -45,9 +45,9 @@ services:
       JWT_REFRESH_EXPIRATION_TIME: 7d
 
       # Mail (cấu hình mail service nếu cần)
-      MAIL_HOST: smtp.gmail.com
-      SMTP_USERNAME: your-email@gmail.com
-      SMTP_PASSWORD: your-app-password
+      MAIL_HOST: sandbox.smtp.mailtrap.io
+      SMTP_USERNAME: bad03a58a727cf
+      SMTP_PASSWORD: 1a69be052b47af
     depends_on:
       - postgres
     networks:

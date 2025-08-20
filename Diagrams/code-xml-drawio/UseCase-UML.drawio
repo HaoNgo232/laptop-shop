@@ -1,0 +1,280 @@
+<mxfile host="app.diagrams.net" modified="2025-08-19T00:00:00.000Z" agent="github-copilot" version="20.8.3" type="device">
+  <diagram id="usecase-backend" name="Use Case - Backend API">
+    <mxGraphModel dx="1500" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1080" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- System Boundary -->
+        <mxCell id="sysBoundary" value="Laptop Shop Backend API" style="shape=rectangle;whiteSpace=wrap;html=1;strokeDasharray=4 4;rounded=0;fontStyle=1;align=center;verticalAlign=top;fillColor=#f8f8f8;" vertex="1" parent="1">
+          <mxGeometry x="160" y="20" width="760" height="520" as="geometry"/>
+        </mxCell>
+
+        <!-- Actors -->
+        <mxCell id="actorGuest" value="Khách (Guest)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" vertex="1" parent="1">
+          <mxGeometry x="20" y="80" width="40" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="actorUser" value="Người dùng (Customer)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" vertex="1" parent="1">
+          <mxGeometry x="20" y="230" width="40" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="actorAdmin" value="Quản trị (Admin)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" vertex="1" parent="1">
+          <mxGeometry x="20" y="380" width="40" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="actorSepay" value="SePay (Payment Gateway)" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;" vertex="1" parent="1">
+          <mxGeometry x="940" y="220" width="40" height="80" as="geometry"/>
+        </mxCell>
+
+        <!-- Guest Use Cases -->
+        <mxCell id="ucBrowseProducts" value="Duyệt sản phẩm" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="60" y="60" width="170" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucViewProduct" value="Xem chi tiết sản phẩm" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="60" y="110" width="200" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucBrowseCategories" value="Xem danh mục" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="60" y="160" width="170" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucViewCategory" value="Xem chi tiết danh mục" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="60" y="210" width="210" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucViewProductReviews" value="Xem đánh giá sản phẩm" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="60" y="260" width="210" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucGetPaymentMethods" value="Xem phương thức thanh toán" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="60" y="310" width="230" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucRegister" value="Đăng ký" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="320" y="60" width="120" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucLogin" value="Đăng nhập" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="320" y="110" width="120" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucRefreshToken" value="Làm mới token" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="320" y="160" width="140" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Customer Use Cases: Cart & Profile & Reviews -->
+        <mxCell id="ucViewCart" value="Xem giỏ hàng" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="300" y="210" width="150" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucAddToCart" value="Thêm vào giỏ" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="300" y="260" width="150" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucUpdateCart" value="Cập nhật số lượng" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="300" y="310" width="170" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucRemoveFromCart" value="Xóa khỏi giỏ" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="300" y="360" width="150" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucClearCart" value="Xóa toàn bộ giỏ" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="300" y="410" width="170" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ucViewProfile" value="Xem hồ sơ cá nhân" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="500" y="60" width="180" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucUpdateProfile" value="Cập nhật hồ sơ" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="500" y="110" width="160" height="40" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="ucCreateReview" value="Tạo đánh giá" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="500" y="160" width="140" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucUpdateReview" value="Cập nhật đánh giá" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="500" y="210" width="170" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucDeleteReview" value="Xóa đánh giá" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="500" y="260" width="140" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Orders & Payments (Customer) -->
+        <mxCell id="ucCreateOrder" value="Tạo đơn hàng" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="500" y="310" width="150" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucOrderHistory" value="Xem lịch sử đơn hàng" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="500" y="360" width="200" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucOrderDetail" value="Xem chi tiết đơn hàng" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="680" y="60" width="200" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucCheckPaymentStatus" value="Kiểm tra trạng thái thanh toán" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="680" y="110" width="240" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucCancelOrder" value="Hủy đơn hàng" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="680" y="160" width="140" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucCreatePaymentQR" value="Tạo QR thanh toán" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="680" y="210" width="170" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucSwitchPaymentMethod" value="Chuyển đổi phương thức thanh toán" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="680" y="260" width="270" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Admin Use Cases -->
+        <mxCell id="ucManageProducts" value="Quản lý sản phẩm (Tạo/Cập nhật/Xóa/Khôi phục)" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="460" y="410" width="330" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucManageCategories" value="Quản lý danh mục (Tạo/Cập nhật/Xóa)" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="460" y="460" width="300" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucManageOrders" value="Quản lý đơn hàng (Danh sách/Chi tiết/Cập nhật trạng thái)" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="160" y="460" width="420" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucManageUsers" value="Quản lý người dùng (Danh sách/Chi tiết/Cập nhật)" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="160" y="410" width="380" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucDashboardSummary" value="Dashboard - Tổng quan" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="160" y="60" width="200" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="ucDetailedStats" value="Dashboard - Thống kê chi tiết" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="160" y="110" width="240" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Payment Webhook Use Case -->
+        <mxCell id="ucSepayWebhook" value="Xử lý Webhook SePay" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="sysBoundary">
+          <mxGeometry x="680" y="310" width="200" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Associations: Guest -->
+        <mxCell id="edgeGuestBrowse" style="endArrow=none;html=1;" edge="1" parent="1" source="actorGuest" target="ucBrowseProducts">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeGuestViewProduct" style="endArrow=none;html=1;" edge="1" parent="1" source="actorGuest" target="ucViewProduct">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeGuestBrowseCategories" style="endArrow=none;html=1;" edge="1" parent="1" source="actorGuest" target="ucBrowseCategories">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeGuestViewCategory" style="endArrow=none;html=1;" edge="1" parent="1" source="actorGuest" target="ucViewCategory">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeGuestViewReviews" style="endArrow=none;html=1;" edge="1" parent="1" source="actorGuest" target="ucViewProductReviews">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeGuestPaymentMethods" style="endArrow=none;html=1;" edge="1" parent="1" source="actorGuest" target="ucGetPaymentMethods">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeGuestRegister" style="endArrow=none;html=1;" edge="1" parent="1" source="actorGuest" target="ucRegister">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeGuestLogin" style="endArrow=none;html=1;" edge="1" parent="1" source="actorGuest" target="ucLogin">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeGuestRefresh" style="endArrow=none;html=1;" edge="1" parent="1" source="actorGuest" target="ucRefreshToken">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Associations: Customer -->
+        <mxCell id="edgeUserViewCart" style="endArrow=none;html=1;" edge="1" parent="1" source="actorUser" target="ucViewCart">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeUserAddCart" style="endArrow=none;html=1;" edge="1" parent="1" source="actorUser" target="ucAddToCart">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeUserUpdateCart" style="endArrow=none;html=1;" edge="1" parent="1" source="actorUser" target="ucUpdateCart">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeUserRemoveCart" style="endArrow=none;html=1;" edge="1" parent="1" source="actorUser" target="ucRemoveFromCart">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeUserClearCart" style="endArrow=none;html=1;" edge="1" parent="1" source="actorUser" target="ucClearCart">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edgeUserViewProfile" style="endArrow=none;html=1;" edge="1" parent="1" source="actorUser" target="ucViewProfile">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeUserUpdateProfile" style="endArrow=none;html=1;" edge="1" parent="1" source="actorUser" target="ucUpdateProfile">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edgeUserCreateReview" style="endArrow=none;html=1;" edge="1" parent="1" source="actorUser" target="ucCreateReview">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeUserUpdateReview" style="endArrow=none;html=1;" edge="1" parent="1" source="actorUser" target="ucUpdateReview">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeUserDeleteReview" style="endArrow=none;html=1;" edge="1" parent="1" source="actorUser" target="ucDeleteReview">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="edgeUserCreateOrder" style="endArrow=none;html=1;" edge="1" parent="1" source="actorUser" target="ucCreateOrder">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeUserOrderHistory" style="endArrow=none;html=1;" edge="1" parent="1" source="actorUser" target="ucOrderHistory">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeUserOrderDetail" style="endArrow=none;html=1;" edge="1" parent="1" source="actorUser" target="ucOrderDetail">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeUserCheckPayment" style="endArrow=none;html=1;" edge="1" parent="1" source="actorUser" target="ucCheckPaymentStatus">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeUserCancelOrder" style="endArrow=none;html=1;" edge="1" parent="1" source="actorUser" target="ucCancelOrder">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeUserCreateQR" style="endArrow=none;html=1;" edge="1" parent="1" source="actorUser" target="ucCreatePaymentQR">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeUserSwitchMethod" style="endArrow=none;html=1;" edge="1" parent="1" source="actorUser" target="ucSwitchPaymentMethod">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Associations: Admin -->
+        <mxCell id="edgeAdminManageProducts" style="endArrow=none;html=1;" edge="1" parent="1" source="actorAdmin" target="ucManageProducts">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeAdminManageCategories" style="endArrow=none;html=1;" edge="1" parent="1" source="actorAdmin" target="ucManageCategories">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeAdminManageOrders" style="endArrow=none;html=1;" edge="1" parent="1" source="actorAdmin" target="ucManageOrders">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeAdminManageUsers" style="endArrow=none;html=1;" edge="1" parent="1" source="actorAdmin" target="ucManageUsers">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeAdminDashboardSummary" style="endArrow=none;html=1;" edge="1" parent="1" source="actorAdmin" target="ucDashboardSummary">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="edgeAdminDetailedStats" style="endArrow=none;html=1;" edge="1" parent="1" source="actorAdmin" target="ucDetailedStats">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Associations: SePay Webhook -->
+        <mxCell id="edgeSepayWebhook" style="endArrow=none;html=1;" edge="1" parent="1" source="actorSepay" target="ucSepayWebhook">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Include/Extend relationships (dashed open arrow) -->
+  <mxCell id="edgeExtendCreateOrderToCreateQR" value="«extend»" style="dashed=1;endArrow=open;endFill=0;html=1;strokeWidth=1;" edge="1" parent="1" source="ucCreateOrder" target="ucCreatePaymentQR">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+  <mxCell id="edgeExtendOrderDetailToCancel" value="«extend»" style="dashed=1;endArrow=open;endFill=0;html=1;strokeWidth=1;" edge="1" parent="1" source="ucOrderDetail" target="ucCancelOrder">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="legend" name="Legend">
+    <mxGraphModel dx="1500" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1920" pageHeight="1080" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="legendBox" value="Ký hiệu:\n- Diễn viên (Actor)\n- Trường hợp sử dụng (Use Case)\n- Biên hệ thống (System Boundary)\n- «include» / «extend»" style="shape=rectangle;whiteSpace=wrap;html=1;rounded=1;strokeColor=#999;fillColor=#fffbe6;" vertex="1" parent="1">
+          <mxGeometry x="80" y="80" width="520" height="220" as="geometry"/>
+        </mxCell>
+        <mxCell id="legendActor" value="Actor" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="120" y="120" width="40" height="80" as="geometry"/>
+        </mxCell>
+        <mxCell id="legendUseCase" value="Use Case" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="130" width="120" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="legendInclude" value="«include»" style="dashed=1;endArrow=open;endFill=0;" edge="1" parent="1" source="legendUseCase" target="legendActor">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
