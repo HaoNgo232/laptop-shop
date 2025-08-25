@@ -79,24 +79,29 @@ export function BestSellingSection({
                                 </div>
 
                                 <CardContent className="p-3">
-                                    <button
-                                        className="aspect-square bg-gray-100 rounded-lg mb-3 overflow-hidden relative w-full border-none p-0 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                                        onClick={() => onProductClick(product.id)}
-                                        aria-label={`Xem chi tiết sản phẩm ${product.name}`}
-                                    >
-                                        <img
-                                            src={product.imageUrl || 'https://images.unsplash.com/photo-1485546246426-74dc88dec4d9?w=500'}
-                                            alt={product.name}
-                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                                        />
+                                    {/* Wrapper cho cả image và overlay - không clickable */}
+                                    <div className="aspect-square bg-gray-100 rounded-lg mb-3 overflow-hidden relative w-full group/image">
+                                        {/* Image clickable để xem chi tiết */}
+                                        <button
+                                            type="button"
+                                            className="w-full h-full border-0 p-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+                                            onClick={() => onProductClick(product.id)}
+                                            aria-label={`Xem chi tiết sản phẩm ${product.name}`}
+                                        >
+                                            <img
+                                                src={product.imageUrl || 'https://images.unsplash.com/photo-1485546246426-74dc88dec4d9?w=500'}
+                                                alt={product.name}
+                                                className="w-full h-full object-cover group-hover/image:scale-110 transition-transform duration-300"
+                                            />
+                                        </button>
 
-                                        {/* Overlay with action */}
-                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                        {/* Overlay với button riêng biệt - không nằm trong button cha */}
+                                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover/image:opacity-100 transition-opacity duration-300 flex items-center justify-center pointer-events-none">
                                             <Button
                                                 size="sm"
-                                                className="bg-blue-500 hover:bg-blue-600 text-white"
+                                                className="bg-blue-500 hover:bg-blue-600 text-white pointer-events-auto"
                                                 onClick={(e) => {
-                                                    e.stopPropagation(); // Ngăn bubble lên button cha
+                                                    e.stopPropagation();
                                                     onQuickAddToCart(product, e);
                                                 }}
                                             >
@@ -104,7 +109,7 @@ export function BestSellingSection({
                                                 Chọn mua
                                             </Button>
                                         </div>
-                                    </button>
+                                    </div>
 
                                     <h3 className="font-medium text-sm text-gray-900 mb-2 line-clamp-2 min-h-[2.5rem]">
                                         {product.name}
