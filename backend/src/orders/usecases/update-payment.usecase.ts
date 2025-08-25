@@ -133,7 +133,10 @@ export class UpdatePaymentUseCase {
   /**
    * Convert reserved stock thành actual stock decrement khi payment PAID
    */
-  private async convertReservedToActualStock(manager: EntityManager, orderId: string): Promise<void> {
+  private async convertReservedToActualStock(
+    manager: EntityManager,
+    orderId: string,
+  ): Promise<void> {
     try {
       // Lấy order với items
       const orderWithItems = await manager.findOne(Order, {

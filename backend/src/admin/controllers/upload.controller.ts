@@ -18,7 +18,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiConsumes } from '@nestjs/swagger
 // Configure multer for file storage
 const storage = diskStorage({
   destination: (req, file, cb) => {
-    const uploadPath = './images';
+    const uploadPath = './uploads/images';
     // Create directory if it doesn't exist
     if (!existsSync(uploadPath)) {
       mkdirSync(uploadPath, { recursive: true });
@@ -34,7 +34,11 @@ const storage = diskStorage({
 });
 
 // File filter for image validation
-const imageFilter = (req: any, file: Express.Multer.File, cb: any) => {
+const imageFilter = (
+  req: any,
+  file: Express.Multer.File,
+  cb: (error: Error | null, acceptFile: boolean) => void,
+) => {
   if (!file.mimetype.match(/\/(jpg|jpeg|png|gif|webp)$/)) {
     return cb(
       new HttpException(
@@ -87,7 +91,7 @@ export class UploadController {
       filename: file.filename,
       path: file.path,
       size: file.size,
-      url: `/images/${file.filename}`, // URL for frontend to access the image
+      url: `/uploads/images/${file.filename}`, // URL for frontend to access the image
     };
   }
 }

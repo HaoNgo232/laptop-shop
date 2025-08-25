@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Upload, X, ExternalLink } from 'lucide-react';
-import axios from 'axios';
+import { apiClient } from '@/services/api';
 
 interface ImageUploadProps {
   label: string;
@@ -56,32 +56,32 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
       const formData = new FormData();
       formData.append('image', file);
 
-      // Get token from localStorage (adjust based on your auth implementation)
+      // Get token from localStorage and base URL
       const token = localStorage.getItem('accessToken');
+      const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
       
-      const response = await axios.post<UploadResponse>(
-        '/api/admin/upload/image',
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await fetch(`${baseURL}/admin/upload/image`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        body: formData,
+      });
 
-      const imageUrl = response.data.url;
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({ message: 'Upload failed' }));
+        throw new Error(errorData.message || 'Upload failed');
+      }
+
+      const data: UploadResponse = await response.json();
+      const imageUrl = data.url;
       setPreviewUrl(imageUrl);
       setUrlInput(imageUrl);
       setUseLocalUpload(true);
       onChange(imageUrl);
     } catch (error) {
       console.error('Upload error:', error);
-      if (axios.isAxiosError(error)) {
-        onError?.(error.response?.data?.message || 'Lỗi khi tải lên hình ảnh');
-      } else {
-        onError?.('Lỗi không xác định khi tải lên hình ảnh');
-      }
+      onError?.(error instanceof Error ? error.message : 'Lỗi không xác định khi tải lên hình ảnh');
     } finally {
       setIsUploading(false);
     }

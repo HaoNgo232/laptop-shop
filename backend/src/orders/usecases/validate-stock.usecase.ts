@@ -85,7 +85,7 @@ export class ValidateStockUseCase {
   private checkStock(product: Product, requestedQuantity: number): void {
     // Available stock = stockQuantity - reservedQuantity
     const availableStock = product.stockQuantity - (product.reservedQuantity || 0);
-    
+
     // Nếu số lượng có sẵn < số lượng yêu cầu
     if (availableStock < requestedQuantity) {
       throw new BadRequestException(

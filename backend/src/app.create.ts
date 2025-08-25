@@ -10,7 +10,8 @@ export function appCreate(app: INestApplication): void {
 
   // Configure static file serving for uploaded images
   const expressApp = app.getHttpAdapter().getInstance();
-  expressApp.use('/images', express.static(join(__dirname, '..', 'images')));
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+  expressApp.use('/uploads', express.static(join(__dirname, '..', 'uploads')));
 
   // Thiết lập global ValidationPipe
   app.useGlobalPipes(

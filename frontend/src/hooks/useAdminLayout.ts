@@ -8,8 +8,16 @@ export function useAdminLayout() {
   const location = useLocation();
   const { user, logout } = useAuthStore();
 
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  // Load sidebar preferences from localStorage
+  const [sidebarOpen, setSidebarOpen] = useState(() => {
+    const saved = localStorage.getItem('admin-sidebar-open');
+    return saved !== null ? JSON.parse(saved) : true;
+  });
+  
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    const saved = localStorage.getItem('admin-sidebar-collapsed');
+    return saved !== null ? JSON.parse(saved) : false;
+  });
 
   // Menu items configuration
   const menuItems = [
@@ -66,11 +74,15 @@ export function useAdminLayout() {
 
   // Sidebar controls
   const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
+    const newState = !sidebarOpen;
+    setSidebarOpen(newState);
+    localStorage.setItem('admin-sidebar-open', JSON.stringify(newState));
   };
 
   const toggleSidebarCollapse = () => {
-    setSidebarCollapsed(!sidebarCollapsed);
+    const newState = !sidebarCollapsed;
+    setSidebarCollapsed(newState);
+    localStorage.setItem('admin-sidebar-collapsed', JSON.stringify(newState));
   };
 
   // Menu navigation

@@ -28,7 +28,9 @@ export class OrderTimeoutJob {
         const expiredOrders = await manager
           .createQueryBuilder(Order, 'order')
           .where('order.status = :status', { status: OrderStatusEnum.PENDING })
-          .andWhere('order.paymentStatus = :paymentStatus', { paymentStatus: PaymentStatusEnum.PENDING })
+          .andWhere('order.paymentStatus = :paymentStatus', {
+            paymentStatus: PaymentStatusEnum.PENDING,
+          })
           .andWhere('order.expiresAt < :now', { now: new Date() })
           .getMany();
 

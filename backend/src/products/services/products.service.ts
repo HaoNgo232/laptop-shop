@@ -305,11 +305,7 @@ export class ProductsService implements IProductsService {
         .createQueryBuilder('product')
         .leftJoinAndSelect('product.category', 'category')
         .leftJoin('product.orderItems', 'orderItem')
-        .select([
-          'product',
-          'category',
-          'COALESCE(SUM(orderItem.quantity), 0) as totalSold'
-        ])
+        .select(['product', 'category', 'COALESCE(SUM(orderItem.quantity), 0) as totalSold'])
         .where('product.active = :active', { active: true })
         .groupBy('product.id, category.id')
         .orderBy('totalSold', 'DESC')
@@ -317,7 +313,7 @@ export class ProductsService implements IProductsService {
         .limit(limit);
 
       const result = await bestSellingQuery.getRawAndEntities();
-      
+
       // Return just the entities part, which are the Product objects
       return result.entities;
     } catch (error) {
