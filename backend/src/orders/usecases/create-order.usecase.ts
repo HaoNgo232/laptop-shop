@@ -32,7 +32,10 @@ export class CreateOrderUseCase {
 
     try {
       return await this.dataSource.transaction(async (manager) => {
-        // 1. Tạo order entity
+        // 1. Tạo order entity với expiration time
+        const expiresAt = new Date();
+        expiresAt.setMinutes(expiresAt.getMinutes() + 30); // 30 phút timeout
+
         const order = manager.create(Order, {
           userId,
           totalAmount,
@@ -41,11 +44,12 @@ export class CreateOrderUseCase {
           note: createOrderDto.note,
           status: OrderStatusEnum.PENDING,
           paymentStatus: PaymentStatusEnum.PENDING,
+          expiresAt,
         });
 
         const savedOrder = await manager.save(order);
 
-        // 2. Tạo order items và update stock
+        // 2. Tạo order items và reserve stock
         await this.processOrderItems(manager, savedOrder.id, orderItems);
 
         // 3. Clear user cart
@@ -73,8 +77,8 @@ export class CreateOrderUseCase {
       });
       await manager.save(orderItem);
 
-      // Cập nhật stock với atomic operation
-      await manager.decrement(Product, { id: item.productId }, 'stockQuantity', item.quantity);
+      // Reserve stock thay vì trừ stock ngay lập tức
+      await manager.increment(Product, { id: item.productId }, 'reservedQuantity', item.quantity);
     }
   }
 }

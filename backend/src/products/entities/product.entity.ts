@@ -22,6 +22,9 @@ export class Product extends BaseEntity {
   @Column('int', { default: 0 })
   stockQuantity: number;
 
+  @Column('int', { default: 0 })
+  reservedQuantity: number;
+
   @Column({ nullable: false })
   imageUrl: string;
 

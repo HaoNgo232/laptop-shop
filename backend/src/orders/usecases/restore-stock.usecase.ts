@@ -24,12 +24,13 @@ export class RestoreStockUseCase {
         return;
       }
 
-      // Restore stock cho từng item
+      // Restore stock cho từng item (chỉ restore reserved stock vì actual stock chưa bị trừ)
       for (const item of orderWithItems.items) {
-        await manager.increment(Product, { id: item.productId }, 'stockQuantity', item.quantity);
+        // Chỉ restore reserved stock vì đây là order bị cancel/failed
+        await manager.decrement(Product, { id: item.productId }, 'reservedQuantity', item.quantity);
 
         this.logger.debug(
-          `Restored ${item.quantity} units of product ${item.productId} for order ${orderId}`,
+          `Restored ${item.quantity} reserved units of product ${item.productId} for order ${orderId}`,
         );
       }
 
