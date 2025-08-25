@@ -28,6 +28,7 @@ interface CheckoutState {
   startPaymentPolling: (orderId: string) => void;
   stopPaymentPolling: () => void;
   resetCheckout: () => void;
+  startNewOrder: () => void;
   clearError: () => void;
 }
 
@@ -150,6 +151,19 @@ export const useCheckoutStore = create<CheckoutState>((set, get) => ({
   },
 
   resetCheckout: () => {
+    get().stopPaymentPolling();
+    set({
+      shippingAddress: null,
+      paymentMethod: null,
+      createdOrder: null,
+      qrCodeData: null,
+      paymentStatus: PaymentStatusEnum.PENDING,
+      error: null,
+      isLoading: false,
+    });
+  },
+
+  startNewOrder: () => {
     get().stopPaymentPolling();
     set({
       shippingAddress: null,

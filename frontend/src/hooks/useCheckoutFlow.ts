@@ -59,9 +59,9 @@ export function useCheckoutFlow() {
   // Handle payment status changes
   useEffect(() => {
     if (paymentStatus === PaymentStatusEnum.PAID && createdOrder) {
-      // Delay để user thấy success state
+      // Delay để user thấy success state, sau đó chuyển đến success page
       setTimeout(() => {
-        navigate(`/orders/${createdOrder.id}`, { replace: true });
+        navigate(`/checkout/success?orderId=${createdOrder.id}`, { replace: true });
       }, 2000);
     }
   }, [paymentStatus, createdOrder, navigate]);
@@ -71,9 +71,12 @@ export function useCheckoutFlow() {
     if (createdOrder && qrCodeData && paymentMethod === "SEPAY_QR") {
       setCurrentStep("payment-waiting");
     } else if (createdOrder && paymentMethod === "COD") {
-      setCurrentStep("processing");
+      // Cho COD, chuyển ngay đến success page
+      setTimeout(() => {
+        navigate(`/checkout/success?orderId=${createdOrder.id}`, { replace: true });
+      }, 1500);
     }
-  }, [createdOrder, qrCodeData, paymentMethod]);
+  }, [createdOrder, qrCodeData, paymentMethod, navigate]);
 
   // Handle shipping form submit
   const handleShippingSubmit = (address: ShippingAddress) => {

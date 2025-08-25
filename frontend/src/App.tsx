@@ -8,6 +8,7 @@ import { AdminCategoriesPage } from '@/pages/admin/AdminCategoriesPage';
 import { ProductDetailPage } from '@/pages/ProductDetailPage';
 import { ProtectedRoute } from '@/components/ProtectedRoute';
 import { CheckoutPage } from '@/pages/CheckoutPage';
+import { OrderSuccessPage } from '@/pages/OrderSuccessPage';
 import { UserRole } from '@/types';
 import { useEffect } from 'react';
 import { useAuthStore } from '@/stores/authStore';
@@ -91,6 +92,15 @@ const App = () => {
               element={
                 <ProtectedRoute>
                   <CheckoutPage />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/checkout/success"
+              element={
+                <ProtectedRoute>
+                  <OrderSuccessPage />
                 </ProtectedRoute>
               }
             />
