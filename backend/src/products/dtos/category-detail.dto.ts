@@ -11,6 +11,9 @@ export class CategoryDetailDto {
   @ApiProperty({ required: false })
   description?: string;
 
+  @ApiProperty({ required: false })
+  imageUrl?: string;
+
   @ApiProperty({ type: () => [ProductDto] })
   products: ProductDto[];
 }

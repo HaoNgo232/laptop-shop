@@ -5,13 +5,16 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Category, CreateCategory, UpdateCategory } from "@/types";
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { ImageUploader } from '@/components/common/ImageUploader';
+import { uploadService } from '@/services/uploadService';
 
 const CategoryFormSchema = z.object({
     name: z.string().min(3, 'Tên danh mục phải có ít nhất 3 ký tự'),
     description: z.string().min(10, 'Mô tả phải có ít nhất 10 ký tự'),
+    imageUrl: z.string().url().or(z.literal('')).optional(),
 });
 
 type CategoryFormData = z.infer<typeof CategoryFormSchema>;
@@ -28,24 +31,46 @@ const CategoryForm = ({ category, onSubmit, onCancel, isLoading }: CategoryFormP
         register,
         handleSubmit,
         formState: { errors, isSubmitting },
-        reset
+        reset,
+        watch,
     } = useForm<CategoryFormData>({
         resolver: zodResolver(CategoryFormSchema),
         defaultValues: {
             name: '',
             description: '',
+            imageUrl: '',
         },
     });
 
+    const [imageFile, setImageFile] = useState<File | null>(null);
+
     useEffect(() => {
         if (category) {
-            reset(category);
+            reset({
+                name: category.name,
+                description: category.description || '',
+                imageUrl: category.imageUrl || '',
+            });
+            setImageFile(null);
         }
     }, [category, reset]);
 
     const handleFormSubmit = async (data: CategoryFormData) => {
         try {
-            await onSubmit(data);
+            let imageUrl = data.imageUrl?.trim();
+            if (imageFile) {
+                const res = await uploadService.uploadImage(imageFile);
+                imageUrl = res.url;
+            }
+            if (!imageUrl) {
+                throw new Error('Vui lòng cung cấp hình ảnh');
+            }
+            const submitData = {
+                name: data.name.trim(),
+                description: data.description.trim(),
+                imageUrl,
+            };
+            await onSubmit(submitData);
         } catch (error) {
             console.error('Error submitting category form:', error);
         }
@@ -72,7 +97,7 @@ const CategoryForm = ({ category, onSubmit, onCancel, isLoading }: CategoryFormP
                                 <p className="text-red-500 text-sm">{errors.name.message}</p>
                             )}
                         </div>
-                        <div className="grid gap-2">
+                    <div className="grid gap-2">
                             <Label htmlFor="description">Mô tả</Label>
                             <Textarea
                                 id="description"
@@ -83,6 +108,19 @@ const CategoryForm = ({ category, onSubmit, onCancel, isLoading }: CategoryFormP
                                 <p className="text-red-500 text-sm">{errors.description.message}</p>
                             )}
                         </div>
+                        <div className="grid gap-2">
+                            <Label htmlFor="imageUrl">URL hình ảnh</Label>
+                            <Input
+                                id="imageUrl"
+                                {...register('imageUrl')}
+                                className={errors.imageUrl ? 'border-red-500' : ''}
+                            />
+                            {errors.imageUrl && (
+                                <p className="text-red-500 text-sm">{errors.imageUrl.message}</p>
+                            )}
+                        </div>
+                        <ImageUploader onFileSelect={setImageFile} initialUrl={watch('imageUrl') || category?.imageUrl} />
+
                         <div className="flex justify-end gap-2">
                             <Button variant="outline" onClick={onCancel}>
                                 Hủy

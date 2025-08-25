@@ -2,14 +2,21 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthStore } from "@/stores/authStore";
 import { LayoutDashboard, Users, Package, ShoppingCart } from "lucide-react";
+import { toast } from "sonner";
 
 export function useAdminLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuthStore();
 
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(() => {
+    const stored = localStorage.getItem('adminSidebarOpen');
+    return stored ? JSON.parse(stored) : true;
+  });
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    const stored = localStorage.getItem('adminSidebarCollapsed');
+    return stored ? JSON.parse(stored) : false;
+  });
 
   // Menu items configuration
   const menuItems = [
@@ -59,18 +66,22 @@ export function useAdminLayout() {
       navigate("/login");
     } catch (error) {
       console.error("Logout failed:", error);
-      // Navigate anyway vì logout clears local state
+      toast.error("Đăng xuất thất bại");
       navigate("/login");
     }
   };
 
   // Sidebar controls
   const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
+    const next = !sidebarOpen;
+    setSidebarOpen(next);
+    localStorage.setItem('adminSidebarOpen', JSON.stringify(next));
   };
 
   const toggleSidebarCollapse = () => {
-    setSidebarCollapsed(!sidebarCollapsed);
+    const next = !sidebarCollapsed;
+    setSidebarCollapsed(next);
+    localStorage.setItem('adminSidebarCollapsed', JSON.stringify(next));
   };
 
   // Menu navigation

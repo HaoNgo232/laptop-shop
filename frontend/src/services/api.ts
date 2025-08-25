@@ -140,6 +140,17 @@ class ApiClient {
       throw this.transformError(error as AxiosError);
     }
   }
+
+  async upload<T>(url: string, data: FormData): Promise<T> {
+    try {
+      const response = await this.client.post(url, data, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      return response.data;
+    } catch (error) {
+      throw this.transformError(error as AxiosError);
+    }
+  }
 }
 
 export const apiClient = new ApiClient();

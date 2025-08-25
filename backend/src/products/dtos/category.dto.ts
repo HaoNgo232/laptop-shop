@@ -10,6 +10,9 @@ export class CategoryDto {
   @ApiProperty({ required: false })
   description?: string;
 
+  @ApiProperty({ required: false })
+  imageUrl?: string;
+
   @ApiProperty()
   createdAt: Date;
 

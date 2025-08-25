@@ -10,6 +10,7 @@ import { Product } from '@/products/entities/product.entity';
 import { Order } from '@/orders/entities/order.entity';
 import { ProductsModule } from '@/products/products.module';
 import { OrdersModule } from '@/orders/orders.module';
+import { UploadModule } from '@/upload/upload.module';
 
 /**
  * Module đặc biệt dành cho admin
@@ -19,6 +20,7 @@ import { OrdersModule } from '@/orders/orders.module';
     AuthModule,
     ProductsModule,
     OrdersModule,
+    UploadModule,
     TypeOrmModule.forFeature([User, Product, Order]),
   ],
   controllers: [AdminDashboardController, ManagerUsersController],
