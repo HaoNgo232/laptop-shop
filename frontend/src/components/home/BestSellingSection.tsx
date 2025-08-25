@@ -62,16 +62,15 @@ export function BestSellingSection({
                                 {/* Ranking badge */}
                                 {index < 3 && (
                                     <div className="absolute top-2 left-2 z-10">
-                                        <Badge className={`text-white text-xs font-bold px-2 py-1 ${
-                                            index === 0 ? 'bg-yellow-500' : 
+                                        <Badge className={`text-white text-xs font-bold px-2 py-1 ${index === 0 ? 'bg-yellow-500' :
                                             index === 1 ? 'bg-gray-400' : 'bg-orange-600'
-                                        }`}>
+                                            }`}>
                                             <Crown className="h-3 w-3 mr-1" />
                                             TOP {index + 1}
                                         </Badge>
                                     </div>
                                 )}
-                                
+
                                 {/* Best seller badge */}
                                 <div className="absolute top-2 right-2 z-10">
                                     <Badge className="bg-orange-500 text-white text-xs">
@@ -80,33 +79,37 @@ export function BestSellingSection({
                                 </div>
 
                                 <CardContent className="p-3">
-                                    <div
-                                        className="aspect-square bg-gray-100 rounded-lg mb-3 overflow-hidden relative"
+                                    <button
+                                        className="aspect-square bg-gray-100 rounded-lg mb-3 overflow-hidden relative w-full border-none p-0 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                                         onClick={() => onProductClick(product.id)}
+                                        aria-label={`Xem chi tiết sản phẩm ${product.name}`}
                                     >
                                         <img
                                             src={product.imageUrl || 'https://images.unsplash.com/photo-1485546246426-74dc88dec4d9?w=500'}
                                             alt={product.name}
                                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                                         />
-                                        
+
                                         {/* Overlay with action */}
                                         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                                             <Button
                                                 size="sm"
                                                 className="bg-blue-500 hover:bg-blue-600 text-white"
-                                                onClick={(e) => onQuickAddToCart(product, e)}
+                                                onClick={(e) => {
+                                                    e.stopPropagation(); // Ngăn bubble lên button cha
+                                                    onQuickAddToCart(product, e);
+                                                }}
                                             >
                                                 <ShoppingCart className="h-4 w-4 mr-1" />
                                                 Chọn mua
                                             </Button>
                                         </div>
-                                    </div>
-                                    
+                                    </button>
+
                                     <h3 className="font-medium text-sm text-gray-900 mb-2 line-clamp-2 min-h-[2.5rem]">
                                         {product.name}
                                     </h3>
-                                    
+
                                     <div className="space-y-2">
                                         <div className="flex items-center justify-between">
                                             <span className="text-lg font-bold text-blue-600">
@@ -117,14 +120,14 @@ export function BestSellingSection({
                                                 <span>Hot</span>
                                             </div>
                                         </div>
-                                        
+
                                         <div className="flex items-center justify-between">
                                             <Badge variant="outline" className="text-xs">
                                                 {product.category.name}
                                             </Badge>
                                             {product.averageRating > 0 && (
                                                 <div className="flex items-center gap-1 text-xs text-yellow-500">
-                                                    ⭐ {product.averageRating.toFixed(1)}
+                                                    ⭐ {Number(product.averageRating).toFixed(1)}
                                                 </div>
                                             )}
                                         </div>
