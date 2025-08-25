@@ -10,6 +10,7 @@ export interface Category {
   id: string;
   name: string;
   description?: string;
+  imageUrl?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -17,6 +18,7 @@ export interface Category {
 export interface CategoryBrief {
   id: string;
   name: string;
+  imageUrl?: string;
 }
 
 export interface CategoryDetail extends Category {
@@ -70,6 +72,7 @@ export interface UpdateProduct extends Partial<CreateProduct> {
 export interface CreateCategory {
   name: string;
   description?: string;
+  imageUrl?: string;
 }
 
 export interface UpdateCategory extends Partial<CreateCategory> {

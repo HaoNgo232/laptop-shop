@@ -8,4 +8,7 @@ export class UpdateCategoryDto extends PartialType(CreateCategoryDto) {
 
   @ApiProperty({ required: false })
   description?: string;
+
+  @ApiProperty({ required: false })
+  imageUrl?: string;
 }

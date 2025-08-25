@@ -2,9 +2,15 @@ import { ClassSerializerInterceptor, INestApplication, ValidationPipe } from '@n
 import { Reflector } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { join } from 'path';
+import * as express from 'express';
 
 export function appCreate(app: INestApplication): void {
   const configService = app.get(ConfigService);
+
+  // Configure static file serving for uploaded images
+  const expressApp = app.getHttpAdapter().getInstance();
+  expressApp.use('/images', express.static(join(__dirname, '..', 'images')));
 
   // Thiết lập global ValidationPipe
   app.useGlobalPipes(

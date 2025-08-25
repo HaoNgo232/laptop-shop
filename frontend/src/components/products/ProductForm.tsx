@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/select';
 import { CreateProduct, UpdateProduct, Category, Product } from "@/types";
 import { z } from 'zod';
+import { ImageUpload } from '@/components/common/ImageUpload';
 
 //  Schema validation riêng cho form
 const ProductFormSchema = z.object({
@@ -22,7 +23,7 @@ const ProductFormSchema = z.object({
     description: z.string().min(10, 'Mô tả phải có ít nhất 10 ký tự'),
     price: z.number().min(1000, 'Giá phải ít nhất 1,000 VND'),
     stockQuantity: z.number().min(0, 'Số lượng không thể âm'),
-    imageUrl: z.string().url('URL hình ảnh không hợp lệ'),
+    imageUrl: z.string().min(1, 'Vui lòng chọn hình ảnh'),
     categoryId: z.string().min(1, 'Vui lòng chọn danh mục'),
 });
 
@@ -43,6 +44,8 @@ export const ProductForm = ({
     onCancel,
     isLoading = false,
 }: ProductFormProps) => {
+    const [imageError, setImageError] = useState<string>('');
+    
     const {
         register,
         handleSubmit,
@@ -89,6 +92,9 @@ export const ProductForm = ({
     //  Handle form submission với error handling tốt hơn
     const handleFormSubmit = async (data: ProductFormData) => {
         try {
+            // Clear any previous image errors
+            setImageError('');
+            
             //  Validate categoryId
             if (!data.categoryId) {
                 throw new Error('Vui lòng chọn danh mục');
@@ -186,43 +192,20 @@ export const ProductForm = ({
                         </div>
                     </div>
 
-                    {/* URL hình ảnh */}
+                    {/* Image Upload */}
                     <div className="space-y-2">
-                        <Label htmlFor="imageUrl">URL hình ảnh *</Label>
-                        <Input
-                            id="imageUrl"
-                            {...register('imageUrl')}
-                            placeholder="https://example.com/image.jpg"
-                            className={errors.imageUrl ? 'border-red-500' : ''}
+                        <ImageUpload
+                            label="Hình ảnh sản phẩm"
+                            value={watchedImageUrl}
+                            onChange={(imageUrl) => setValue('imageUrl', imageUrl)}
+                            onError={setImageError}
+                            required={true}
                         />
                         {errors.imageUrl && (
                             <p className="text-sm text-red-600">{errors.imageUrl.message}</p>
                         )}
-
-                        {/* Preview hình ảnh hiện tại */}
-                        {watchedImageUrl && (
-                            <div className="mt-3">
-                                <Label className="text-sm text-gray-600">Preview:</Label>
-                                <div className="mt-2 border rounded-lg overflow-hidden">
-                                    <img
-                                        src={watchedImageUrl}
-                                        alt="Product preview"
-                                        className="w-full h-48 object-cover"
-                                        onError={(e) => {
-                                            e.currentTarget.style.display = 'none';
-                                            e.currentTarget.nextElementSibling?.classList.remove('hidden');
-                                        }}
-                                        onLoad={(e) => {
-                                            e.currentTarget.style.display = 'block';
-                                            e.currentTarget.nextElementSibling?.classList.add('hidden');
-                                        }}
-                                    />
-                                    <div className="hidden p-4 text-center text-gray-500 bg-gray-50">
-                                        <p className="text-sm">Không thể tải hình ảnh</p>
-                                        <p className="text-xs">Vui lòng kiểm tra URL</p>
-                                    </div>
-                                </div>
-                            </div>
+                        {imageError && (
+                            <p className="text-sm text-red-600">{imageError}</p>
                         )}
                     </div>
 

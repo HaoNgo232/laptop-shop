@@ -11,6 +11,9 @@ export class Category extends BaseEntity {
   @Column('text', { nullable: true })
   description?: string;
 
+  @Column({ nullable: true })
+  imageUrl?: string;
+
   // Relationships
   @OneToMany(() => Product, (product) => product.category)
   @Type(() => Product)
