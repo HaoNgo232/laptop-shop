@@ -8,8 +8,16 @@ import type { Product } from "@/types";
 export function useHomepage() {
   const navigate = useNavigate();
   const { user, isAuthenticated, isLoading: authLoading } = useAuthStore();
-  const { products, categories, fetchProducts, fetchCategories } =
-    useProductStore();
+  const { 
+    products, 
+    categories, 
+    highStockProducts,
+    bestSellingProducts,
+    fetchProducts, 
+    fetchCategories,
+    fetchHighStockProducts,
+    fetchBestSellingProducts
+  } = useProductStore();
   const { addToCart } = useCartStore();
 
   // Carousel state
@@ -20,7 +28,9 @@ export function useHomepage() {
   useEffect(() => {
     fetchProducts({ limit: 12 });
     fetchCategories();
-  }, [fetchProducts, fetchCategories]);
+    fetchHighStockProducts(8);
+    fetchBestSellingProducts(8);
+  }, [fetchProducts, fetchCategories, fetchHighStockProducts, fetchBestSellingProducts]);
 
   // Auto-slide cho carousel
   useEffect(() => {
@@ -74,6 +84,8 @@ export function useHomepage() {
     products,
     categories,
     featuredProducts,
+    highStockProducts,
+    bestSellingProducts,
     currentSlide,
 
     // States

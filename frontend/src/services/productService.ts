@@ -1,5 +1,6 @@
 import type {
   CategoryListResponse,
+  Product,
   ProductDetail,
   ProductListResponse,
   QueryProduct,
@@ -68,6 +69,36 @@ class ProductService {
       return response;
     } catch (error) {
       console.error("Lỗi khi tìm kiếm sản phẩm:", error);
+      throw error;
+    }
+  }
+
+  // Lấy sản phẩm có tồn kho cao (cho khuyến mãi)
+  async getHighStockProducts(limit?: number): Promise<Product[]> {
+    try {
+      const response = await apiClient.get<Product[]>(
+        "/api/products/high-stock",
+        { limit },
+      );
+      console.log("Lấy sản phẩm tồn kho cao thành công:", response);
+      return response;
+    } catch (error) {
+      console.error("Lỗi khi lấy sản phẩm tồn kho cao:", error);
+      throw error;
+    }
+  }
+
+  // Lấy sản phẩm bán chạy nhất
+  async getBestSellingProducts(limit?: number): Promise<Product[]> {
+    try {
+      const response = await apiClient.get<Product[]>(
+        "/api/products/best-selling",
+        { limit },
+      );
+      console.log("Lấy sản phẩm bán chạy thành công:", response);
+      return response;
+    } catch (error) {
+      console.error("Lỗi khi lấy sản phẩm bán chạy:", error);
       throw error;
     }
   }

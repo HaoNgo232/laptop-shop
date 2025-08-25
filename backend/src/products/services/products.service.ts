@@ -15,6 +15,7 @@ import { CreateProductDto } from '@/products/dtos/create-product.dto';
 import { UpdateProductDto } from '@/products/dtos/update-product.dto';
 import { SortOrder } from '@/products/enums/sort.enum';
 import { PaginationMeta } from '@/common/interfaces/response.interface';
+import { OrderItem } from '@/orders/entities/order-item.entity';
 
 interface IProductsService {
   findAll(queryDto: QueryProductDto): Promise<PaginatedResponse<ProductDto>>;
@@ -22,6 +23,8 @@ interface IProductsService {
   create(createProductDto: CreateProductDto): Promise<Product>;
   update(id: string, updateProductDto: UpdateProductDto): Promise<Product>;
   remove(id: string): Promise<void>;
+  findHighStockProducts(limit?: number): Promise<ProductDto[]>;
+  findBestSellingProducts(limit?: number): Promise<ProductDto[]>;
 }
 
 @Injectable()
@@ -31,6 +34,8 @@ export class ProductsService implements IProductsService {
     private readonly productRepository: Repository<Product>,
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
+    @InjectRepository(OrderItem)
+    private readonly orderItemRepository: Repository<OrderItem>,
   ) {}
 
   /**
@@ -270,5 +275,54 @@ export class ProductsService implements IProductsService {
       data: productsList,
       meta,
     };
+  }
+
+  /**
+   * Lấy danh sách sản phẩm có tồn kho cao nhất (cho khuyến mãi)
+   */
+  async findHighStockProducts(limit: number = 8): Promise<ProductDto[]> {
+    try {
+      const products = await this.productRepository.find({
+        relations: ['category'],
+        where: { active: true },
+        order: { stockQuantity: 'DESC' },
+        take: limit,
+      });
+
+      return products;
+    } catch (error) {
+      console.error('Lỗi khi lấy sản phẩm tồn kho cao:', error);
+      throw new BadRequestException('Không thể tải sản phẩm khuyến mãi');
+    }
+  }
+
+  /**
+   * Lấy danh sách sản phẩm bán chạy nhất dựa trên số lượng đã bán
+   */
+  async findBestSellingProducts(limit: number = 8): Promise<ProductDto[]> {
+    try {
+      const bestSellingQuery = this.productRepository
+        .createQueryBuilder('product')
+        .leftJoinAndSelect('product.category', 'category')
+        .leftJoin('product.orderItems', 'orderItem')
+        .select([
+          'product',
+          'category',
+          'COALESCE(SUM(orderItem.quantity), 0) as totalSold'
+        ])
+        .where('product.active = :active', { active: true })
+        .groupBy('product.id, category.id')
+        .orderBy('totalSold', 'DESC')
+        .addOrderBy('product.createdAt', 'DESC') // Fallback sorting for products with same sales
+        .limit(limit);
+
+      const result = await bestSellingQuery.getRawAndEntities();
+      
+      // Return just the entities part, which are the Product objects
+      return result.entities;
+    } catch (error) {
+      console.error('Lỗi khi lấy sản phẩm bán chạy:', error);
+      throw new BadRequestException('Không thể tải sản phẩm bán chạy');
+    }
   }
 }

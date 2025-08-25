@@ -6,6 +6,7 @@ import { CategoriesController } from '@/products/controllers/categories.controll
 import { ProductsController } from '@/products/controllers/products.controller';
 import { Category } from '@/products/entities/category.entity';
 import { Product } from '@/products/entities/product.entity';
+import { OrderItem } from '@/orders/entities/order-item.entity';
 import { CategoriesService } from '@/products/services/categories.service';
 import { ProductsService } from '@/products/services/products.service';
 import { forwardRef, Module } from '@nestjs/common';
@@ -13,7 +14,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Product, Category]),
+    TypeOrmModule.forFeature([Product, Category, OrderItem]),
     forwardRef(() => CartModule),
     forwardRef(() => AuthModule),
   ],
