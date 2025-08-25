@@ -30,7 +30,7 @@ export function HeroBanner({ isAuthenticated, onNavigate }: HeroBannerProps) {
                             <span className="block text-yellow-300">SIÊU SALE</span>
                             <span className="block">KHỦNG CUỐI NĂM</span>
                         </h1>
-                        
+
                         <div className="flex items-center justify-center gap-2 mb-6">
                             <Star className="h-6 w-6 text-yellow-300 fill-yellow-300" />
                             <Star className="h-6 w-6 text-yellow-300 fill-yellow-300" />
@@ -55,12 +55,12 @@ export function HeroBanner({ isAuthenticated, onNavigate }: HeroBannerProps) {
                                 <ShoppingCart className="h-5 w-5 mr-2" />
                                 Mua ngay - Giá sốc
                             </Button>
-                            
+
                             {!isAuthenticated && (
                                 <Button
                                     variant="outline"
                                     size="lg"
-                                    className="border-white text-white hover:bg-white hover:text-red-600 px-8 py-4 text-lg font-semibold rounded-full"
+                                    className="bg-gray-200 text-red-600 hover:bg-white hover:text-red-600 px-8 py-4 text-lg font-semibold rounded-full shadow-lg transform hover:scale-105 transition-all"
                                     onClick={() => onNavigate('/register')}
                                 >
                                     Đăng ký thành viên - Ưu đãi thêm
