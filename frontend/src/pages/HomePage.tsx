@@ -11,6 +11,8 @@ export function HomePage() {
         products,
         categories,
         featuredProducts,
+        highStockProducts,
+        bestSellingProducts,
         currentSlide,
 
         // States
@@ -45,6 +47,8 @@ export function HomePage() {
             {/* Hero Section */}
             <HeroSection
                 products={products}
+                highStockProducts={highStockProducts}
+                bestSellingProducts={bestSellingProducts}
                 isAuthenticated={isAuthenticated}
                 onProductClick={handleProductClick}
                 onQuickAddToCart={handleQuickAddToCart}

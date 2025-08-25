@@ -17,12 +17,16 @@ interface ProductState {
   isLoading: boolean;
   error: string | null;
   pagination: PaginationMeta | null;
+  highStockProducts: Product[];
+  bestSellingProducts: Product[];
 
   // Actions
   fetchProducts: (params?: QueryProduct) => Promise<void>;
   fetchProductById: (id: string) => Promise<void>;
   fetchCategories: () => Promise<void>;
   searchProducts: (searchTerm: string, params?: QueryProduct) => Promise<void>;
+  fetchHighStockProducts: (limit?: number) => Promise<void>;
+  fetchBestSellingProducts: (limit?: number) => Promise<void>;
   clearError: () => void;
   clearSelectedProduct: () => void;
 }
@@ -35,6 +39,8 @@ export const useProductStore = create<ProductState>((set) => ({
   isLoading: false,
   error: null,
   pagination: null,
+  highStockProducts: [],
+  bestSellingProducts: [],
 
   // Actions
   fetchProducts: async (params) => {
@@ -114,6 +120,28 @@ export const useProductStore = create<ProductState>((set) => ({
         error: apiError.message || "Không thể tìm kiếm sản phẩm",
         isLoading: false,
       });
+    }
+  },
+
+  fetchHighStockProducts: async (limit = 8) => {
+    try {
+      set({ error: null });
+      const highStockProducts = await productService.getHighStockProducts(limit);
+      set({ highStockProducts });
+    } catch (error) {
+      const apiError = error as ApiError;
+      set({ error: apiError.message || "Không thể tải sản phẩm khuyến mãi" });
+    }
+  },
+
+  fetchBestSellingProducts: async (limit = 8) => {
+    try {
+      set({ error: null });
+      const bestSellingProducts = await productService.getBestSellingProducts(limit);
+      set({ bestSellingProducts });
+    } catch (error) {
+      const apiError = error as ApiError;
+      set({ error: apiError.message || "Không thể tải sản phẩm bán chạy" });
     }
   },
 
