@@ -10,6 +10,7 @@ export interface Category {
   id: string;
   name: string;
   description?: string;
+  icon?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -70,6 +71,7 @@ export interface UpdateProduct extends Partial<CreateProduct> {
 export interface CreateCategory {
   name: string;
   description?: string;
+  icon?: string;
 }
 
 export interface UpdateCategory extends Partial<CreateCategory> {

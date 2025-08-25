@@ -2,8 +2,17 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Truck, Shield, Phone } from 'lucide-react';
 import { MinimalDarkWrapper } from '@/components/backgrounds/MinimalDarkWrapper';
+import { useTranslation } from 'react-i18next';
 
 export function ServiceFeatures() {
+    const { t } = useTranslation();
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        const formData = new FormData(e.currentTarget);
+        console.log('Newsletter subscribe:', formData.get('email'));
+    };
+
     return (
         <>
             {/* Service Features */}
@@ -13,9 +22,9 @@ export function ServiceFeatures() {
                         <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
                             <Truck className="h-6 w-6 text-blue-600" />
                         </div>
-                        <h3 className="font-semibold mb-2">Giao hàng nhanh</h3>
+                        <h3 className="font-semibold mb-2">{t('serviceFeatures.deliveryTitle')}</h3>
                         <p className="text-gray-600 text-sm">
-                            Giao hàng trong 24h tại TP.HCM và Hà Nội
+                            {t('serviceFeatures.deliveryDesc')}
                         </p>
                     </CardContent>
                 </Card>
@@ -25,9 +34,9 @@ export function ServiceFeatures() {
                         <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
                             <Shield className="h-6 w-6 text-green-600" />
                         </div>
-                        <h3 className="font-semibold mb-2">Đảm bảo chất lượng</h3>
+                        <h3 className="font-semibold mb-2">{t('serviceFeatures.qualityTitle')}</h3>
                         <p className="text-gray-600 text-sm">
-                            100% hàng chính hãng, đổi trả trong 7 ngày
+                            {t('serviceFeatures.qualityDesc')}
                         </p>
                     </CardContent>
                 </Card>
@@ -37,9 +46,9 @@ export function ServiceFeatures() {
                         <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
                             <Phone className="h-6 w-6 text-purple-600" />
                         </div>
-                        <h3 className="font-semibold mb-2">Hỗ trợ 24/7</h3>
+                        <h3 className="font-semibold mb-2">{t('serviceFeatures.supportTitle')}</h3>
                         <p className="text-gray-600 text-sm">
-                            Đội ngũ tư vấn nhiệt tình, sẵn sàng hỗ trợ
+                            {t('serviceFeatures.supportDesc')}
                         </p>
                     </CardContent>
                 </Card>
@@ -48,22 +57,27 @@ export function ServiceFeatures() {
             {/* Newsletter Section */}
             <MinimalDarkWrapper padding="lg" className="rounded-lg">
                 <div className="text-center">
-                    <h3 className="text-xl font-semibold mb-2">Nhận thông tin ưu đãi</h3>
+                    <h3 className="text-xl font-semibold mb-2">{t('serviceFeatures.newsletterTitle')}</h3>
                     <p className="text-gray-300 mb-4">
-                        Đăng ký để nhận thông báo về sản phẩm mới và khuyến mãi
+                        {t('serviceFeatures.newsletterDesc')}
                     </p>
-                    <div className="max-w-md mx-auto flex gap-2">
+                    <form onSubmit={handleSubmit} className="max-w-md mx-auto flex gap-2">
+                        <label htmlFor="newsletter-email" className="sr-only">
+                            {t('serviceFeatures.newsletterPlaceholder')}
+                        </label>
                         <input
+                            id="newsletter-email"
+                            name="email"
                             type="email"
-                            placeholder="Email của bạn"
+                            placeholder={t('serviceFeatures.newsletterPlaceholder')}
                             className="flex-1 px-3 py-2 rounded bg-gray-800/50 border border-gray-700 text-white placeholder-gray-400 focus:border-gray-600 focus:outline-none"
                         />
-                        <Button className="bg-white text-gray-900 hover:bg-gray-300 mt-0.5">
-                            Đăng ký
+                        <Button type="submit" className="bg-white text-gray-900 hover:bg-gray-300 mt-0.5">
+                            {t('serviceFeatures.newsletterSubmit')}
                         </Button>
-                    </div>
+                    </form>
                 </div>
             </MinimalDarkWrapper>
         </>
     );
-} 
+}

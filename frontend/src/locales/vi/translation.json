@@ -1,0 +1,18 @@
+{
+  "categorySection": {
+    "title": "Mua sắm theo danh mục",
+    "subtitle": "Tìm kiếm sản phẩm theo sở thích của bạn"
+  },
+  "serviceFeatures": {
+    "deliveryTitle": "Giao hàng nhanh",
+    "deliveryDesc": "Giao hàng trong 24h tại TP.HCM và Hà Nội",
+    "qualityTitle": "Đảm bảo chất lượng",
+    "qualityDesc": "100% hàng chính hãng, đổi trả trong 7 ngày",
+    "supportTitle": "Hỗ trợ 24/7",
+    "supportDesc": "Đội ngũ tư vấn nhiệt tình, sẵn sàng hỗ trợ",
+    "newsletterTitle": "Nhận thông tin ưu đãi",
+    "newsletterDesc": "Đăng ký để nhận thông báo về sản phẩm mới và khuyến mãi",
+    "newsletterPlaceholder": "Email của bạn",
+    "newsletterSubmit": "Đăng ký"
+  }
+}

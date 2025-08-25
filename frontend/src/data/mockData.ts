@@ -232,11 +232,11 @@ export const mockBestSellingProducts: Product[] = [
 ];
 
 export const mockCategories = [
-  { id: "1", name: "Laptop", description: "Laptop và máy tính xách tay", createdAt: new Date(), updatedAt: new Date() },
-  { id: "2", name: "Màn hình", description: "Màn hình máy tính và gaming monitor", createdAt: new Date(), updatedAt: new Date() },
-  { id: "3", name: "Linh kiện", description: "RAM, SSD, card đồ họa và linh kiện nâng cấp", createdAt: new Date(), updatedAt: new Date() },
-  { id: "4", name: "Thiết bị di động", description: "Tablet, smartphone, smartwatch", createdAt: new Date(), updatedAt: new Date() },
-  { id: "5", name: "Phụ kiện", description: "Bàn phím, chuột, tai nghe và phụ kiện", createdAt: new Date(), updatedAt: new Date() },
+  { id: "1", name: "Laptop", icon: "Laptop", description: "Laptop và máy tính xách tay", createdAt: new Date(), updatedAt: new Date() },
+  { id: "2", name: "Màn hình", icon: "Monitor", description: "Màn hình máy tính và gaming monitor", createdAt: new Date(), updatedAt: new Date() },
+  { id: "3", name: "Linh kiện", icon: "Cpu", description: "RAM, SSD, card đồ họa và linh kiện nâng cấp", createdAt: new Date(), updatedAt: new Date() },
+  { id: "4", name: "Thiết bị di động", icon: "Smartphone", description: "Tablet, smartphone, smartwatch", createdAt: new Date(), updatedAt: new Date() },
+  { id: "5", name: "Phụ kiện", icon: "Headphones", description: "Bàn phím, chuột, tai nghe và phụ kiện", createdAt: new Date(), updatedAt: new Date() },
 ];
 
 export const mockProducts = [...mockHighStockProducts, ...mockBestSellingProducts];
