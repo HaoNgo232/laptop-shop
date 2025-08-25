@@ -25,6 +25,13 @@ export class Order extends BaseEntity {
   orderDate: Date;
 
   @Column({
+    type: 'timestamp',
+    nullable: true,
+    name: 'expires_at',
+  })
+  expiresAt: Date | null;
+
+  @Column({
     type: 'enum',
     enum: OrderStatusEnum,
     default: OrderStatusEnum.PENDING,

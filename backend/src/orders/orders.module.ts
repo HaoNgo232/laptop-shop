@@ -14,6 +14,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrdersService } from '@/orders/services/orders.service';
 import { CreateOrderUseCase } from '@/orders/usecases/create-order.usecase';
 import { ValidateStockUseCase } from '@/orders/usecases/validate-stock.usecase';
+import { RestoreStockUseCase } from '@/orders/usecases/restore-stock.usecase';
+import { UpdatePaymentUseCase } from '@/orders/usecases/update-payment.usecase';
+import { OrderTimeoutJob } from '@/orders/jobs/order-timeout.job';
 import { RankService } from './services/rank.service';
 import { DiscountService } from './services/discount.service';
 import { User } from '@/auth/entities/user.entity';
@@ -41,6 +44,10 @@ import { User } from '@/auth/entities/user.entity';
     // usecases
     ValidateStockUseCase,
     CreateOrderUseCase,
+    RestoreStockUseCase,
+    UpdatePaymentUseCase,
+    // jobs
+    OrderTimeoutJob,
   ],
   exports: [AdminOrdersService, OrdersService, RankService, DiscountService],
 })

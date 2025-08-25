@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException, Logger } from '@nestjs/common';
 import { DataSource, EntityManager } from 'typeorm';
 import { Order } from '@/orders/entities/order.entity';
+import { OrderItem } from '@/orders/entities/order-item.entity';
+import { Product } from '@/products/entities/product.entity';
 import { OrderStatusEnum } from '@/orders/enums/order-status.enum';
 import { PaymentStatusEnum } from '@/orders/enums/payment-status.enum';
 import { RestoreStockUseCase } from './restore-stock.usecase';
@@ -101,8 +103,9 @@ export class UpdatePaymentUseCase {
   ): Promise<void> {
     switch (paymentStatus) {
       case PaymentStatusEnum.PAID:
-        // Payment successful -> chuyển sang PROCESSING
+        // Payment successful -> chuyển sang PROCESSING và convert reserved stock thành actual stock decrement
         order.status = OrderStatusEnum.PROCESSING;
+        await this.convertReservedToActualStock(manager, order.id);
         break;
 
       case PaymentStatusEnum.FAILED:
@@ -124,6 +127,40 @@ export class UpdatePaymentUseCase {
 
       default:
         this.logger.warn(`Unknown payment status: ${paymentStatus} for order ${order.id}`);
+    }
+  }
+
+  /**
+   * Convert reserved stock thành actual stock decrement khi payment PAID
+   */
+  private async convertReservedToActualStock(manager: EntityManager, orderId: string): Promise<void> {
+    try {
+      // Lấy order với items
+      const orderWithItems = await manager.findOne(Order, {
+        where: { id: orderId },
+        relations: ['items'],
+      });
+
+      if (!orderWithItems?.items) {
+        this.logger.warn(`No items found for order ${orderId} to convert reserved stock`);
+        return;
+      }
+
+      // Convert reserved stock cho từng item
+      for (const item of orderWithItems.items) {
+        // Decrement actual stock và decrement reserved stock
+        await manager.decrement(Product, { id: item.productId }, 'stockQuantity', item.quantity);
+        await manager.decrement(Product, { id: item.productId }, 'reservedQuantity', item.quantity);
+
+        this.logger.debug(
+          `Converted ${item.quantity} reserved units to actual stock for product ${item.productId} in order ${orderId}`,
+        );
+      }
+
+      this.logger.log(`Reserved stock converted to actual stock for order ${orderId}`);
+    } catch (error) {
+      this.logger.error(`Failed to convert reserved stock for order ${orderId}:`, error);
+      throw error;
     }
   }
 }

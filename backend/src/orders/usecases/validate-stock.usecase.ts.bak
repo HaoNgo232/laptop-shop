@@ -18,33 +18,33 @@ export class ValidateStockUseCase {
   ) {}
 
   /**
-   * Kiểm tra số lượng sản phẩm có đủ không và tính tổng tiền (chưa áp dụng discount)
+   * Kiểm tra số lượng sản phẩm có đủ không và tính tổng tiền (chưa áp dụng discount)
    */
   async execute(cartItems: CartItem[]): Promise<StockValidationResult> {
     let totalAmount = 0;
     const orderItems: Pick<OrderItem, 'productId' | 'quantity' | 'priceAtPurchase'>[] = [];
 
-    // Lấy từng sản phẩm trong cart và xử lý
+    // Lấy từng sản phẩm trong cart và xử lý
     for (const cartItem of cartItems) {
-      // Kiểm tra số lượng sản phẩm có lớn hơn 0 hay không
+      // Kiểm tra số lượng sản phẩm có lớn hơn 0 hay không
       this.checkQuantity(cartItem.quantity);
 
-      // Lấy product từ database
+      // Lấy product từ database
       const product = await this.getProduct(cartItem.productId);
 
-      // Kiểm tra số lượng sản phẩm có đủ không
+      // Kiểm tra số lượng sản phẩm có đủ không
       this.checkStock(product, cartItem.quantity);
 
-      // Kiểm tra giá sản phẩm có lớn hơn 0 hay không
+      // Kiểm tra giá sản phẩm có lớn hơn 0 hay không
       this.checkPrice(product.price);
 
-      // Tính tổng tiền của từng loại sản phẩm theo số lượng
+      // Tính tổng tiền của từng loại sản phẩm theo số lượng
       const itemTotal = product.price * cartItem.quantity;
 
-      // Cập nhật tổng tiền
+      // Cập nhật tổng tiền
       totalAmount += itemTotal;
 
-      // Thêm sản phẩm vào danh sách đơn hàng
+      // Thêm sản phẩm vào danh sách đơn hàng
       orderItems.push({
         productId: product.id,
         quantity: cartItem.quantity,
@@ -56,7 +56,7 @@ export class ValidateStockUseCase {
   }
 
   /**
-   * Kiểm tra số lượng sản phẩm
+   * Kiểm tra số lượng sản phẩm
    */
   private checkQuantity(quantity: number): void {
     if (quantity <= 0) {
@@ -65,7 +65,7 @@ export class ValidateStockUseCase {
   }
 
   /**
-   * Lấy product từ database
+   * Lấy product từ database
    */
   private async getProduct(productId: string): Promise<Product> {
     const product = await this.productRepository.findOne({
@@ -80,25 +80,22 @@ export class ValidateStockUseCase {
   }
 
   /**
-   * Kiểm tra số lượng sản phẩm có đủ không
+   * Kiểm tra số lượng sản phẩm có đủ không
    */
   private checkStock(product: Product, requestedQuantity: number): void {
-    // Available stock = stockQuantity - reservedQuantity
-    const availableStock = product.stockQuantity - (product.reservedQuantity || 0);
-    
-    // Nếu số lượng có sẵn < số lượng yêu cầu
-    if (availableStock < requestedQuantity) {
+    // Nếu số lượng trong kho < số lượng yêu cầu
+    if (product.stockQuantity < requestedQuantity) {
       throw new BadRequestException(
-        `Sản phẩm "${product.name}" không đủ hàng. Còn lại: ${availableStock}, yêu cầu: ${requestedQuantity}`,
+        `Sản phẩm "${product.name}" không đủ hàng. Còn lại: ${product.stockQuantity}, yêu cầu: ${requestedQuantity}`,
       );
     }
   }
 
   /**
-   * Kiểm tra giá sản phẩm
+   * Kiểm tra giá sản phẩm
    */
   private checkPrice(price: number): void {
-    // Nếu giá sản phẩm < 0
+    // Nếu giá sản phẩm < 0
     if (price < 0) {
       throw new BadRequestException(`Giá sản phẩm không hợp lệ: ${price}`);
     }
