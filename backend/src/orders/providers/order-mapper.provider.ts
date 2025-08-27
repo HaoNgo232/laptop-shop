@@ -21,7 +21,12 @@ export class OrderMapperProvider implements IOrderMapperProvider {
       id: order.id,
       orderDate: order.orderDate,
       status: order.status,
+      paymentStatus: order.paymentStatus,
       totalAmount: order.totalAmount,
+      shippingAddress: order.shippingAddress,
+      paymentMethod: order.paymentMethod,
+      note: order.note,
+      transactionId: order.transactionId,
     };
   }
 
@@ -47,6 +52,8 @@ export class OrderMapperProvider implements IOrderMapperProvider {
       shippingAddress: order.shippingAddress,
       paymentMethod: order.paymentMethod,
       paymentStatus: order.paymentStatus,
+      note: order.note,
+      transactionId: order.transactionId,
       items: order.items.map((item) => ({
         product: {
           id: item.product.id,
@@ -64,6 +71,8 @@ export class OrderMapperProvider implements IOrderMapperProvider {
       orderDate: order.orderDate,
       status: order.status,
       totalAmount: Number(order.totalAmount),
+      createdAt: order.createdAt,
+      updatedAt: order.updatedAt,
     };
   }
 
@@ -75,7 +84,12 @@ export class OrderMapperProvider implements IOrderMapperProvider {
       id: order.id,
       orderDate: order.orderDate,
       status: order.status,
+      paymentStatus: order.paymentStatus,
       totalAmount: Number(order.totalAmount),
+      shippingAddress: order.shippingAddress,
+      paymentMethod: order.paymentMethod,
+      note: order.note,
+      transactionId: order.transactionId,
     };
   }
 
@@ -97,6 +111,9 @@ export class OrderMapperProvider implements IOrderMapperProvider {
       shippingAddress: order.shippingAddress,
       paymentMethod: order.paymentMethod,
       note: order.note,
+      transactionId: order.transactionId,
+      createdAt: order.createdAt,
+      updatedAt: order.updatedAt,
       items:
         order.items?.map((item) => ({
           product: {
