@@ -31,9 +31,11 @@ import {
   ApiNotFoundResponse,
   ApiInternalServerErrorResponse,
   ApiForbiddenResponse,
+  ApiExtraModels,
 } from '@nestjs/swagger';
 
 @ApiTags('📋 Orders')
+@ApiExtraModels(OrderDto, CreateOrderDto, OrderDetailDto, PaginatedResponseDto, ValidationErrorResponseDto, UnauthorizedErrorResponseDto, NotFoundErrorResponseDto, ErrorResponseDto)
 @ApiBearerAuth('Authorization')
 @Controller('api/orders')
 @Auth(AuthType.Bearer, UserRole.USER, UserRole.ADMIN)

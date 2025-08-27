@@ -18,9 +18,11 @@ import {
   ApiUnauthorizedResponse,
   ApiInternalServerErrorResponse,
   ApiConflictResponse,
+  ApiExtraModels,
 } from '@nestjs/swagger';
 
 @ApiTags('🔐 Authentication')
+@ApiExtraModels(LoginResponseDto, UserResponseDto, RegisterUserDto, LoginUserDto, RefreshTokenDto, ValidationErrorResponseDto, UnauthorizedErrorResponseDto, ErrorResponseDto)
 @Controller('api/auth')
 export class AuthController {
   constructor(

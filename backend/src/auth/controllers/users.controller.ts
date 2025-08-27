@@ -4,9 +4,10 @@ import { User } from '@/auth/entities/user.entity';
 import { UsersService } from '@/auth/services/users.service';
 import { RankService } from '@/orders/services/rank.service';
 import { Body, Controller, Get, Post, Put } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags, ApiExtraModels } from '@nestjs/swagger';
 
-@ApiTags('Người dùng')
+@ApiTags('👤 User Management')
+@ApiExtraModels(UpdateUserProfileDto, User)
 @ApiBearerAuth('Authorization')
 @Controller('api/users')
 export class UsersController {

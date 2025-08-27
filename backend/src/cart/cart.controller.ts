@@ -35,9 +35,11 @@ import {
   ApiUnauthorizedResponse,
   ApiNotFoundResponse,
   ApiInternalServerErrorResponse,
+  ApiExtraModels,
 } from '@nestjs/swagger';
 
 @ApiTags('🛒 Shopping Cart')
+@ApiExtraModels(CartDto, AddToCartDto, UpdateCartItemDto, ValidationErrorResponseDto, UnauthorizedErrorResponseDto, NotFoundErrorResponseDto, ErrorResponseDto)
 @ApiBearerAuth('Authorization')
 @Controller('api/cart')
 @Auth(AuthType.Bearer, UserRole.USER, UserRole.ADMIN)

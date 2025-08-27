@@ -8,6 +8,7 @@ import { Auth } from '@/auth/decorators/auth.decorator';
 import { AuthType } from '@/auth/enums/auth-type.enum';
 import { UpdateUserByAdminDto } from '@/admin/dtos/update-user-by-admin.dto';
 import { PaginatedResponse } from '@/common/interfaces/paginated-response.interface';
+import { PaginatedResponseDto } from '@/common/dtos/paginated-response.dto';
 import { UserRole } from '@/auth/enums/user-role.enum';
 import {
   ApiBearerAuth,
@@ -16,9 +17,11 @@ import {
   ApiParam,
   ApiQuery,
   ApiTags,
+  ApiExtraModels,
 } from '@nestjs/swagger';
 
-@ApiTags('Admin - Người dùng')
+@ApiTags('👨‍💼 Admin - Users')
+@ApiExtraModels(AdminUserViewDto, AdminUserQueryDto, AdminViewDetailDto, UpdateUserByAdminDto, PaginatedResponseDto)
 @ApiBearerAuth('Authorization')
 @Controller('api/admin/manager-users')
 @Auth(AuthType.Bearer, UserRole.ADMIN)

@@ -7,6 +7,7 @@ import { ProductDto } from '@/products/dtos/product.dto';
 import { QueryProductDto } from '@/products/dtos/query-product.dto';
 import { UpdateProductDto } from '@/products/dtos/update-product.dto';
 import { PaginatedResponse } from '@/common/interfaces/paginated-response.interface';
+import { PaginatedResponseDto } from '@/common/dtos/paginated-response.dto';
 import { ProductsService } from '@/products/services/products.service';
 import {
   ApiBearerAuth,
@@ -16,9 +17,11 @@ import {
   ApiOperation,
   ApiParam,
   ApiTags,
+  ApiExtraModels,
 } from '@nestjs/swagger';
 
-@ApiTags('Admin - Sản phẩm')
+@ApiTags('👨‍💼 Admin - Products')
+@ApiExtraModels(ProductDto, CreateProductDto, UpdateProductDto, QueryProductDto, PaginatedResponseDto)
 @ApiBearerAuth('Authorization')
 @Controller('api/admin/products')
 @Auth(AuthType.Bearer, UserRole.ADMIN)

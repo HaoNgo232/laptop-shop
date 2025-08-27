@@ -13,9 +13,11 @@ import {
   ApiOperation,
   ApiParam,
   ApiTags,
+  ApiExtraModels,
 } from '@nestjs/swagger';
 
-@ApiTags('Admin - Danh mục')
+@ApiTags('👨‍💼 Admin - Categories')
+@ApiExtraModels(CategoryDto, CreateCategoryDto, UpdateCategoryDto)
 @ApiBearerAuth('Authorization')
 @Controller('api/admin/categories')
 @Auth(AuthType.Bearer, UserRole.ADMIN)

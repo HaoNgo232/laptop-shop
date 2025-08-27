@@ -16,9 +16,11 @@ import {
   ApiParam,
   ApiQuery,
   ApiTags,
+  ApiExtraModels,
 } from '@nestjs/swagger';
 
-@ApiTags('Admin - Đơn hàng')
+@ApiTags('👨‍💼 Admin - Orders')
+@ApiExtraModels()
 @ApiBearerAuth('Authorization')
 @Controller('api/admin/orders')
 @Auth(AuthType.Bearer, UserRole.ADMIN)

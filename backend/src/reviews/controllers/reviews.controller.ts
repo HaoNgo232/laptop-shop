@@ -27,9 +27,11 @@ import {
   ApiParam,
   ApiQuery,
   ApiTags,
+  ApiExtraModels,
 } from '@nestjs/swagger';
 
-@ApiTags('Đánh giá')
+@ApiTags('⭐ Reviews')
+@ApiExtraModels(CreateReviewDto, UpdateReviewDto, PaginationQueryDto)
 @Controller('api/reviews')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}

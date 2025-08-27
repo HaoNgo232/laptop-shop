@@ -5,9 +5,10 @@ import { Auth } from '@/auth/decorators/auth.decorator';
 import { AuthType } from '@/auth/enums/auth-type.enum';
 import { DetailedStatsDto } from '@/admin/dtos/detailed-stats.dto';
 import { UserRole } from '@/auth/enums/user-role.enum';
-import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags, ApiExtraModels } from '@nestjs/swagger';
 
-@ApiTags('Admin - Dashboard')
+@ApiTags('👨‍💼 Admin - Dashboard')
+@ApiExtraModels(DashboardSummaryDto, DetailedStatsDto)
 @ApiBearerAuth('Authorization')
 @Controller('api/admin/dashboard')
 @Auth(AuthType.Bearer, UserRole.ADMIN)

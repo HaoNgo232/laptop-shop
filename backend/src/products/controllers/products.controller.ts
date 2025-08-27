@@ -15,10 +15,12 @@ import {
   ApiTags,
   ApiBadRequestResponse,
   ApiNotFoundResponse,
-  ApiInternalServerErrorResponse
+  ApiInternalServerErrorResponse,
+  ApiExtraModels
 } from '@nestjs/swagger';
 
 @ApiTags('🛍️ Products')
+@ApiExtraModels(PaginatedResponseDto, ProductDto, ValidationErrorResponseDto, NotFoundErrorResponseDto, ErrorResponseDto)
 @Controller('api/products')
 @Auth(AuthType.None)
 export class ProductsController {

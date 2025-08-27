@@ -24,9 +24,11 @@ import {
   ApiNotFoundResponse,
   ApiInternalServerErrorResponse,
   ApiHeader,
+  ApiExtraModels,
 } from '@nestjs/swagger';
 
 @ApiTags('💳 Payments')
+@ApiExtraModels(CreatePaymentDto, SepayWebhookDto, ValidationErrorResponseDto, UnauthorizedErrorResponseDto, NotFoundErrorResponseDto, ErrorResponseDto)
 @Controller('api/payment')
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}

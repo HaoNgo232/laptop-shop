@@ -4,9 +4,10 @@ import { CategoryDetailDto } from '@/products/dtos/category-detail.dto';
 import { CategoryDto } from '@/products/dtos/category.dto';
 import { CategoriesService } from '@/products/services/categories.service';
 import { Controller, Get, Param } from '@nestjs/common';
-import { ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiOperation, ApiParam, ApiTags, ApiExtraModels } from '@nestjs/swagger';
 
-@ApiTags('Danh mục')
+@ApiTags('📂 Categories')
+@ApiExtraModels(CategoryDto, CategoryDetailDto)
 @Auth(AuthType.None)
 @Controller('api/categories')
 export class CategoriesController {

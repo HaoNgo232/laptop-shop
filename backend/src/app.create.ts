@@ -75,32 +75,6 @@ export function appCreate(app: INestApplication): void {
     .setVersion('1.0.0')
     .setContact('Development Team', 'https://github.com/HaoNgo232/laptop-shop', 'contact@laptopshop.com')
     .setLicense('MIT', 'https://opensource.org/licenses/MIT')
-    
-    // Authentication & User Management
-    .addTag('🔐 Authentication', 'User authentication and token management')
-    .addTag('👤 User Management', 'User profile and account management')
-    
-    // Core Shopping Features  
-    .addTag('🛍️ Products', 'Product catalog and search functionality')
-    .addTag('📂 Categories', 'Product category management')
-    .addTag('🛒 Shopping Cart', 'Shopping cart operations')
-    .addTag('📋 Orders', 'Order management and tracking')
-    
-    // Payment & Financial
-    .addTag('💳 Payments', 'Payment processing and methods')
-    
-    // Reviews & Feedback
-    .addTag('⭐ Reviews', 'Product reviews and ratings')
-    
-    // Administrative
-    .addTag('👨‍💼 Admin - Dashboard', 'Administrative dashboard and analytics')
-    .addTag('👨‍💼 Admin - Users', 'User management for administrators')
-    .addTag('👨‍💼 Admin - Products', 'Product management for administrators')
-    .addTag('👨‍💼 Admin - Orders', 'Order management for administrators')
-    
-    // System
-    .addTag('🔧 System', 'System information and health checks')
-    
     .addBearerAuth(
       {
         type: 'http',
