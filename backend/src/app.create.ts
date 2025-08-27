@@ -19,21 +19,95 @@ export function appCreate(app: INestApplication): void {
     }),
   );
 
-  // Cấu hình Swagger document cho API
+  // Cấu hình Swagger document cho API
   const config = new DocumentBuilder()
-    .setTitle('Web Ecommerce API')
-    .setDescription('API documentation cho ứng dụng Web Ecommerce')
-    .setVersion('1.0')
-    .addTag('Ứng dụng', 'Các API chung của ứng dụng')
-    .addTag('Xác thực', 'Các API liên quan đến xác thực người dùng')
-    .addTag('Người dùng', 'Các API liên quan đến quản lý thông tin người dùng')
+    .setTitle('🏪 Laptop Shop E-commerce API')
+    .setDescription(`
+      **Comprehensive API Documentation for Laptop Shop E-commerce Platform**
+      
+      This API provides complete functionality for an e-commerce laptop store including:
+      
+      ## 🔐 Authentication & Authorization
+      - User registration and login
+      - JWT token-based authentication
+      - Role-based access control (USER, ADMIN)
+      - Token refresh mechanism
+      
+      ## 🛍️ Product Management
+      - Browse products with advanced filtering
+      - Product search and sorting
+      - Category-based organization
+      - Best-selling and high-stock recommendations
+      
+      ## 🛒 Shopping Experience
+      - Shopping cart management
+      - Order creation and tracking
+      - Multiple payment methods (COD, SePay QR)
+      - Order status updates
+      
+      ## 💳 Payment Processing
+      - SePay QR code generation
+      - Webhook handling for payment notifications
+      - Payment method switching
+      - Secure transaction processing
+      
+      ## 👨‍💼 Administrative Features
+      - Dashboard with analytics
+      - User and order management
+      - Inventory tracking
+      - Sales reporting
+      
+      ## 📧 Additional Features
+      - Email notifications
+      - Product reviews and ratings
+      - Stock reservation system
+      - Comprehensive error handling
+      
+      **Base URL:** \`/api\`
+      
+      **Authentication:** Most endpoints require Bearer token authentication.
+      Include in request header: \`Authorization: Bearer <your-token>\`
+      
+      **Rate Limiting:** SePay API calls are limited to 2 requests/second.
+      
+      **Error Handling:** All endpoints return standardized error responses with appropriate HTTP status codes.
+    `)
+    .setVersion('1.0.0')
+    .setContact('Development Team', 'https://github.com/HaoNgo232/laptop-shop', 'contact@laptopshop.com')
+    .setLicense('MIT', 'https://opensource.org/licenses/MIT')
+    
+    // Authentication & User Management
+    .addTag('🔐 Authentication', 'User authentication and token management')
+    .addTag('👤 User Management', 'User profile and account management')
+    
+    // Core Shopping Features  
+    .addTag('🛍️ Products', 'Product catalog and search functionality')
+    .addTag('📂 Categories', 'Product category management')
+    .addTag('🛒 Shopping Cart', 'Shopping cart operations')
+    .addTag('📋 Orders', 'Order management and tracking')
+    
+    // Payment & Financial
+    .addTag('💳 Payments', 'Payment processing and methods')
+    
+    // Reviews & Feedback
+    .addTag('⭐ Reviews', 'Product reviews and ratings')
+    
+    // Administrative
+    .addTag('👨‍💼 Admin - Dashboard', 'Administrative dashboard and analytics')
+    .addTag('👨‍💼 Admin - Users', 'User management for administrators')
+    .addTag('👨‍💼 Admin - Products', 'Product management for administrators')
+    .addTag('👨‍💼 Admin - Orders', 'Order management for administrators')
+    
+    // System
+    .addTag('🔧 System', 'System information and health checks')
+    
     .addBearerAuth(
       {
         type: 'http',
         scheme: 'bearer',
         bearerFormat: 'JWT',
         name: 'Authorization',
-        description: 'Enter JWT token',
+        description: 'Enter JWT token obtained from login endpoint',
         in: 'header',
       },
       'Authorization',
@@ -46,12 +120,20 @@ export function appCreate(app: INestApplication): void {
       persistAuthorization: true,
       tagsSorter: 'alpha',
       operationsSorter: 'alpha',
+      docExpansion: 'list',
+      filter: true,
+      showRequestHeaders: true,
+      showCommonExtensions: true,
+      tryItOutEnabled: true,
     },
+    customSiteTitle: 'Laptop Shop API Documentation',
+    customfavIcon: 'https://avatars.githubusercontent.com/u/20165699?s=32&v=4',
   });
 
   // Sử dụng ClassSerializerInterceptor toàn cục
   app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
   console.log(`Environment: ${configService.get('app.nodeEnv')}`);
+  console.log(`🔖 Swagger documentation available at: http://localhost:${configService.get('app.port')}/api/docs`);
 
   // Thiết lập CORS
   app.enableCors();
